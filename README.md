@@ -102,7 +102,7 @@ editor.selected = {
 	}
 }
 </code>
-<pre>
+</pre>
 
 # Other Methods and General Structure
 

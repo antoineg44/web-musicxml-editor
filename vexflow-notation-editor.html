@@ -10,11 +10,12 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<h1>Online Notation Editor Built with the VexFlow API and Javascript</h1>
+				<button onclick="printNotes1();">print notes1</button>
 				<ul class="nav nav-tabs">
 				  <li role="presentation" class="active"><a href="#measures"  data-toggle="tab">Measures</a></li>
 				  <li role="presentation"><a href="#notes-and-rests"  data-toggle="tab">Notes/Rests</a></li>
 				</ul>
-				<div class="tab-content">
+				<div class="tab-content" id="control-panel">
 				<div class="tab-pane fade in active" id="measures">
 					<div class="tool-section">
 						<label>Measure:</label>
@@ -140,7 +141,8 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div id="canvas-wrapper" style="background:#fff;">
-						<canvas id="notation-canvas" width="800" height="1056"></canvas>
+						<!-- <canvas id="notation-canvas" width="800" height="1056"></canvas> -->
+						<svg id="notation-canvas" width="800" height="1056"></svg>
 					</div>
 				</div>
 			</div>
@@ -150,7 +152,7 @@
 	<footer>
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<script src="js/vexflow-min.js"></script>
+		<script src="js/vexflow-debug.js"></script>
 		<script src="js/vexflow-notation-editor.js"></script>
 	</footer>
 </html>

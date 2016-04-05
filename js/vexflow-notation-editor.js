@@ -178,10 +178,10 @@ editor.draw = {
     if(voiceLengths.length >= 1){
       voiceLengths.sort(function(a,b){return b-a;});
       maxLength = voiceLengths[0];
-      var noteWidth = 30;
+      var noteWidth = 40;
       var minWidth = noteWidth * maxLength;
     }else{
-      minWidth = 30;
+      minWidth = 40;
     }
 
     var count = 0;
@@ -259,29 +259,29 @@ editor.draw = {
           var dotted = editor.staves[i].v1[n].dotted;
 
 
-          if(accidental != null && dotted != false){
-            editor.notes1.push(new Vex.Flow.StaveNote(
-              editor.staves[i].v1[n]
-            ).addAccidental(0, new Vex.Flow.Accidental(accidental)).addDotToAll()); 
-          } else if(accidental != null){
-            editor.notes1.push(new Vex.Flow.StaveNote(
-              editor.staves[i].v1[n]
-            ).addAccidental(0, new Vex.Flow.Accidental(accidental))); 
-          } else if(dotted == true){
-            editor.notes1.push(new Vex.Flow.StaveNote(
-              editor.staves[i].v1[n]
-            ).addDotToAll()); 
-          } else{
-            editor.notes1.push(new Vex.Flow.StaveNote(
-              editor.staves[i].v1[n]
-            ));             
-          }
+          // if(accidental != null && dotted != false){
+          //   editor.notes1.push(new Vex.Flow.StaveNote(
+          //     editor.staves[i].v1[n]
+          //   ).addAccidental(0, new Vex.Flow.Accidental(accidental)).addDotToAll()); 
+          // } else if(accidental != null){
+          //   editor.notes1.push(new Vex.Flow.StaveNote(
+          //     editor.staves[i].v1[n]
+          //   ).addAccidental(0, new Vex.Flow.Accidental(accidental))); 
+          // } else if(dotted == true){
+          //   editor.notes1.push(new Vex.Flow.StaveNote(
+          //     editor.staves[i].v1[n]
+          //   ).addDotToAll()); 
+          // } else{
+          //   editor.notes1.push(new Vex.Flow.StaveNote(
+          //     editor.staves[i].v1[n]
+          //   ));             
+          // }
 
-          // maybe equvalent code to above if-elses ^ (not tested)          
-          // var note = new Vex.Flow.StaveNote(editor.staves[i].v1[n]);
-          // if (accidental != null) note.addAccidental(0, new Vex.Flow.Accidental(accidental));
-          // if (dotted == true) note.addDotToAll();
-          // editor.notes1.push(note);
+          // maybe equvalent code to above if-elses ^ tested, seems to work equivalently
+          var note = new Vex.Flow.StaveNote(editor.staves[i].v1[n]);
+          if (accidental != null) note.addAccidental(0, new Vex.Flow.Accidental(accidental));
+          if (dotted == true) note.addDotToAll();
+          editor.notes1.push(note);
           
           editor.staves[i].v1[n].x = editor.notes1[n].note_heads[0].x;
           editor.staves[i].v1[n].y = editor.notes1[n].note_heads[0].y;
@@ -326,14 +326,41 @@ editor.draw = {
           beam.setContext(editor.ctx).draw();
         });
 
-        // adds x and y positoins to the staves notes
         for(n=0; n<editor.staves[i].v1.length; n++){
-          if(editor.staves[i].v1[n].keys != null){
-            
-            if(editor.notes1[n] != undefined){
+          if(editor.notes1[n] != undefined){
+            if(editor.staves[i].v1[n].keys != null){
+              // adds x and y positoins to the staves notes
               editor.staves[i].v1[n].x = editor.notes1[n].note_heads[0].x;
               editor.staves[i].v1[n].y = editor.notes1[n].note_heads[0].y;  
             } 
+
+            //adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
+            var item = editor.notes1[n].getElem();
+            item.addEventListener("mouseover", function() {
+              Vex.forEach($(this).find("*"), function(child) {
+                console.log('mouseover');
+                child.setAttribute("fill", "green");
+                child.setAttribute("stroke", "green");
+              });
+            }, false);
+            item.addEventListener("mouseout", function() {
+              Vex.forEach($(this).find("*"), function(child) {
+                console.log('mouseout');
+                child.setAttribute("fill", "black");
+                child.setAttribute("stroke", "black");
+              });
+            }, false);
+            item.addEventListener("click", function() {
+              Vex.forEach($(this).find("*"), function(child) {
+                //TODO: unset class selected-note from previous selected note
+                //and set class selected-note to this one
+                //note styling will be based on the class
+                //OR: set class or styling based on editor.selected.note
+                console.log('click');
+                child.setAttribute("fill", "red");
+                child.setAttribute("stroke", "red");
+              });
+            }, false);
           }
         }
       }
@@ -619,9 +646,15 @@ editor.canvas.addEventListener('click', editor.select.measure);
 editor.canvas.addEventListener('click', editor.select.note);
 editor.canvas.addEventListener('click', editor.add.note);
 editor.canvas.addEventListener('click', editor.draw.staves);
-editor.canvas.addEventListener('mousemove', editor.draw.staves);
+editor.canvas.addEventListener('mousemove', redraw);
 editor.canvas.addEventListener('mousemove', getMousePos);
 editor.canvas.addEventListener('mousemove', returnInsertNote);
+
+function redraw() {
+  //redraw on mousemove only when adding new note
+  if(editor.getRadioValue('tools') == 'add')
+    editor.draw.staves();
+}
 
 function getMousePos(evt){
     editor.mousePos = editor.select.getMousePos(editor.canvas, evt);

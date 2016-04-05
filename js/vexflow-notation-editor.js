@@ -60,7 +60,7 @@ editor.staveHeight = 140;
 editor.frameLengthMs = 1000;
 editor.frameCount = 1;
 
-editor.staves = [   //measures/tacts
+editor.staves = [   //measures/tacts, in vexflow there is a new stave for each measure
   {
     clef: 'treble',
     timeSigTop: 4,
@@ -245,6 +245,8 @@ editor.draw = {
       stave.setContext(editor.ctx).draw();
 
       //draw the notes
+      //TODO: remove 3 & 4, maybe 2 also
+      //TODO: replace notes1 by local variable, it's useless as a global
       editor.notes1 = [];
       editor.notes2 = [];
       editor.notes3 = [];
@@ -288,7 +290,7 @@ editor.draw = {
 
         var voice1 = new Vex.Flow.Voice({
             num_beats: editor.staves[i].timeSigTop,
-            beat_value: editor.staves[i].timeSigTop,    //is it correct?
+            beat_value: editor.staves[i].timeSigTop,    //TODO: is it correct? change it to time SigBottom
             resolution: Vex.Flow.RESOLUTION
           });
 
@@ -306,6 +308,9 @@ editor.draw = {
 
           voice1.addTickables(editor.notes1);
 
+
+        // This is only helper function to justify and draw a 4/4 voice
+        // TODO: replace it with something like: voice.draw(ctx, stave);
         Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, editor.notes1);
 
         //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
@@ -342,21 +347,26 @@ editor.add = {
     var staveLn = editor.staves.length;
     var selectedMeasure = editor.selected.measure.selection;
 
-    if(selectedMeasure == null && staveLn < 1){   //first added measure at initialization
+    //first added measure at initialization
+    if(selectedMeasure == null && staveLn < 1) {
       editor.staves.push({
         timeSigTop: 4,
         timeSigBottom: 4,
         showTimeSig: true,
         clef: 'treble',
       });
-    }else if(selectedMeasure == null && staveLn >= 1){
+    }
+    //no measure selected, new will be added to the end
+    else if(selectedMeasure == null && staveLn >= 1) {
       editor.staves.push({
         timeSigTop: null,
         timeSigBottom: null,
         showTimeSig: false,
         clef: null,
       });
-    }else{
+    }
+    //some measure selected, new will be added after selected one
+    else {
       editor.staves.splice(selectedMeasure, 0, {
         timeSigTop: null,
         timeSigBottom: null,
@@ -429,7 +439,7 @@ editor.add = {
     var selectedMeasure = editor.selected.measure.selection - 1;
     var selectedNoteVoice = 'v' + editor.voiceDropdown.value;
     var checkboxValue = $('#dotted-checkbox').is(":checked");
-    var isSelectedNoteDotted = editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
+    // var isSelectedNoteDotted = editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
 
     editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted = checkboxValue;
   }
@@ -437,12 +447,16 @@ editor.add = {
 
 editor.delete = {
   measure: function(){
+    //TODO: editor.selected.measure can be null/undefined
     var nextMeasureWidth = editor.selected.measure.width;
     nextMeasureWidth = parseInt(nextMeasureWidth);
     // splice the selected measure
     editor.staves.splice(editor.selected.measure.selection - 1, 1);
-    if(editor.notes)
-      editor.notes.splice(editor.selected.measure.selection - 1, 1);
+
+    //useless:            (nevertheless, author is better programmer than me), stay humble :)
+    // if(editor.notes)
+    //   editor.notes.splice(editor.selected.measure.selection - 1, 1);
+
     // reset the selected measure to the measure after the measure that was just deleted
     editor.selected.measure.selection = editor.selected.measure.selection + 1;
     editor.selected.measure.width = nextMeasureWidth;
@@ -488,17 +502,30 @@ editor.select = {
       var xEnd = xStart + width;
       var yEnd = yStart + height;
 
-      if(editor.mousePos.x >= xStart && editor.mousePos.x <= xEnd && editor.mousePos.y >= yStart && editor.mousePos.y <= yEnd){
-        // previous or selected measure
-        if(editor.mousePos.x >= editor.selected.measure.x && editor.mousePos.x <= editor.selected.measure.x + editor.selected.measure.width && editor.mousePos.y >= editor.selected.measure.y && editor.mousePos.y <= editor.selected.measure.y + editor.selected.measure.height){
+      /* Start point[xStart, yStart] is on top-left
+       * End point[xEnd, yEnd] is on bottom-right
+       */
+
+      //if clicked on measure
+      if(editor.mousePos.x >= xStart && editor.mousePos.x <= xEnd &&
+         editor.mousePos.y >= yStart && editor.mousePos.y <= yEnd) {
+
+        //if clicked second time on already(previously) selected measure
+        if(editor.mousePos.x >= editor.selected.measure.x
+        && editor.mousePos.x <= editor.selected.measure.x + editor.selected.measure.width
+        && editor.mousePos.y >= editor.selected.measure.y
+        && editor.mousePos.y <= editor.selected.measure.y + editor.selected.measure.height
+        ){
           editor.selected.measure.doubleClick = true;
           editor.selected.measure.previousSelection = editor.selected.measure.selection;
-        }else{
+        }
+        else {
           editor.selected.note.selection = null;
           editor.selected.note.clicked = false;
           editor.selected.measure.doubleClick = false;
           editor.selected.measure.previousSelection = editor.selected.measure.selection;
         }
+
         editor.selected.measure.selection = editor.staves[i].measure;
         editor.selected.measure.x = xStart;
         editor.selected.measure.y = yStart;
@@ -521,9 +548,9 @@ editor.select = {
           // loop through notes
           for(n=0; n<editor.staves[editor.selected.measure.selection - 1][noteVoice].length; n++){
             if(editor.mousePos.x >= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].x
-              && editor.mousePos.x <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].x + 10 
-              && editor.mousePos.y >= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y - 5
-              && editor.mousePos.y + 5 <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y + 10
+            && editor.mousePos.x <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].x + 10 
+            && editor.mousePos.y >= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y - 5
+            && editor.mousePos.y + 5 <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y + 10
             ){
               editor.selected.note.selection = n;
               editor.selected.note.clicked = true;

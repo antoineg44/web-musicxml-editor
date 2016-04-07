@@ -6,43 +6,55 @@
 
 //This online notation editor is built using the VexFlow Javascript API, Javascript, jQuery (for now anyway) and Bootstrap for Styling.
 
-// Below is an example of the array of staves objects and their properties.  
-// Each key in the staves array represents a single measure.
-// v1, v2, v3 and v4 store each note for their respective voice in the measure.  
-//These measures and ntoes are then rendered using the VexFlow API.
+var xmlInit = '<?xml version="1.0" encoding="UTF-8" standalone="no"?> \
+            <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd"> \
+            <score-partwise version="3.0"></score-partwise>';
+var xmlInitDoc = $.parseXML(xmlInit);
+var $xml = $(xmlInitDoc);
 
-/*
-editor.staves = [
-  {
-    clef: 'treble',
-    timeSigTop: 4,
-    timeSigBottom: 4,
-    keySig: 'C',
-    v1: [{
-      keys: 'C/4',
-      duration 'q',
-      x: 200,
-      y: 200,
-      accidental: '#',
-      dotted: false,
-    }],
-    v2: [],
-    v3: [],
-    v4: [],
-    x: 400,
-    y: 400,
-    width: 200,
-    noteCount: 0,
-  },
-];
-*/
+// note: pure js createElement is faster
+// http://stackoverflow.com/questions/268490/jquery-document-createelement-equivalent
+// http://jsperf.com/jquery-vs-createelement
+// TODO: create own test case on jsperf.com
+$xml.find(':root').append('<part-list></part-list>');
+$xml.find(':root').append('<part></part>');
+$xml.find('part').append($xml[0].createElement('measure')); // $xml.find('part').append('<measure></measure>');
+$xml.find('measure').append('<note></note>');
+
+// var scorePartwise = {};
+
+// scorePartwise.parts = [
+//   measures = [
+//     {
+//       attributes: {  //ADDED
+//         clef: 'treble',
+//         timeSigTop: 4,
+//         timeSigBottom: 4,
+//         keySig: 'C',
+//       },
+//       v1: [{
+//         keys: 'C/4',
+//         duration: 'q',
+//         x: 200,
+//         y: 200,
+//         accidental: '#',
+//         dotted: false,
+//       }],
+//       v2: [],
+//       x: 400,
+//       y: 400,
+//       width: 200,
+//       noteCount: 0,
+//     },
+//   ]
+// ];
 
 var editor = {};
 editor.canvas = $("#notation-canvas")[0];
 editor.renderer = new Vex.Flow.Renderer(editor.canvas, Vex.Flow.Renderer.Backends.SVG);
 editor.ctx = editor.renderer.getContext();
 
-editor.chord = [];
+// editor.chord = [];
 
 // editor.canvas = canvas = document.getElementsById('notation-canvas')[0];
 // editor.context = canvas.getContext('2d');
@@ -53,14 +65,13 @@ editor.keySignature = document.getElementById('key-signature');
 editor.timeSigTop = $('#timeSigTop').val();
 editor.timeSigBottom = $('#timeSigBottom').val();
 
-editor.measures = 1;  //probably stave...?
-editor.measuresPerLine = 4;
+// editor.measuresPerLine = 4;
 editor.staveHeight = 140;
 
-editor.frameLengthMs = 1000;
-editor.frameCount = 1;
+// editor.frameLengthMs = 1000;
+// editor.frameCount = 1;
 
-editor.staves = [   //measures/tacts, in vexflow there is a new stave for each measure
+editor.measures = [   //measures/tacts, in vexflow there is a new stave for each measure
   {
     clef: 'treble',
     timeSigTop: 4,
@@ -89,11 +100,12 @@ editor.getInsertNote = function(evt){
 
   var checkboxValue = $('#dotted-checkbox').is(":checked");
 
-  if(checkboxValue == true){
-    var d = 'd';
-  }else{
-    var d = '';
-  }
+  // if(checkboxValue == true){
+  //   var d = 'd';
+  // }else{
+  //   var d = '';
+  // }
+  var d = checkboxValue ? 'd' : '';
 
   for(i=5; i>=0; i--){
     for(l=0; l<notesArray.length; l++){
@@ -115,11 +127,10 @@ editor.getInsertNote = function(evt){
 editor.draw = {
   staves: function(){
 
-    editor.frameCount = editor.frameCount + 1;
-    if(editor.frameCount > 30){
-      editor.frameCount = 0;
-    }
-
+    // editor.frameCount = editor.frameCount + 1;
+    // if(editor.frameCount > 30){
+    //   editor.frameCount = 0;
+    // }
 
     var noteValue = editor.getRadioValue('note-value');
     var selectOrAdd = editor.getRadioValue('tools');
@@ -152,25 +163,18 @@ editor.draw = {
     }
     editor.ctx.fillStyle = 'black';
     editor.ctx.strokeStyle = 'black';
+
     // find the min-width needed for a measure
     var voiceLengths = [];
-    for(i=0; i<editor.staves.length; i++){
+    for(i=0; i<editor.measures.length; i++){
       var noteCount = 0;
       // find the longest voice
-      if(editor.staves[i].hasOwnProperty('v1')){
-        noteCount = editor.staves[i].v1.length;
+      if(editor.measures[i].hasOwnProperty('v1')){
+        noteCount = editor.measures[i].v1.length;
         voiceLengths.push(noteCount);
       }
-      if(editor.staves[i].hasOwnProperty('v2')){
-        noteCount = editor.staves[i].v2.length;
-        voiceLengths.push(noteCount);
-      }
-      if(editor.staves[i].hasOwnProperty('v3')){
-        noteCount = editor.staves[i].v3.length;
-        voiceLengths.push(noteCount);
-      }
-      if(editor.staves[i].hasOwnProperty('v4')){
-        noteCount = editor.staves[i].v4.length;
+      if(editor.measures[i].hasOwnProperty('v2')){
+        noteCount = editor.measures[i].v2.length;
         voiceLengths.push(noteCount);
       }
     }
@@ -190,7 +194,8 @@ editor.draw = {
     var staveY = 0;
 
     // draw the staves
-    for(i=0; i<editor.staves.length; i++){
+    // console.log($xml.find("measure").length);
+    for(i=0; i<editor.measures.length; i++){
 
       // find line break points
       for(br=6; br>=0; br--){
@@ -211,25 +216,25 @@ editor.draw = {
 
       staveX = staveX + staveWidth;
 
-      editor.staves[i].measure = i + 1;
-      editor.staves[i].width = staveWidth;  
-      editor.staves[i].x = staveX - staveWidth;
-      editor.staves[i].y = staveY;
-      editor.staves[i].height = editor.staveHeight;
+      editor.measures[i].measure = i + 1;
+      editor.measures[i].width = staveWidth;  
+      editor.measures[i].x = staveX - staveWidth;
+      editor.measures[i].y = staveY;
+      editor.measures[i].height = editor.staveHeight;
 
-      var stave = new Vex.Flow.Stave(editor.staves[i].x, editor.staves[i].y, editor.staves[i].width);
+      var stave = new Vex.Flow.Stave(editor.measures[i].x, editor.measures[i].y, editor.measures[i].width);
 
-      if(editor.staves[i].clef != null){
-        stave.addClef(editor.staves[i].clef).setContext(editor.ctx);  
-        var currentClef = editor.staves[i].clef;
+      if(editor.measures[i].clef != null){
+        stave.addClef(editor.measures[i].clef).setContext(editor.ctx);  
+        var currentClef = editor.measures[i].clef;
       }else{
         //stave.setContext(editor.ctx);
       }
 
-      if(editor.staves[i].keySig != null){
-        var keySig = new Vex.Flow.KeySignature(editor.staves[i].keySig);
+      if(editor.measures[i].keySig != null){
+        var keySig = new Vex.Flow.KeySignature(editor.measures[i].keySig);
         keySig.addToStave(stave);
-        var currentKeySig = editor.staves[i].keySig;
+        var currentKeySig = editor.measures[i].keySig;
       }
 
       if(newLine == true){
@@ -238,59 +243,38 @@ editor.draw = {
         keySig.addToStave(stave);
       }
 
-      if(editor.staves[i].showTimeSig == true){
-        stave.addTimeSignature(editor.staves[i].timeSigTop + '/' + editor.staves[i].timeSigBottom);
+      if(editor.measures[i].showTimeSig == true){
+        stave.addTimeSignature(editor.measures[i].timeSigTop + '/' + editor.measures[i].timeSigBottom);
       }
 
       stave.setContext(editor.ctx).draw();
 
       //draw the notes
-      //TODO: remove 3 & 4, maybe 2 also
       //TODO: replace notes1 by local variable, it's useless as a global
       editor.notes1 = [];
       editor.notes2 = [];
-      editor.notes3 = [];
-      editor.notes4 = [];
 
-      if(editor.staves[i].hasOwnProperty('v1')){
-        for(n=0; n<editor.staves[i].v1.length; n++){
+      if(editor.measures[i].hasOwnProperty('v1')){
+        for(n=0; n<editor.measures[i].v1.length; n++){
 
-          var accidental = editor.staves[i].v1[n].accidental;
-          var dotted = editor.staves[i].v1[n].dotted;
+          var accidental = editor.measures[i].v1[n].accidental;
+          var dotted = editor.measures[i].v1[n].dotted;
 
-
-          // if(accidental != null && dotted != false){
-          //   editor.notes1.push(new Vex.Flow.StaveNote(
-          //     editor.staves[i].v1[n]
-          //   ).addAccidental(0, new Vex.Flow.Accidental(accidental)).addDotToAll()); 
-          // } else if(accidental != null){
-          //   editor.notes1.push(new Vex.Flow.StaveNote(
-          //     editor.staves[i].v1[n]
-          //   ).addAccidental(0, new Vex.Flow.Accidental(accidental))); 
-          // } else if(dotted == true){
-          //   editor.notes1.push(new Vex.Flow.StaveNote(
-          //     editor.staves[i].v1[n]
-          //   ).addDotToAll()); 
-          // } else{
-          //   editor.notes1.push(new Vex.Flow.StaveNote(
-          //     editor.staves[i].v1[n]
-          //   ));             
-          // }
-
-          // maybe equvalent code to above if-elses ^ tested, seems to work equivalently
-          var note = new Vex.Flow.StaveNote(editor.staves[i].v1[n]);
+          var note = new Vex.Flow.StaveNote(editor.measures[i].v1[n]);
           if (accidental != null) note.addAccidental(0, new Vex.Flow.Accidental(accidental));
           if (dotted == true) note.addDotToAll();
+          var noteId = 'm' + i + 'n' + n;   //identification for note, n.o. of measure and note in it
+          note.setId(noteId);   //set id for note DOM element in svg
           editor.notes1.push(note);
           
-          editor.staves[i].v1[n].x = editor.notes1[n].note_heads[0].x;
-          editor.staves[i].v1[n].y = editor.notes1[n].note_heads[0].y;
+          editor.measures[i].v1[n].x = editor.notes1[n].note_heads[0].x;
+          editor.measures[i].v1[n].y = editor.notes1[n].note_heads[0].y;
         
         }
 
         var voice1 = new Vex.Flow.Voice({
-            num_beats: editor.staves[i].timeSigTop,
-            beat_value: editor.staves[i].timeSigTop,    //TODO: is it correct? change it to time SigBottom
+            num_beats: editor.measures[i].timeSigTop,
+            beat_value: editor.measures[i].timeSigTop,    //TODO: is it correct? change it to time SigBottom
             resolution: Vex.Flow.RESOLUTION
           });
 
@@ -326,26 +310,26 @@ editor.draw = {
           beam.setContext(editor.ctx).draw();
         });
 
-        for(n=0; n<editor.staves[i].v1.length; n++){
+        for(n=0; n<editor.measures[i].v1.length; n++){
           if(editor.notes1[n] != undefined){
-            if(editor.staves[i].v1[n].keys != null){
+            if(editor.measures[i].v1[n].keys != null){
               // adds x and y positoins to the staves notes
-              editor.staves[i].v1[n].x = editor.notes1[n].note_heads[0].x;
-              editor.staves[i].v1[n].y = editor.notes1[n].note_heads[0].y;  
+              editor.measures[i].v1[n].x = editor.notes1[n].note_heads[0].x;
+              editor.measures[i].v1[n].y = editor.notes1[n].note_heads[0].y;  
             } 
 
             //adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
             var item = editor.notes1[n].getElem();
             item.addEventListener("mouseover", function() {
               Vex.forEach($(this).find("*"), function(child) {
-                console.log('mouseover');
+                // console.log('mouseover');
                 child.setAttribute("fill", "green");
                 child.setAttribute("stroke", "green");
               });
             }, false);
             item.addEventListener("mouseout", function() {
               Vex.forEach($(this).find("*"), function(child) {
-                console.log('mouseout');
+                // console.log('mouseout');
                 child.setAttribute("fill", "black");
                 child.setAttribute("stroke", "black");
               });
@@ -356,7 +340,7 @@ editor.draw = {
                 //and set class selected-note to this one
                 //note styling will be based on the class
                 //OR: set class or styling based on editor.selected.note
-                console.log('click');
+                // console.log('click');
                 child.setAttribute("fill", "red");
                 child.setAttribute("stroke", "red");
               });
@@ -371,12 +355,12 @@ editor.draw = {
 
 editor.add = {
   measure: function(){
-    var staveLn = editor.staves.length;
+    var staveLn = editor.measures.length;
     var selectedMeasure = editor.selected.measure.selection;
 
     //first added measure at initialization
     if(selectedMeasure == null && staveLn < 1) {
-      editor.staves.push({
+      editor.measures.push({
         timeSigTop: 4,
         timeSigBottom: 4,
         showTimeSig: true,
@@ -385,7 +369,7 @@ editor.add = {
     }
     //no measure selected, new will be added to the end
     else if(selectedMeasure == null && staveLn >= 1) {
-      editor.staves.push({
+      editor.measures.push({
         timeSigTop: null,
         timeSigBottom: null,
         showTimeSig: false,
@@ -394,7 +378,7 @@ editor.add = {
     }
     //some measure selected, new will be added after selected one
     else {
-      editor.staves.splice(selectedMeasure, 0, {
+      editor.measures.splice(selectedMeasure, 0, {
         timeSigTop: null,
         timeSigBottom: null,
         showTimeSig: false,
@@ -420,8 +404,8 @@ editor.add = {
 
       var checkboxValue = $('#dotted-checkbox').is(":checked");
 
-      if(editor.staves[selectedMeasure].hasOwnProperty(selectedNoteVoice)){
-        editor.staves[selectedMeasure][selectedNoteVoice].push(
+      if(editor.measures[selectedMeasure].hasOwnProperty(selectedNoteVoice)){
+        editor.measures[selectedMeasure][selectedNoteVoice].push(
           { 
             keys: [insertNote], 
             duration: thisNoteValue + thisNoteOrRest,
@@ -429,8 +413,8 @@ editor.add = {
           }
         );
       }else{
-        editor.staves[selectedMeasure][selectedNoteVoice] = [];
-        editor.staves[selectedMeasure][selectedNoteVoice].push(
+        editor.measures[selectedMeasure][selectedNoteVoice] = [];
+        editor.measures[selectedMeasure][selectedNoteVoice].push(
           { 
             keys: [insertNote], 
             duration: thisNoteValue + thisNoteOrRest,
@@ -442,33 +426,33 @@ editor.add = {
   },
   clef: function(){
     var dropdownValue = editor.clefDropdown.value;
-    editor.staves[editor.selected.measure.selection - 1].clef = dropdownValue;
+    editor.measures[editor.selected.measure.selection - 1].clef = dropdownValue;
   },
   keySignature: function(){ 
-    editor.staves[editor.selected.measure.selection - 1].keySig = editor.keySignature.value;
+    editor.measures[editor.selected.measure.selection - 1].keySig = editor.keySignature.value;
   },
   timeSignature: function(){
     var top = $('#timeSigTop').val();
     var bottom = $('#timeSigBottom').val();
     var selectedMeasure = editor.selected.measure.selection - 1;
 
-    editor.staves[selectedMeasure].timeSigTop = top;
-    editor.staves[selectedMeasure].timeSigBottom = bottom;
-    editor.staves[selectedMeasure].showTimeSig = true;
+    editor.measures[selectedMeasure].timeSigTop = top;
+    editor.measures[selectedMeasure].timeSigBottom = bottom;
+    editor.measures[selectedMeasure].showTimeSig = true;
   },
   accidental: function(){
     var selectedMeasure = editor.selected.measure.selection - 1;
     var selectedNoteVoice = 'v' + editor.voiceDropdown.value;
     var accidental = editor.getRadioValue('note-accidental');
-    editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = accidental;
+    editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = accidental;
   }, 
   dot: function(){
     var selectedMeasure = editor.selected.measure.selection - 1;
     var selectedNoteVoice = 'v' + editor.voiceDropdown.value;
     var checkboxValue = $('#dotted-checkbox').is(":checked");
-    // var isSelectedNoteDotted = editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
+    // var isSelectedNoteDotted = editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
 
-    editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted = checkboxValue;
+    editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted = checkboxValue;
   }
 }
 
@@ -478,7 +462,7 @@ editor.delete = {
     var nextMeasureWidth = editor.selected.measure.width;
     nextMeasureWidth = parseInt(nextMeasureWidth);
     // splice the selected measure
-    editor.staves.splice(editor.selected.measure.selection - 1, 1);
+    editor.measures.splice(editor.selected.measure.selection - 1, 1);
 
     //useless:            (nevertheless, author is better programmer than me), stay humble :)
     // if(editor.notes)
@@ -488,27 +472,27 @@ editor.delete = {
     editor.selected.measure.selection = editor.selected.measure.selection + 1;
     editor.selected.measure.width = nextMeasureWidth;
     // reset all measure numbers
-    for(i=0; i<editor.staves.length; i++){
-      editor.staves[i].measure = i + 1;
+    for(i=0; i<editor.measures.length; i++){
+      editor.measures[i].measure = i + 1;
     }
   },
   note: function(){
     var selectedNoteVoice = 'v' + editor.selected.note.voice;
 
-    editor.staves[editor.selected.measure.selection - 1][selectedNoteVoice].splice(editor.selected.note.selection, 1);
+    editor.measures[editor.selected.measure.selection - 1][selectedNoteVoice].splice(editor.selected.note.selection, 1);
     editor.selected.note.selection = null;
     editor.selected.note.clicked = false;
   },
   clef: function(){
-    editor.staves[editor.selected.measure.selection - 1].clef = null;
+    editor.measures[editor.selected.measure.selection - 1].clef = null;
   },
   timeSignature: function(){
-    editor.staves[editor.selected.measure.selection - 1].showTimeSig = false;
+    editor.measures[editor.selected.measure.selection - 1].showTimeSig = false;
   },
   accidental: function(){
     var selectedMeasure = editor.selected.measure.selection - 1;
     var selectedNoteVoice = 'v' + editor.voiceDropdown.value;
-    editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = null;
+    editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = null;
   }
 }
 
@@ -521,11 +505,11 @@ editor.select = {
     };
   },
   measure: function(){    
-    for(i=0; i<editor.staves.length; i++){
-      var width = editor.staves[i].width;
-      var height = editor.staves[i].height;
-      var xStart = editor.staves[i].x;
-      var yStart = editor.staves[i].y;
+    for(i=0; i<editor.measures.length; i++){
+      var width = editor.measures[i].width;
+      var height = editor.measures[i].height;
+      var xStart = editor.measures[i].x;
+      var yStart = editor.measures[i].y;
       var xEnd = xStart + width;
       var yEnd = yStart + height;
 
@@ -553,7 +537,7 @@ editor.select = {
           editor.selected.measure.previousSelection = editor.selected.measure.selection;
         }
 
-        editor.selected.measure.selection = editor.staves[i].measure;
+        editor.selected.measure.selection = editor.measures[i].measure;
         editor.selected.measure.x = xStart;
         editor.selected.measure.y = yStart;
         editor.selected.measure.width = width;
@@ -568,21 +552,21 @@ editor.select = {
     var selectedNoteVoice = 'v' + editor.voiceDropdown.value;
 
     if(toolValue == 'select' ){
-      for(v=1; v<=4; v++){
+      for(v=1; v<=2; v++){
         var noteVoice = 'v'+ v;
       
-        if(editor.staves[editor.selected.measure.selection - 1].hasOwnProperty(noteVoice)){
+        if(editor.measures[editor.selected.measure.selection - 1].hasOwnProperty(noteVoice)){
           // loop through notes
-          for(n=0; n<editor.staves[editor.selected.measure.selection - 1][noteVoice].length; n++){
-            if(editor.mousePos.x >= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].x
-            && editor.mousePos.x <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].x + 10 
-            && editor.mousePos.y >= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y - 5
-            && editor.mousePos.y + 5 <= editor.staves[editor.selected.measure.selection - 1][noteVoice][n].y + 10
+          for(n=0; n<editor.measures[editor.selected.measure.selection - 1][noteVoice].length; n++){
+            if(editor.mousePos.x >= editor.measures[editor.selected.measure.selection - 1][noteVoice][n].x
+            && editor.mousePos.x <= editor.measures[editor.selected.measure.selection - 1][noteVoice][n].x + 10 
+            && editor.mousePos.y >= editor.measures[editor.selected.measure.selection - 1][noteVoice][n].y - 5
+            && editor.mousePos.y + 5 <= editor.measures[editor.selected.measure.selection - 1][noteVoice][n].y + 10
             ){
               editor.selected.note.selection = n;
               editor.selected.note.clicked = true;
-              editor.selected.note.x = editor.staves[editor.selected.measure.selection - 1][selectedNoteVoice][n].x - 10;
-              editor.selected.note.y = editor.staves[editor.selected.measure.selection - 1][selectedNoteVoice][n].y - 15;
+              editor.selected.note.x = editor.measures[editor.selected.measure.selection - 1][selectedNoteVoice][n].x - 10;
+              editor.selected.note.y = editor.measures[editor.selected.measure.selection - 1][selectedNoteVoice][n].y - 15;
               editor.selected.note.width = 30;
               editor.selected.note.height = 30;
               var selectedNote = true;
@@ -590,7 +574,7 @@ editor.select = {
               // Set the value of the dotted checkbox accordingly
               var selectedMeasure = editor.selected.measure.selection - 1;
               var checkboxValue = $('#dotted-checkbox').is(":checked");
-              var isSelectedNoteDotted = editor.staves[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
+              var isSelectedNoteDotted = editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
 
               if(isSelectedNoteDotted == true){
                 $('#dotted-checkbox').prop('checked', true);

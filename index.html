@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Vexflow Online Notation Editor</title>
+		<title>Web Editor of MusicXML Files</title>
 		<link rel="stylesheet" href="style/style.css"/>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
 	</head>
@@ -9,8 +9,12 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-12">
-				<h1>Online Notation Editor Built with the VexFlow API and Javascript</h1>
-				<button onclick="printNotes1();">print notes1</button>
+				<h1>Web Editor of MusicXML Files</h1>
+
+				<!-- <button onclick="printNotes1();">print notes1</button> -->
+	      MusicXML import: <input type="file" id="fileInput">
+	      <a href="" id="link" onclick="setupDownloadLink(this)" download="score.xml">MusicXML export</a>
+
 				<ul class="nav nav-tabs">
 				  <li role="presentation" class="active"><a href="#measures"  data-toggle="tab">Measures</a></li>
 				  <li role="presentation"><a href="#notes-and-rests"  data-toggle="tab">Notes/Rests</a></li>
@@ -80,8 +84,6 @@
 						<select id="voice">
 							<option>1</option>
 							<option>2</option>
-							<option>3</option>
-							<option>4</option>
 						</select>
 					</div>
 
@@ -154,5 +156,7 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<script src="js/vexflow-debug.js"></script>
 		<script src="js/vexflow-notation-editor.js"></script>
+		<script src="js/file_upload.js"></script>
+		<script src="js/file_download.js"></script>
 	</footer>
 </html>

@@ -12,9 +12,11 @@ window.onload = function() {
       // $('#msgArea').html("");
       var reader = new FileReader();
 
-      reader.onload = function(e) {   //after FileReader finishes reading
-        xmlDoc = $.parseXML(reader.result);   //parse xml using jQuery
-        $xml = $(xmlDoc);   //make jQuery object from it
+      reader.onload = function(e) {             // after FileReader finishes reading:
+        var xmlDoc = $.parseXML(reader.result); // parse xml using jQuery into xml document,
+        //TODO: use xml2json and json2xml accordingly to it's license (LGPL 2.1)
+        jsonFromXml = xml2json(xmlDoc, '  ');   // convert xml to json for faster access,
+        scoreJson = $.parseJSON(jsonFromXml);   // load json to memory; parseJSON is safer than eval
       }
 
       reader.readAsText(file);

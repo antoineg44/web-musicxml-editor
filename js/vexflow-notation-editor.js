@@ -6,48 +6,23 @@
 
 //This online notation editor is built using the VexFlow Javascript API, Javascript, jQuery (for now anyway) and Bootstrap for Styling.
 
-var xmlInit = '<?xml version="1.0" encoding="UTF-8" standalone="no"?> \
-            <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd"> \
-            <score-partwise version="3.0"></score-partwise>';
-var xmlInitDoc = $.parseXML(xmlInit);
-var $xml = $(xmlInitDoc);
-
-// note: pure js createElement is faster
-// http://stackoverflow.com/questions/268490/jquery-document-createelement-equivalent
-// http://jsperf.com/jquery-vs-createelement
-// TODO: create own test case on jsperf.com
-$xml.find(':root').append('<part-list></part-list>');
-$xml.find(':root').append('<part></part>');
-$xml.find('part').append($xml[0].createElement('measure')); // $xml.find('part').append('<measure></measure>');
-$xml.find('measure').append('<note></note>');
-
-// var scorePartwise = {};
-
-// scorePartwise.parts = [
-//   measures = [
-//     {
-//       attributes: {  //ADDED
-//         clef: 'treble',
-//         timeSigTop: 4,
-//         timeSigBottom: 4,
-//         keySig: 'C',
-//       },
-//       v1: [{
-//         keys: 'C/4',
-//         duration: 'q',
-//         x: 200,
-//         y: 200,
-//         accidental: '#',
-//         dotted: false,
-//       }],
-//       v2: [],
-//       x: 400,
-//       y: 400,
-//       width: 200,
-//       noteCount: 0,
-//     },
-//   ]
-// ];
+var scoreJson = {
+  'score-partwise': {
+    '@version': '3.0',
+    'part-list': {
+      'score-part': {
+        '@id': 'P1',
+        'part-name': {}
+      }
+    },
+    part: [
+      {
+        '@id': 'P1',
+        measure: {}
+      }
+    ]
+  }
+};
 
 var editor = {};
 editor.canvas = $("#notation-canvas")[0];

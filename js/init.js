@@ -80,8 +80,14 @@ editor.selected = {
 }
 
 editor.mySelect = {
-  measure: 0,
-  note: 0
+  measure: {
+    id: 0,
+    previousId: 0
+  },
+  note: {
+    id: 0,
+    previousId: 0
+  }
 }
 
 editor.getRadioValue = function(name){
@@ -93,6 +99,10 @@ editor.getRadioValue = function(name){
     }
   }
 }
+
+/*
+
+*/
 editor.getInsertNote = function(evt){
   // find the mouse position and return the correct note for that position.
   var y = editor.selected.measure.y;

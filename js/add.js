@@ -1,3 +1,6 @@
+/*
+module for note/measure addition...
+*/
 editor.add = {
   measure: function(){
     var staveLn = editor.measures.length;

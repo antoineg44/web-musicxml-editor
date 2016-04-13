@@ -84,7 +84,7 @@ editor.draw = {
         editor.ctx.lineWidth = 0;
         editor.ctx.strokeStyle = '#FFF7D9';
       editor.ctx.stroke();
-      console.log('first');
+      // console.log('first');
     }
     //gray fill on single click
     else{
@@ -94,14 +94,14 @@ editor.draw = {
         editor.ctx.lineWidth = 0;
         editor.ctx.strokeStyle = '#F0F0F0';
       editor.ctx.stroke();
-      console.log('second');
+      // console.log('second');
     }
     //black border on doubleClick
     if(editor.selected.measure.doubleClick === true){
       editor.ctx.strokeStyle = 'black';
       editor.ctx.rect(editor.selected.note.x, editor.selected.note.y, editor.selected.note.width, editor.selected.note.height);
       editor.ctx.stroke();
-      console.log('third');
+      // console.log('third');
     }
     editor.ctx.fillStyle = 'black';
     editor.ctx.strokeStyle = 'black';
@@ -162,7 +162,6 @@ editor.draw = {
 
       var stave = new Vex.Flow.Stave(editor.measures[i].x, editor.measures[i].y, editor.measures[i].width);
 
-
       if(editor.measures[i].clef != null){
         stave.addClef(editor.measures[i].clef).setContext(editor.ctx);  
         var currentClef = editor.measures[i].clef;
@@ -187,6 +186,17 @@ editor.draw = {
       }
 
       stave.setContext(editor.ctx).draw();
+
+      editor.ctx.rect(editor.measures[i].x,
+                      editor.measures[i].y,
+                      editor.measures[i].width,
+                      editor.measures[i].height,
+                      {
+                        'class': 'measureRect',
+                        'id': i,
+                        'fill': 'transparent'
+                      }
+                    );
 
       //draw the notes
       //TODO: replace notes1 by local variable, it's useless as a global
@@ -273,18 +283,16 @@ editor.draw = {
             }, false);
             item.addEventListener("click", function() {
               Vex.forEach($(this).find("*"), function(child) {
-                //TODO: unset class selected-note from previous selected note
-                //and set class selected-note to this one
-                //note styling will be based on the class
-                //OR: set class or styling based on editor.selected.note
-                child.setAttribute("class", "selected-note");
                 child.setAttribute("fill", "red");
                 child.setAttribute("stroke", "red");
               });
+              $(this).attr("class", "selected-note");
               //id='vf-m1n3' - fourth note in second measure
               var selectIds = $(this).attr('id').split('m')[1].split('n');
-              editor.mySelect.measure = +selectIds[0];
-              editor.mySelect.note = +selectIds[1];
+              editor.mySelect.measure.previousId = editor.mySelect.measure.id;
+              editor.mySelect.note.previousId = editor.mySelect.note.id;
+              editor.mySelect.measure.id = +selectIds[0];
+              editor.mySelect.note.id = +selectIds[1];
               console.log(editor.mySelect);
               editor.canRedraw = false;
             }, false);
@@ -292,6 +300,14 @@ editor.draw = {
         }
       }
       count++;
-    }
+    }//loop over all measures
+
+    var clickedRectStyle = {opacity: 0.5};
+    $('.measureRect').click(function() {
+      // $(this).css(clickedRectStyle);
+      console.log($(this).attr('id'));
+    })
+    // $('.selected-note')
+    // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});
   }
 }

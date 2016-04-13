@@ -6,10 +6,6 @@ editor.delete = {
     // splice the selected measure
     editor.measures.splice(editor.selected.measure.selection - 1, 1);
 
-    //useless:            (nevertheless, author is better programmer than me), stay humble :)
-    // if(editor.notes)
-    //   editor.notes.splice(editor.selected.measure.selection - 1, 1);
-
     // reset the selected measure to the measure after the measure that was just deleted
     editor.selected.measure.selection = editor.selected.measure.selection + 1;
     editor.selected.measure.width = nextMeasureWidth;

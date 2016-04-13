@@ -40,6 +40,7 @@ editor.timeSigBottom = $('#timeSigBottom').val();
 
 // editor.measuresPerLine = 4;
 editor.staveHeight = 140;
+editor.canRedraw = true;
 
 editor.measures = [   //measures/tacts, in vexflow there is a new stave for each measure
   {
@@ -76,6 +77,11 @@ editor.selected = {
     height: 0,
     voice: 1,
   }
+}
+
+editor.mySelect = {
+  measure: 0,
+  note: 0
 }
 
 editor.getRadioValue = function(name){

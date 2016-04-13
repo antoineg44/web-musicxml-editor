@@ -65,7 +65,8 @@
 // }
 
 editor.draw = {
-    staves: function(){
+  staves: function(){
+    console.log('draw');
     var noteValue = editor.getRadioValue('note-value');
     var selectOrAdd = editor.getRadioValue('tools');
 
@@ -75,25 +76,32 @@ editor.draw = {
     $('#notation-canvas').attr('width', canvasWidth);
 
     // render the selected measure border
+    // yellow fill on doubleClick
     if(editor.selected.measure.doubleClick === true){
       editor.ctx.rect(editor.selected.measure.x, editor.selected.measure.y, editor.selected.measure.width, editor.selected.measure.height);
       editor.ctx.fillStyle = '#FFF7D9';
-        editor.ctx.fill();
+        editor.ctx.fill();  //TODO: fill method from SVGContext needs attributes
         editor.ctx.lineWidth = 0;
         editor.ctx.strokeStyle = '#FFF7D9';
       editor.ctx.stroke();
-    }else{
+      console.log('first');
+    }
+    //gray fill on single click
+    else{
       editor.ctx.rect(editor.selected.measure.x, editor.selected.measure.y, editor.selected.measure.width, editor.selected.measure.height);
         editor.ctx.fillStyle = '#F0F0F0';
-        editor.ctx.fill();
+        editor.ctx.fill();  //TODO: fill method from SVGContext needs attributes
         editor.ctx.lineWidth = 0;
         editor.ctx.strokeStyle = '#F0F0F0';
       editor.ctx.stroke();
+      console.log('second');
     }
+    //black border on doubleClick
     if(editor.selected.measure.doubleClick === true){
       editor.ctx.strokeStyle = 'black';
       editor.ctx.rect(editor.selected.note.x, editor.selected.note.y, editor.selected.note.width, editor.selected.note.height);
       editor.ctx.stroke();
+      console.log('third');
     }
     editor.ctx.fillStyle = 'black';
     editor.ctx.strokeStyle = 'black';
@@ -153,6 +161,7 @@ editor.draw = {
       editor.measures[i].height = editor.staveHeight;
 
       var stave = new Vex.Flow.Stave(editor.measures[i].x, editor.measures[i].y, editor.measures[i].width);
+
 
       if(editor.measures[i].clef != null){
         stave.addClef(editor.measures[i].clef).setContext(editor.ctx);  
@@ -251,17 +260,16 @@ editor.draw = {
             var item = editor.notes1[n].getElem();
             item.addEventListener("mouseover", function() {
               Vex.forEach($(this).find("*"), function(child) {
-                // console.log('mouseover');
                 child.setAttribute("fill", "green");
                 child.setAttribute("stroke", "green");
               });
             }, false);
             item.addEventListener("mouseout", function() {
               Vex.forEach($(this).find("*"), function(child) {
-                // console.log('mouseout');
                 child.setAttribute("fill", "black");
                 child.setAttribute("stroke", "black");
               });
+              editor.canRedraw = true;
             }, false);
             item.addEventListener("click", function() {
               Vex.forEach($(this).find("*"), function(child) {
@@ -269,10 +277,16 @@ editor.draw = {
                 //and set class selected-note to this one
                 //note styling will be based on the class
                 //OR: set class or styling based on editor.selected.note
-                // console.log('click');
+                child.setAttribute("class", "selected-note");
                 child.setAttribute("fill", "red");
                 child.setAttribute("stroke", "red");
               });
+              //id='vf-m1n3' - fourth note in second measure
+              var selectIds = $(this).attr('id').split('m')[1].split('n');
+              editor.mySelect.measure = +selectIds[0];
+              editor.mySelect.note = +selectIds[1];
+              console.log(editor.mySelect);
+              editor.canRedraw = false;
             }, false);
           }
         }

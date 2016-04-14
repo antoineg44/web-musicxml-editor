@@ -27,6 +27,7 @@ var scoreJson = {
 };
 
 var vfStaves = [];
+var vfStaveNotes = [];
 
 var editor = {};
 editor.canvas = $("#notation-canvas")[0];

@@ -3,7 +3,7 @@ $("#control-panel")[0].addEventListener('click', editor.draw.staves);
 editor.canvas.addEventListener('click', editor.select.measure);
 editor.canvas.addEventListener('click', editor.select.note);
 editor.canvas.addEventListener('click', editor.add.note);
-editor.canvas.addEventListener('click', redrawSelect, true);
+// editor.canvas.addEventListener('click', redrawSelect, true);
 editor.canvas.addEventListener('mousemove', redraw);
 editor.canvas.addEventListener('mousemove', getMousePos);
 editor.canvas.addEventListener('mousemove', returnInsertNote);

@@ -25,9 +25,3 @@ h1{
 .container{
 	margin-top:20px;
 }
-
-/*style for measure rectangle*/
-.measureRect:hover {
-	fill: blue;
-	opacity: 0.1;
-}

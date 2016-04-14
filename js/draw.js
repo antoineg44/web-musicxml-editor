@@ -75,37 +75,6 @@ editor.draw = {
     canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
     $('#notation-canvas').attr('width', canvasWidth);
 
-    // render the selected measure border
-    // yellow fill on doubleClick
-    if(editor.selected.measure.doubleClick === true){
-      editor.ctx.rect(editor.selected.measure.x, editor.selected.measure.y, editor.selected.measure.width, editor.selected.measure.height);
-      editor.ctx.fillStyle = '#FFF7D9';
-        editor.ctx.fill();  //TODO: fill method from SVGContext needs attributes
-        editor.ctx.lineWidth = 0;
-        editor.ctx.strokeStyle = '#FFF7D9';
-      editor.ctx.stroke();
-      // console.log('first');
-    }
-    //gray fill on single click
-    else{
-      editor.ctx.rect(editor.selected.measure.x, editor.selected.measure.y, editor.selected.measure.width, editor.selected.measure.height);
-        editor.ctx.fillStyle = '#F0F0F0';
-        editor.ctx.fill();  //TODO: fill method from SVGContext needs attributes
-        editor.ctx.lineWidth = 0;
-        editor.ctx.strokeStyle = '#F0F0F0';
-      editor.ctx.stroke();
-      // console.log('second');
-    }
-    //black border on doubleClick
-    if(editor.selected.measure.doubleClick === true){
-      editor.ctx.strokeStyle = 'black';
-      editor.ctx.rect(editor.selected.note.x, editor.selected.note.y, editor.selected.note.width, editor.selected.note.height);
-      editor.ctx.stroke();
-      // console.log('third');
-    }
-    editor.ctx.fillStyle = 'black';
-    editor.ctx.strokeStyle = 'black';
-
     // find the min-width needed for a measure
     var voiceLengths = [];
     for(i=0; i<editor.measures.length; i++){
@@ -197,6 +166,38 @@ editor.draw = {
                         'fill': 'transparent'
                       }
                     );
+
+      $('svg .measureRect').each(function () {
+        //
+        if($(this).data('handlers-added'))
+          return true;
+
+        $(this).data('handlers-added', true);
+
+        $(this).on('click', function() {
+          $(this).css({'fill': 'blue', 'opacity': '0.4'});
+          console.log($(this).attr('id'));
+          if(editor.mySelect.measure.id !== $(this).attr('id')) {
+            editor.mySelect.measure.previousId = editor.mySelect.measure.id;
+            editor.mySelect.measure.id = $(this).attr('id');
+            var prevId = editor.mySelect.measure.previousId;
+            $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
+          }
+        });
+        $(this).on('mouseenter', function() {
+          if(editor.mySelect.measure.id !== $(this).attr('id'))
+            $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
+          console.log('mouseenter on measure['+$(this).attr('id')+']');
+        });
+        $(this).on('mouseleave', function() {
+          if(editor.mySelect.measure.id !== $(this).attr('id'))
+            $(this).css({'fill': 'transparent'}); 
+            console.log('mouseleave from measure['+$(this).attr('id')+']');
+        });
+      });
+
+      $('svg .measureRect#'+editor.mySelect.measure.id)
+        .css({'fill': 'blue', 'opacity': '0.4'});
 
       //draw the notes
       //TODO: replace notes1 by local variable, it's useless as a global
@@ -301,12 +302,6 @@ editor.draw = {
       }
       count++;
     }//loop over all measures
-
-    var clickedRectStyle = {opacity: 0.5};
-    $('.measureRect').click(function() {
-      // $(this).css(clickedRectStyle);
-      console.log($(this).attr('id'));
-    })
     // $('.selected-note')
     // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});
   }

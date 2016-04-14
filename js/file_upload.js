@@ -31,17 +31,18 @@ window.onload = function() {
   });
 }
 
-//wraps measure and note only child elements
+//wraps part, measure and note only child elements
 //into one element arrays for later better manipulation
-
-//TODO: fix it, doesn't work yet
 function onlyChildren2Array(scoreJson) {
-  if(! $.isArray(scoreJson["score-partwise"].part.measure) ) {  //or !(x instanceof Array)
-    scoreJson["score-partwise"].part.measure = [ scoreJson["score-partwise"].part.measure ];
+  if(! $.isArray(scoreJson["score-partwise"].part) ) {  //or !(x instanceof Array)
+    scoreJson["score-partwise"].part = [ scoreJson["score-partwise"].part ];
   }
-  for (var i in scoreJson["score-partwise"].part.measure) {
-    if(! $.isArray(scoreJson["score-partwise"].part.measure[i].note) ) {
-      scoreJson["score-partwise"].part.measure[i].note = [ scoreJson["score-partwise"].part.measure[i].note ];
+  if(! $.isArray(scoreJson["score-partwise"].part[0].measure) ) {
+    scoreJson["score-partwise"].part[0].measure = [ scoreJson["score-partwise"].part[0].measure ];
+  }
+  for (var i in scoreJson["score-partwise"].part[0].measure) {
+    if(! $.isArray(scoreJson["score-partwise"].part[0].measure[i].note) ) {
+      scoreJson["score-partwise"].part[0].measure[i].note = [ scoreJson["score-partwise"].part[0].measure[i].note ];
     }
   }
   return scoreJson;

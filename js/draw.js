@@ -67,6 +67,10 @@
 editor.draw = {
   staves: function(){
     console.log('draw');
+
+    vfStaves = [];      //global array with currently rendered vexflow staves(Vex.Flow.Stave)
+    vfStaveNotes = [];  //global array with notes to corresponding stave in vfStaves
+
     var noteValue = editor.getRadioValue('note-value');
     var selectOrAdd = editor.getRadioValue('tools');
 
@@ -156,6 +160,8 @@ editor.draw = {
 
       stave.setContext(editor.ctx).draw();
 
+      vfStaves.push(stave);   //push vexflow stave into global array
+
       editor.ctx.rect(editor.measures[i].x,
                       editor.measures[i].y,
                       editor.measures[i].width,
@@ -180,6 +186,7 @@ editor.draw = {
           if(editor.mySelect.measure.id !== $(this).attr('id')) {
             editor.mySelect.measure.previousId = editor.mySelect.measure.id;
             editor.mySelect.measure.id = $(this).attr('id');
+            editor.selected.measure.selection = +editor.mySelect.measure.id + 1;
             var prevId = editor.mySelect.measure.previousId;
             $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
           }
@@ -187,12 +194,12 @@ editor.draw = {
         $(this).on('mouseenter', function() {
           if(editor.mySelect.measure.id !== $(this).attr('id'))
             $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
-          console.log('mouseenter on measure['+$(this).attr('id')+']');
+          // console.log('mouseenter on measure['+$(this).attr('id')+']');
         });
         $(this).on('mouseleave', function() {
           if(editor.mySelect.measure.id !== $(this).attr('id'))
             $(this).css({'fill': 'transparent'}); 
-            console.log('mouseleave from measure['+$(this).attr('id')+']');
+            // console.log('mouseleave from measure['+$(this).attr('id')+']');
         });
       });
 
@@ -200,8 +207,7 @@ editor.draw = {
         .css({'fill': 'blue', 'opacity': '0.4'});
 
       //draw the notes
-      //TODO: replace notes1 by local variable, it's useless as a global
-      editor.notes1 = [];
+      editor.notes = [];
 
       if(editor.measures[i].hasOwnProperty('v1')){
         for(n=0; n<editor.measures[i].v1.length; n++){
@@ -214,10 +220,10 @@ editor.draw = {
           if (dotted == true) note.addDotToAll();
           var noteId = 'm' + i + 'n' + n;   //identification for note, n.o. of measure and note in it
           note.setId(noteId);   //set id for note DOM element in svg
-          editor.notes1.push(note);
+          editor.notes.push(note);
           
-          editor.measures[i].v1[n].x = editor.notes1[n].note_heads[0].x;
-          editor.measures[i].v1[n].y = editor.notes1[n].note_heads[0].y;
+          editor.measures[i].v1[n].x = editor.notes[n].note_heads[0].x;
+          editor.measures[i].v1[n].y = editor.notes[n].note_heads[0].y;
         
         }
 
@@ -231,7 +237,7 @@ editor.draw = {
 
         // draw the cursor note
         if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
-            editor.notes1.push(new Vex.Flow.StaveNote(
+            editor.notes.push(new Vex.Flow.StaveNote(
             {
               keys: [editor.selected.insertNote],
               duration: noteValue,
@@ -239,20 +245,22 @@ editor.draw = {
           )); 
         }
 
-          voice1.addTickables(editor.notes1);
+        voice1.addTickables(editor.notes);
+
+        vfStaveNotes.push(editor.notes);
 
 
         // This is only helper function to justify and draw a 4/4 voice
         // TODO: replace it with something like: voice.draw(ctx, stave);
-        Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, editor.notes1);
+        Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, editor.notes);
 
         //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-        var beams = new Vex.Flow.Beam.generateBeams(editor.notes1, {
+        var beams = new Vex.Flow.Beam.generateBeams(editor.notes, {
           groups: [new Vex.Flow.Fraction(4, 8)]
         });
 
         // if(editor.frameCount % 30 == 0){
-        //   console.log(editor.notes1); 
+        //   console.log(editor.notes); 
         // }
         
         beams.forEach(function(beam) {
@@ -260,15 +268,15 @@ editor.draw = {
         });
 
         for(n=0; n<editor.measures[i].v1.length; n++){
-          if(editor.notes1[n] != undefined){
+          if(editor.notes[n] != undefined){
             if(editor.measures[i].v1[n].keys != null){
               // adds x and y positoins to the staves notes
-              editor.measures[i].v1[n].x = editor.notes1[n].note_heads[0].x;
-              editor.measures[i].v1[n].y = editor.notes1[n].note_heads[0].y;  
+              editor.measures[i].v1[n].x = editor.notes[n].note_heads[0].x;
+              editor.measures[i].v1[n].y = editor.notes[n].note_heads[0].y;  
             } 
 
             //adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
-            var item = editor.notes1[n].getElem();
+            var item = editor.notes[n].getElem();
             item.addEventListener("mouseover", function() {
               Vex.forEach($(this).find("*"), function(child) {
                 child.setAttribute("fill", "green");

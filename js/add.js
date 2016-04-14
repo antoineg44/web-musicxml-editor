@@ -42,13 +42,14 @@ editor.add = {
   },
   note: function(){
           
-    var thisNoteOrRest = editor.getRadioValue('note-or-rest');
-    var thisNoteValue = editor.getRadioValue('note-value');
-    var thisNoteOrChord = editor.getRadioValue('note-or-chord');
+    var thisNoteOrRest = editor.getRadioValue('note-or-rest');  //"" or "r"
+    var thisNoteValue = editor.getRadioValue('note-value');     //w ,h ,q ,8 ,16
+    // var thisNoteOrChord = editor.getRadioValue('note-or-chord');
     var toolValue = editor.getRadioValue('tools');
 
     // find the mouse position and insert the correct note
-    if(editor.selected.measure.doubleClick === true && toolValue == 'add'){
+    // if(editor.selected.measure.doubleClick === true && toolValue == 'add'){
+    if(toolValue == 'add'){
 
       var insertNote = editor.getInsertNote();
 

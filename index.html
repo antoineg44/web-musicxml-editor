@@ -11,7 +11,7 @@
 			<div class="col-xs-12">
 				<h1>Web Editor of MusicXML Files</h1>
 
-				<button onclick="printAttributes();">print attributes</button>
+				<button onclick="editor.parse.all();">parse</button>
 	      MusicXML import: <input type="file" id="fileInput">
 	      <a href="" id="link" onclick="setupDownloadLink(this)" download="score.xml">MusicXML export</a>
 
@@ -157,6 +157,7 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<script src="js/vexflow-debug.js"></script>
 		<script src="js/init.js"></script>
+		<script src="js/parse.js"></script>
 		<script src="js/add.js"></script>
 		<script src="js/delete.js"></script>
 		<script src="js/draw.js"></script>

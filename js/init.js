@@ -15,19 +15,21 @@ var scoreJson = {
         'part-name': {}
       }
     },
-    part: {         // currently support only for one part
-      '@id': 'P1',
-      measure: [
-        {
-          '@number': 1
-        }
-      ]
-    }
+    part: [
+      {
+        '@id': 'P1',
+        measure: [
+          {
+            '@number': 1
+          }
+        ]
+      }
+    ]
   }
 };
 
-var vfStaves = [];
-var vfStaveNotes = [];
+var vfStaves = [];      // array with currently rendered vexflow staves(Vex.Flow.Stave)
+var vfStaveNotes = [];  // array of arrays with notes to corresponding stave in vfStaves
 
 var editor = {};
 editor.canvas = $("#notation-canvas")[0];
@@ -52,6 +54,7 @@ editor.measures = [   //measures/tacts, in vexflow there is a new stave for each
     keySig: 'C',
     width: 200,
     noteCount: 0,
+    v1: []
   },
 ];
 
@@ -102,11 +105,12 @@ editor.getRadioValue = function(name){
 }
 
 /*
-
+TODO: documentary comment...
 */
 editor.getInsertNote = function(evt){
   // find the mouse position and return the correct note for that position.
-  var y = editor.selected.measure.y;
+  var y = vfStaves[editor.mySelect.measure.id].y;
+  // var y = editor.selected.measure.y;
   var notesArray = ['c/','d/','e/','f/','g/','a/','b/'];
   var count = 0;
 

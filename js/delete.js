@@ -1,17 +1,17 @@
 editor.delete = {
   measure: function(){
-    //TODO: editor.selected.measure can be null/undefined
-    var nextMeasureWidth = editor.selected.measure.width;
-    nextMeasureWidth = parseInt(nextMeasureWidth);
-    // splice the selected measure
-    editor.measures.splice(editor.selected.measure.selection - 1, 1);
+    if(editor.measures.length > 1) {   //protection from removing last measure
+      //TODO: editor.selected.measure can be null/undefined
+      // splice the selected measure
+      console.log('delete:'+editor.selected.measure.selection);
+      editor.measures.splice(editor.selected.measure.selection - 1, 1);
 
-    // reset the selected measure to the measure after the measure that was just deleted
-    editor.selected.measure.selection = editor.selected.measure.selection + 1;
-    editor.selected.measure.width = nextMeasureWidth;
-    // reset all measure numbers
-    for(i=0; i<editor.measures.length; i++){
-      editor.measures[i].measure = i + 1;
+      // reset the selected measure to the measure after the measure that was just deleted
+      // editor.selected.measure.selection = editor.selected.measure.selection + 1;
+      // reset all measure numbers
+      for(i=0; i<editor.measures.length; i++){
+        editor.measures[i].measure = i + 1;
+      }
     }
   },
   note: function(){

@@ -4,6 +4,8 @@
    Version: 0.9
 	Author:  Stefan Goessner/2006
 	Web:     http://goessner.net/ 
+
+   minor modification: Tomas Hudziec/2016
 */
 function xml2json(xml, tab) {
    var X = {
@@ -61,11 +63,12 @@ function xml2json(xml, tab) {
             }
             if (!xml.attributes.length && !xml.firstChild) o = null;
          }
+         else if (xml.nodeType==8) {} // comment, added by Tomas Hudziec/2016
          else if (xml.nodeType==9) { // document.node
             o = X.toObj(xml.documentElement);
          }
          else
-            alert("unhandled node type: " + xml.nodeType);
+            alert("[Conversion xml to json]: unhandled node type: " + xml.nodeType);
          return o;
       },
       toJson: function(o, name, ind) {

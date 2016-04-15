@@ -34,11 +34,11 @@ editor.add = {
       });
     }
 
-    var numOfMeasures = scoreJson["score-partwise"].part.measure.length;
+    var numOfMeasures = scoreJson["score-partwise"].part[0].measure.length;
     var newMeasure = {
       '@number': numOfMeasures + 1,
     }
-    scoreJson["score-partwise"].part.measure.push(newMeasure);
+    scoreJson["score-partwise"].part[0].measure.push(newMeasure);
   },
   note: function(){
           

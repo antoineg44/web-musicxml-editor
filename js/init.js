@@ -28,7 +28,10 @@ var scoreJson = {
   }
 };
 
-var vfStaves = [];      // array with currently rendered vexflow staves(Vex.Flow.Stave)
+// one <measure> in MusicXML -> one Vex.Flow.Stave
+// all of these three arrays below use share same index
+var vfStaves = [];      // array with currently rendered vexflow measures(Vex.Flow.Stave)
+var mXmlMeasAttr = [];  // array of MusicXML attributes for each measure
 var vfStaveNotes = [];  // array of arrays with notes to corresponding stave in vfStaves
 
 var editor = {};
@@ -41,7 +44,6 @@ editor.keySignature = document.getElementById('key-signature');
 editor.timeSigTop = $('#timeSigTop').val();
 editor.timeSigBottom = $('#timeSigBottom').val();
 
-// editor.measuresPerLine = 4;
 editor.staveHeight = 140;
 editor.canRedraw = true;
 

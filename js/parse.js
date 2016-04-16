@@ -63,19 +63,28 @@ editor.parse = {
     var staveNoteDuration =
       editor.NoteTool.getStaveNoteTypeFromDuration(note.duration, divisions);
 
-    // console.log(key+', '+'divisions:'+divisions
+    //console.log(key+', '+'divisions:'+divisions
     //   +', '+'duration:'+note.duration+' -> '+staveNoteDuration);
 
     var vfStaveNote = new Vex.Flow.StaveNote({keys: [key], duration: staveNoteDuration});
 
+    // currently support for only one dot
+    // to support more dots, xml2json.js needs to be changed -
+    // - currently it is eating up more dots:
+    // e.g. from <dot/><dot/><dot/> it makes only one {dot: null}
+    if(note.hasOwnProperty('dot')) {
+      vfStaveNote.addDotToAll();
+      console.log('dot');
+    }
 
-
-
-    // TODO :
-    // add dot(s) and accidental to note; maybe set stem direction too
-
-
-
+    if(note.accidental) {
+      // accidental element can have attributes
+      var mXmlAcc = (typeof note.accidental === 'string')
+                      ? note.accidental : note.accidental['#text'];
+      var vfAcc = editor.table.ACCIDENTAL_DICT[mXmlAcc];
+      vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(vfAcc));
+      //console.log('acci: '+mXmlAcc+' -> '+vfAcc);
+    }
 
     return vfStaveNote;
   }

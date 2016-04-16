@@ -24,6 +24,7 @@ function setupDownloadLink(link) {
   //TODO: read header from original file
   var xmlHeaderString = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'+
   '<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">\n';
+  link.download = uploadedFileName.split(".xml")[0] + '[edited].xml';
   link.href = 'data:text/xml;charset=utf-8,' + encodeURIComponent(xmlHeaderString + formatXml(xmlFromJson));
 }
 

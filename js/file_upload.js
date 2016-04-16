@@ -19,13 +19,17 @@ window.onload = function() {
 
         reader.onload = function(e) {             // after FileReader finishes reading:
           try {
-            var xmlDoc = $.parseXML(reader.result); // parse xml using jQuery into xml document,
-            //TODO: check, if xmlDoc is MusicXML, if root element name is score-partwise
+            // parse xml using jQuery into xml document object
+            var xmlDoc = $.parseXML(reader.result);
             if(xmlDoc.documentElement.nodeName !== "score-partwise")
-              throw 'Uploaded file is not MusicXML file.';
+              throw 'Uploaded file is not MusicXML score-partwise file.';
+            uploadedFileName = file.name;
             //TODO: use xml2json and json2xml accordingly to it's license (LGPL 2.1)
-            jsonFromXml = xml2json(xmlDoc, '  ');   // convert xml to json for faster access,
-            scoreJson = $.parseJSON(jsonFromXml);   // load json to memory; parseJSON is safer than eval
+            // convert xml to json for faster access
+            jsonFromXml = xml2json(xmlDoc, '  ');  
+            // load json to memory; parseJSON is safer than eval
+            scoreJson = $.parseJSON(jsonFromXml);  
+            // turn some only properties into one element array
             scoreJson = onlyChildren2Array(scoreJson);
           }
           catch(err) {
@@ -52,16 +56,14 @@ window.onload = function() {
 //wraps part, measure and note only child elements
 //into one element arrays for later better manipulation
 function onlyChildren2Array(scoreJson) {
-  if(! $.isArray(scoreJson["score-partwise"].part) ) {  //or !(x instanceof Array)
+  if(! $.isArray(scoreJson["score-partwise"].part) )  //or !(x instanceof Array)
     scoreJson["score-partwise"].part = [ scoreJson["score-partwise"].part ];
-  }
-  if(! $.isArray(scoreJson["score-partwise"].part[0].measure) ) {
-    scoreJson["score-partwise"].part[0].measure = [ scoreJson["score-partwise"].part[0].measure ];
-  }
-  for (var i in scoreJson["score-partwise"].part[0].measure) {
-    if(! $.isArray(scoreJson["score-partwise"].part[0].measure[i].note) ) {
-      scoreJson["score-partwise"].part[0].measure[i].note = [ scoreJson["score-partwise"].part[0].measure[i].note ];
-    }
-  }
+  if(! $.isArray(scoreJson["score-partwise"].part[0].measure) )
+    scoreJson["score-partwise"].part[0].measure =
+      [ scoreJson["score-partwise"].part[0].measure ];
+  for (var i in scoreJson["score-partwise"].part[0].measure)
+    if(! $.isArray(scoreJson["score-partwise"].part[0].measure[i].note) )
+      scoreJson["score-partwise"].part[0].measure[i].note =
+        [ scoreJson["score-partwise"].part[0].measure[i].note ];
   return scoreJson;
 }

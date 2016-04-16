@@ -28,6 +28,8 @@ var scoreJson = {
   }
 };
 
+var uploadedFileName = 'score';
+
 // one <measure> in MusicXML -> one Vex.Flow.Stave
 // all of these three arrays below use share same index
 var vfStaves = [];      // array with currently rendered vexflow measures(Vex.Flow.Stave)

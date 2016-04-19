@@ -15,9 +15,9 @@
 	      MusicXML import: <input type="file" id="fileInput">
 	      <a href="" id="link" onclick="setupDownloadLink(this)" download="">MusicXML export</a>
 
-				<ul class="nav nav-tabs">
-				  <li role="presentation" class="active"><a href="#measures"  data-toggle="tab">Measures</a></li>
-				  <li role="presentation"><a href="#notes-and-rests"  data-toggle="tab">Notes/Rests</a></li>
+				<ul class="nav nav-tabs" id="editor-tabs">
+				  <li role="presentation" class="active"><a href="#measures" onclick="editor.mode='measure';return true;" data-toggle="tab">Measures</a></li>
+				  <li role="presentation"><a href="#notes-and-rests" onclick="editor.mode='note';return true;" data-toggle="tab">Notes/Rests</a></li>
 				</ul>
 				<div class="tab-content" id="control-panel">
 				<div class="tab-pane fade in active" id="measures">

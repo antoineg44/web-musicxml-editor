@@ -174,44 +174,44 @@ editor.draw = {
                     );
 
       // mouse events handlers for selecting measures
-      $('svg .measureRect').each(function () {
-        // to avoid multiple handler attach
-        if($(this).data('handlers-added'))
-          return true;
+      if(editor.mode === 'measure') {
+        $('svg .measureRect').each(function () {
+          // to avoid multiple handler attach
+          if($(this).data('handlers-added'))
+            return true;
 
-        $(this).data('handlers-added', true);
+          $(this).data('handlers-added', true);
 
-        $(this).on('click', function() {
-          // $(this).addClass( "selectedMeasure" );   // doesn't work, don't know why...
-          $(this).css({'fill': 'blue', 'opacity': '0.4'});  // do it this way
-          console.log($(this).attr('id'));
-          // if it is not second click on already selected measure
-          if(editor.mySelect.measure.id !== $(this).attr('id')) {
-            editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-            editor.mySelect.measure.id = $(this).attr('id');
-            editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
-            var prevId = editor.mySelect.measure.previousId;
-            // $('svg .measureRect#'+prevId).removeClass( "selectedMeasure" );
-            $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
-            $('svg .measureRect#'+editor.mySelect.measure.id)
-              .css({'fill': 'blue', 'opacity': '0.4'});
-          }
+          $(this).on('click', function() {
+            $(this).css({'fill': 'blue', 'opacity': '0.4'});
+            console.log($(this).attr('id'));
+            // if it is not second click on already selected measure
+            if(editor.mySelect.measure.id !== $(this).attr('id')) {
+              editor.mySelect.measure.previousId = editor.mySelect.measure.id;
+              editor.mySelect.measure.id = $(this).attr('id');
+              editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
+              var prevId = editor.mySelect.measure.previousId;
+              $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
+              $('svg .measureRect#'+editor.mySelect.measure.id)
+                .css({'fill': 'blue', 'opacity': '0.4'});
+            }
+          });
+          // TODO: doesn't highlight only measure after start, fix it
+          $(this).on('mouseenter', function() {
+            if(editor.mySelect.measure.id !== $(this).attr('id'))
+              $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
+            // console.log('mouseenter on measure['+$(this).attr('id')+']');
+          });
+          $(this).on('mouseleave', function() {
+            if(editor.mySelect.measure.id !== $(this).attr('id'))
+              $(this).css({'fill': 'transparent'}); 
+              // console.log('mouseleave from measure['+$(this).attr('id')+']');
+          });
         });
-        // TODO: doesn't highlight only measure after start, fix it
-        $(this).on('mouseenter', function() {
-          if(editor.mySelect.measure.id !== $(this).attr('id'))
-            $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
-          // console.log('mouseenter on measure['+$(this).attr('id')+']');
-        });
-        $(this).on('mouseleave', function() {
-          if(editor.mySelect.measure.id !== $(this).attr('id'))
-            $(this).css({'fill': 'transparent'}); 
-            // console.log('mouseleave from measure['+$(this).attr('id')+']');
-        });
-      });
-
-      // $('svg .measureRect#'+editor.mySelect.measure.id)
-      //   .css({'fill': 'blue', 'opacity': '0.4'});
+        // highlight selected measure
+        $('svg .measureRect#'+editor.mySelect.measure.id)
+          .css({'fill': 'blue', 'opacity': '0.4'});
+      }
 
       //draw the notes
       editor.notes = [];
@@ -274,6 +274,7 @@ editor.draw = {
           beam.setContext(editor.ctx).draw();
         });
 
+        // looping over all notes
         for(n=0; n<editor.measures[i].v1.length; n++){
           if(editor.notes[n] != undefined){
             if(editor.measures[i].v1[n].keys != null){
@@ -282,42 +283,73 @@ editor.draw = {
               editor.measures[i].v1[n].y = editor.notes[n].note_heads[0].y;  
             } 
 
-            //adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
+            // adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
+            // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
             var item = editor.notes[n].getElem();
+
             item.addEventListener("mouseover", function() {
-              Vex.forEach($(this).find("*"), function(child) {
-                child.setAttribute("fill", "green");
-                child.setAttribute("stroke", "green");
-              });
+              // if editor is in mode for working with notes
+              if(editor.mode === 'note') {
+                // we don't want to change colour of already selected note
+                if(editor.mySelect.measure.id + editor.mySelect.note.id
+                    !== $(this).attr('id').split('-')[1]) {
+                  // change colour for each note parts - stem, head, dot, accidenal...
+                  Vex.forEach($(this).find("*"), function(child) {
+                    child.setAttribute("fill", "green");
+                    child.setAttribute("stroke", "green");
+                  });
+                }
+              }
             }, false);
+
             item.addEventListener("mouseout", function() {
-              Vex.forEach($(this).find("*"), function(child) {
-                child.setAttribute("fill", "black");
-                child.setAttribute("stroke", "black");
-              });
-              editor.canRedraw = true;
+              if(editor.mode === 'note') {
+                if(editor.mySelect.measure.id + editor.mySelect.note.id
+                    !== $(this).attr('id').split('-')[1]) {
+                  Vex.forEach($(this).find("*"), function(child) {
+                    child.setAttribute("fill", "black");
+                    child.setAttribute("stroke", "black");
+                  });
+                }
+              }
             }, false);
+
             item.addEventListener("click", function() {
-              Vex.forEach($(this).find("*"), function(child) {
-                child.setAttribute("fill", "red");
-                child.setAttribute("stroke", "red");
-              });
-              $(this).attr("class", "selected-note");
-              //id='vf-m1n3' - fourth note in second measure
-              var selectIds = $(this).attr('id').split('m')[1].split('n');
-              editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-              editor.mySelect.note.previousId = editor.mySelect.note.id;
-              editor.mySelect.measure.id = +selectIds[0];
-              editor.mySelect.note.id = +selectIds[1];
-              console.log(editor.mySelect);
-              editor.canRedraw = false;
+              if(editor.mode === 'note') {
+                // if it is not second click on already selected note
+                if(editor.mySelect.measure.id + editor.mySelect.note.id
+                    !== $(this).attr('id').split('-')[1]) {
+                  Vex.forEach($(this).find("*"), function(child) {
+                    child.setAttribute("fill", "red");
+                    child.setAttribute("stroke", "red");
+                  });
+                  // save currently selected id to previous
+                  editor.mySelect.measure.previousId = editor.mySelect.measure.id;
+                  editor.mySelect.note.previousId = editor.mySelect.note.id;
+                  // format of id: id='vf-m1n3' - fourth note in second measure
+                  var noteId = $(this).attr('id');
+                  // save id of newly selected note
+                  editor.mySelect.measure.id = noteId.slice(3,5);
+                  editor.mySelect.note.id = noteId.slice(5);
+                  // for backward compatibility, will be removed soon
+                  editor.selected.note.selection = +editor.mySelect.note.id[1];
+                  // unhighlight previous selected note
+                  $('svg #vf-'+editor.mySelect.measure.previousId+editor.mySelect.note.previousId)
+                    .unHighlightNote();
+                  console.log(editor.mySelect.note);
+                }
+              }
             }, false);
+
           }
         }
+        // highlight selected note
+        if(editor.mode === 'note')
+          $('svg #vf-'+editor.mySelect.measure.id+editor.mySelect.note.id)
+            .highlightNote();
       }
       count++;
     }//loop over all measures
-    // $('.selected-note')
     // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});
   }
 }

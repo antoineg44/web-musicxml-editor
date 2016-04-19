@@ -47,9 +47,9 @@ editor.timeSigTop = $('#timeSigTop').val();
 editor.timeSigBottom = $('#timeSigBottom').val();
 
 editor.staveHeight = 140;
-editor.canRedraw = true;
+editor.mode = "measure";    // measure or note
 
-editor.measures = [   //measures/tacts, in vexflow there is a new stave for each measure
+editor.measures = [   // measures/tacts, in vexflow there is a new stave for each measure
   {
     clef: 'treble',
     timeSigTop: 4,

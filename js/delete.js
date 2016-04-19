@@ -1,6 +1,6 @@
 editor.delete = {
   measure: function(){
-    if(editor.measures.length > 1) {   //protection from removing last measure
+    if(editor.measures.length > 1) {   //protection from removing last remaining measure
       //TODO: editor.selected.measure can be null/undefined
       // splice the selected measure
       console.log('delete:'+editor.selected.measure.selection);

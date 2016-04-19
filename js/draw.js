@@ -168,29 +168,36 @@ editor.draw = {
                       editor.measures[i].height,
                       {
                         'class': 'measureRect',
-                        'id': i,
+                        'id': 'm'+i,
                         'fill': 'transparent'
                       }
                     );
 
+      // mouse events handlers for selecting measures
       $('svg .measureRect').each(function () {
-        //
+        // to avoid multiple handler attach
         if($(this).data('handlers-added'))
           return true;
 
         $(this).data('handlers-added', true);
 
         $(this).on('click', function() {
-          $(this).css({'fill': 'blue', 'opacity': '0.4'});
+          // $(this).addClass( "selectedMeasure" );   // doesn't work, don't know why...
+          $(this).css({'fill': 'blue', 'opacity': '0.4'});  // do it this way
           console.log($(this).attr('id'));
+          // if it is not second click on already selected measure
           if(editor.mySelect.measure.id !== $(this).attr('id')) {
             editor.mySelect.measure.previousId = editor.mySelect.measure.id;
             editor.mySelect.measure.id = $(this).attr('id');
-            editor.selected.measure.selection = +editor.mySelect.measure.id + 1;
+            editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
             var prevId = editor.mySelect.measure.previousId;
+            // $('svg .measureRect#'+prevId).removeClass( "selectedMeasure" );
             $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
+            $('svg .measureRect#'+editor.mySelect.measure.id)
+              .css({'fill': 'blue', 'opacity': '0.4'});
           }
         });
+        // TODO: doesn't highlight only measure after start, fix it
         $(this).on('mouseenter', function() {
           if(editor.mySelect.measure.id !== $(this).attr('id'))
             $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
@@ -203,8 +210,8 @@ editor.draw = {
         });
       });
 
-      $('svg .measureRect#'+editor.mySelect.measure.id)
-        .css({'fill': 'blue', 'opacity': '0.4'});
+      // $('svg .measureRect#'+editor.mySelect.measure.id)
+      //   .css({'fill': 'blue', 'opacity': '0.4'});
 
       //draw the notes
       editor.notes = [];

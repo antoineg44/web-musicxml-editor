@@ -89,12 +89,12 @@ editor.selected = {
 
 editor.mySelect = {
   measure: {
-    id: 0,
-    previousId: 0
+    id: 'm0',
+    previousId: 'm0'
   },
   note: {
-    id: 0,
-    previousId: 0
+    id: 'n0',
+    previousId: 'n0'
   }
 }
 
@@ -113,7 +113,7 @@ TODO: documentary comment...
 */
 editor.getInsertNote = function(evt){
   // find the mouse position and return the correct note for that position.
-  var y = vfStaves[editor.mySelect.measure.id].y;
+  var y = vfStaves[editor.mySelect.measure.id[1]].y;
   // var y = editor.selected.measure.y;
   var notesArray = ['c/','d/','e/','f/','g/','a/','b/'];
   var count = 0;

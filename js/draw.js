@@ -1,75 +1,6 @@
-// editor.draw = {
-//   staves: function(){
-//     vfStaves = [];
-//     var noteValue = editor.getRadioValue('note-value');
-//     var selectOrAdd = editor.getRadioValue('tools');
-
-//     // editor.ctx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
-//     editor.ctx.clear();
-//     canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
-//     $('#notation-canvas').attr('width', canvasWidth);
-
-//     var notesPerMeasureLengths = [];
-//     for (var i in scoreJson["score-partwise"].part.measure) {
-//       var measure = scoreJson["score-partwise"].part.measure[i];
-//       if (measure.note)
-//         notesPerMeasureLengths.push(measure.note.length);
-//       else
-//         notesPerMeasureLengths.push(1);
-//     }
-
-//     //find max number of notes in measure
-//     notesPerMeasureLengths.sort(function(a,b){return b-a;});
-//     var maxLength = notesPerMeasureLengths[0];
-//     var noteWidth = 40;
-//     var minWidth = noteWidth * maxLength;
-
-
-
-//     var attributes = {};
-//     var count = 0;
-//     var staveX = 10, staveY = 0;
-
-//     // draw the staves
-//     for (var i in scoreJson["score-partwise"].part.measure) {
-//       // find line break points
-//       for(var br=6; br>=0; br--){
-//         if(canvasWidth / br >= minWidth){
-//           var staveWidth = canvasWidth / br - 10;
-//           break;
-//         }
-//       }
-
-//       var staveEnd = staveX + staveWidth;
-//       if(staveEnd > canvasWidth){
-//         staveX = 10;
-//         staveY = staveY + editor.staveHeight;
-//         newLine = true;
-//       }
-//       else{
-//         newLine = false;
-//       }
-//       staveX = staveX + staveWidth;
-
-//       var stave = new Vex.Flow.Stave(staveX - staveWidth, staveY, staveWidth);
-//       vfStaves.push(stave);
-
-//       var measure = scoreJson["score-partwise"].part.measure[i];
-//       if (measure['attributes']) {
-//         attributes = measure['attributes'];
-//       }
-
-//       // console.log(obj);
-//     }
-//   }
-// }
-
 editor.draw = {
   staves: function(){
     console.log('draw');
-
-    vfStaves = [];      //global array with currently rendered vexflow staves(Vex.Flow.Stave)
-    vfStaveNotes = [];  //global array with notes to corresponding stave in vfStaves
 
     var noteValue = editor.getRadioValue('note-value');
     var selectOrAdd = editor.getRadioValue('tools');
@@ -79,101 +10,90 @@ editor.draw = {
     canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
     $('#notation-canvas').attr('width', canvasWidth);
 
-    // find the min-width needed for a measure
-    var voiceLengths = [];
-    for(i=0; i<editor.measures.length; i++){
-      var noteCount = 0;
-      // find the longest voice
-      if(editor.measures[i].hasOwnProperty('v1')){
-        noteCount = editor.measures[i].v1.length;
-        voiceLengths.push(noteCount);
-      }
+    // collect number count for each measure
+    var notesPerMeasureLengths = [];
+    for(var i in vfStaves) {
+      var measure = vfStaves[i];
+      if(measure.note)
+        notesPerMeasureLengths.push(measure.note.length);
+      else
+        notesPerMeasureLengths.push(1);
     }
 
-    if(voiceLengths.length >= 1){
-      voiceLengths.sort(function(a,b){return b-a;});
-      maxLength = voiceLengths[0];
-      var noteWidth = 40;
-      var minWidth = noteWidth * maxLength;
-    }else{
-      minWidth = 40;
-    }
+    // find maximum number of notes in measure
+    notesPerMeasureLengths.sort(function(a,b){return b-a;});
+    var maxLength = notesPerMeasureLengths[0];
+    var noteWidth = 40;
+    // calculate minimal width for measure, depends on how many notes measure has
+    var minWidth = noteWidth * maxLength;
 
-    var count = 0;
+    var attributes = {};
+    // var count = 0;
+    var staveX = 10, staveY = 0;
 
-    var staveX = 10;
-    var staveY = 0;
-
-    // draw the staves
-    // console.log($xml.find("measure").length);
-    for(i=0; i<editor.measures.length; i++){
+    // loop over all measures
+    for(var m in vfStaves) {
+      var stave = vfStaves[m];
 
       // find line break points
-      for(br=6; br>=0; br--){
+      for(var br=6; br>=0; br--){
         if(canvasWidth / br >= minWidth){
           var staveWidth = canvasWidth / br - 10;
           break;
         }
       }
 
+      // calculate stave(measure) positions
       var staveEnd = staveX + staveWidth;
-      if(staveEnd > canvasWidth){
+      if(staveEnd > canvasWidth) {
         staveX = 10;
         staveY = staveY + editor.staveHeight;
         newLine = true;
-      }else{
+      }
+      else {
         newLine = false;
       }
 
-      staveX = staveX + staveWidth;
+      // set position and width of stave 
+      stave.setX(staveX);
+      stave.setY(staveY);
+      // if measure doesn't have its own width(set as attribute in xml)
+      // if(stave.getWidth() == editor.staveWidth)
+        stave.setWidth(staveWidth);
+      // else
+      //   staveWidth = stave.getWidth();
 
-      editor.measures[i].measure = i + 1;
-      editor.measures[i].width = staveWidth;  
-      editor.measures[i].x = staveX - staveWidth;
-      editor.measures[i].y = staveY;
-      editor.measures[i].height = editor.staveHeight;
+      // set rendering context for stave
+      stave.setContext(editor.ctx);
 
-      var stave = new Vex.Flow.Stave(editor.measures[i].x, editor.measures[i].y, editor.measures[i].width);
-
-      if(editor.measures[i].clef != null){
-        stave.addClef(editor.measures[i].clef).setContext(editor.ctx);  
-        var currentClef = editor.measures[i].clef;
-      }else{
-        //stave.setContext(editor.ctx);
+      // clef and key signature must be rendered on every first measure on new line
+      if(newLine == true) {
+        // stave.addClef(editor.currentClef);
+        stave.setClef(editor.currentClef);
+        stave.setKeySignature(editor.currentKeySig);
+        // var keySig = new Vex.Flow.KeySignature(editor.currentKeySig);
+        // keySig.addToStave(stave);
       }
 
-      if(editor.measures[i].keySig != null){
-        var keySig = new Vex.Flow.KeySignature(editor.measures[i].keySig);
-        keySig.addToStave(stave);
-        var currentKeySig = editor.measures[i].keySig;
-      }
+      // draw stave
+      stave.draw();
 
-      if(newLine == true){
-        stave.addClef(currentClef).setContext(editor.ctx);  
-        var keySig = new Vex.Flow.KeySignature(currentKeySig);
-        keySig.addToStave(stave);
-      }
-
-      if(editor.measures[i].showTimeSig == true){
-        stave.addTimeSignature(editor.measures[i].timeSigTop + '/' + editor.measures[i].timeSigBottom);
-      }
-
-      stave.setContext(editor.ctx).draw();
-
-      vfStaves.push(stave);   //push vexflow stave into global array
-
-      editor.ctx.rect(editor.measures[i].x,
-                      editor.measures[i].y,
-                      editor.measures[i].width,
-                      editor.measures[i].height,
+      // create svg <rect> element exactly overlapping stave for stave selection and highlight
+      editor.ctx.rect(staveX,
+                      staveY,
+                      staveWidth,
+                      editor.staveHeight,
                       {
                         'class': 'measureRect',
-                        'id': 'm'+i,
+                        'id': 'm'+m,
                         'fill': 'transparent'
                       }
                     );
 
-      // mouse events handlers for selecting measures
+      // set start x position for next measure
+      staveX = staveX + staveWidth;
+
+      // mouse events listeners on <rect> for selecting measures
       if(editor.mode === 'measure') {
         $('svg .measureRect').each(function () {
           // to avoid multiple handler attach
@@ -213,143 +133,114 @@ editor.draw = {
           .css({'fill': 'blue', 'opacity': '0.4'});
       }
 
-      //draw the notes
-      editor.notes = [];
-
-      if(editor.measures[i].hasOwnProperty('v1')){
-        for(n=0; n<editor.measures[i].v1.length; n++){
-
-          var accidental = editor.measures[i].v1[n].accidental;
-          var dotted = editor.measures[i].v1[n].dotted;
-
-          var note = new Vex.Flow.StaveNote(editor.measures[i].v1[n]);
-          if (accidental != null) note.addAccidental(0, new Vex.Flow.Accidental(accidental));
-          if (dotted == true) note.addDotToAll();
-          var noteId = 'm' + i + 'n' + n;   //identification for note, n.o. of measure and note in it
-          note.setId(noteId);   //set id for note DOM element in svg
-          editor.notes.push(note);
-          
-          editor.measures[i].v1[n].x = editor.notes[n].note_heads[0].x;
-          editor.measures[i].v1[n].y = editor.notes[n].note_heads[0].y;
-        
-        }
-
-        var voice1 = new Vex.Flow.Voice({
-            num_beats: editor.measures[i].timeSigTop,
-            beat_value: editor.measures[i].timeSigTop,    //TODO: is it correct? change it to time SigBottom
-            resolution: Vex.Flow.RESOLUTION
-          });
-
-        voice1.setStrict(false);    //TODO: let it be strict for check notes duration in measure
-
-        // draw the cursor note
-        if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
-            editor.notes.push(new Vex.Flow.StaveNote(
-            {
-              keys: [editor.selected.insertNote],
-              duration: noteValue,
-            }
-          )); 
-        }
-
-        voice1.addTickables(editor.notes);
-
-        vfStaveNotes.push(editor.notes);
-
-
-        // This is only helper function to justify and draw a 4/4 voice
-        // TODO: replace it with something like: voice.draw(ctx, stave);
-        Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, editor.notes);
-
-        //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-        var beams = new Vex.Flow.Beam.generateBeams(editor.notes, {
-          groups: [new Vex.Flow.Fraction(4, 8)]
+      var voice = new Vex.Flow.Voice({
+          num_beats: 4,
+          beat_value: 4,
+          resolution: Vex.Flow.RESOLUTION
         });
 
-        // if(editor.frameCount % 30 == 0){
-        //   console.log(editor.notes); 
-        // }
-        
-        beams.forEach(function(beam) {
-          beam.setContext(editor.ctx).draw();
-        });
+      voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
-        // looping over all notes
-        for(n=0; n<editor.measures[i].v1.length; n++){
-          if(editor.notes[n] != undefined){
-            if(editor.measures[i].v1[n].keys != null){
-              // adds x and y positoins to the staves notes
-              editor.measures[i].v1[n].x = editor.notes[n].note_heads[0].x;
-              editor.measures[i].v1[n].y = editor.notes[n].note_heads[0].y;  
-            } 
-
-            // adding handlers for interactivity: (from vexflow stavenote_tests.js line 463)
-            // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
-            var item = editor.notes[n].getElem();
-
-            item.addEventListener("mouseover", function() {
-              // if editor is in mode for working with notes
-              if(editor.mode === 'note') {
-                // we don't want to change colour of already selected note
-                if(editor.mySelect.measure.id + editor.mySelect.note.id
-                    !== $(this).attr('id').split('-')[1]) {
-                  // change colour for each note parts - stem, head, dot, accidenal...
-                  Vex.forEach($(this).find("*"), function(child) {
-                    child.setAttribute("fill", "green");
-                    child.setAttribute("stroke", "green");
-                  });
-                }
-              }
-            }, false);
-
-            item.addEventListener("mouseout", function() {
-              if(editor.mode === 'note') {
-                if(editor.mySelect.measure.id + editor.mySelect.note.id
-                    !== $(this).attr('id').split('-')[1]) {
-                  Vex.forEach($(this).find("*"), function(child) {
-                    child.setAttribute("fill", "black");
-                    child.setAttribute("stroke", "black");
-                  });
-                }
-              }
-            }, false);
-
-            item.addEventListener("click", function() {
-              if(editor.mode === 'note') {
-                // if it is not second click on already selected note
-                if(editor.mySelect.measure.id + editor.mySelect.note.id
-                    !== $(this).attr('id').split('-')[1]) {
-                  Vex.forEach($(this).find("*"), function(child) {
-                    child.setAttribute("fill", "red");
-                    child.setAttribute("stroke", "red");
-                  });
-                  // save currently selected id to previous
-                  editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-                  editor.mySelect.note.previousId = editor.mySelect.note.id;
-                  // format of id: id='vf-m1n3' - fourth note in second measure
-                  var noteId = $(this).attr('id');
-                  // save id of newly selected note
-                  editor.mySelect.measure.id = noteId.slice(3,5);
-                  editor.mySelect.note.id = noteId.slice(5);
-                  // for backward compatibility, will be removed soon
-                  editor.selected.note.selection = +editor.mySelect.note.id[1];
-                  // unhighlight previous selected note
-                  $('svg #vf-'+editor.mySelect.measure.previousId+editor.mySelect.note.previousId)
-                    .unHighlightNote();
-                  console.log(editor.mySelect.note);
-                }
-              }
-            }, false);
-
+      // draw the cursor note
+      if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
+          vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
+          {
+            keys: [editor.selected.insertNote],
+            duration: noteValue,
           }
-        }
-        // highlight selected note
-        if(editor.mode === 'note')
-          $('svg #vf-'+editor.mySelect.measure.id+editor.mySelect.note.id)
-            .highlightNote();
+        )); 
       }
-      count++;
-    }//loop over all measures
+
+      voice.addTickables(vfStaveNotes[m]);
+
+
+      // This is only helper function to justify and draw a 4/4 voice
+      // TODO: replace it with something like: voice.draw(ctx, stave);
+      Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, vfStaveNotes[m]);
+
+      //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
+      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[m], {
+        groups: [new Vex.Flow.Fraction(3, 8)]
+      });
+
+      // if(editor.frameCount % 30 == 0){
+      //   console.log(editor.notes); 
+      // }
+      
+      beams.forEach(function(beam) {
+        beam.setContext(editor.ctx).draw();
+      });
+
+      // adding event listeners to note objects
+      for(n in vfStaveNotes[m]){
+
+          // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
+          // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
+          var item = vfStaveNotes[m][n].getElem();
+
+          item.addEventListener("mouseover", function() {
+            // if editor is in mode for working with notes
+            if(editor.mode === 'note') {
+              // we don't want to change colour of already selected note
+              if(editor.mySelect.measure.id + editor.mySelect.note.id
+                  !== $(this).attr('id').split('-')[1]) {
+                // change colour for each note parts - stem, head, dot, accidenal...
+                Vex.forEach($(this).find("*"), function(child) {
+                  child.setAttribute("fill", "green");
+                  child.setAttribute("stroke", "green");
+                });
+              }
+            }
+          }, false);
+
+          item.addEventListener("mouseout", function() {
+            if(editor.mode === 'note') {
+              if(editor.mySelect.measure.id + editor.mySelect.note.id
+                  !== $(this).attr('id').split('-')[1]) {
+                Vex.forEach($(this).find("*"), function(child) {
+                  child.setAttribute("fill", "black");
+                  child.setAttribute("stroke", "black");
+                });
+              }
+            }
+          }, false);
+
+          item.addEventListener("click", function() {
+            if(editor.mode === 'note') {
+              // if it is not second click on already selected note
+              if(editor.mySelect.measure.id + editor.mySelect.note.id
+                  !== $(this).attr('id').split('-')[1]) {
+                Vex.forEach($(this).find("*"), function(child) {
+                  child.setAttribute("fill", "red");
+                  child.setAttribute("stroke", "red");
+                });
+                // save currently selected id to previous
+                editor.mySelect.measure.previousId = editor.mySelect.measure.id;
+                editor.mySelect.note.previousId = editor.mySelect.note.id;
+                // format of id: id='vf-m1n3' - fourth note in second measure
+                var noteId = $(this).attr('id');
+                // save id of newly selected note
+                editor.mySelect.measure.id = noteId.slice(3,5);
+                editor.mySelect.note.id = noteId.slice(5);
+                // for backward compatibility, will be removed soon
+                editor.selected.note.selection = +editor.mySelect.note.id[1];
+                // unhighlight previous selected note
+                $('svg #vf-'+editor.mySelect.measure.previousId+editor.mySelect.note.previousId)
+                  .unHighlightNote();
+                console.log(editor.mySelect.note);
+              }
+            }
+          }, false);
+
+        }
+      }
+      // highlight selected note
+      if(editor.mode === 'note')
+        $('svg #vf-'+editor.mySelect.measure.id+editor.mySelect.note.id)
+          .highlightNote();
+
+    // count++;
     // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});
+
   }
 }

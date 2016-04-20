@@ -5,21 +5,21 @@ editor.canvas.addEventListener('click', editor.select.measure);
 editor.canvas.addEventListener('click', editor.select.note);
 editor.canvas.addEventListener('click', editor.add.note);
 editor.canvas.addEventListener('mousemove', redraw);
-editor.canvas.addEventListener('mousemove', getMousePos);
-editor.canvas.addEventListener('mousemove', returnInsertNote);
 
-function redraw() {
-  //redraw on mousemove only when adding new note
-  if(editor.getRadioValue('tools') == 'add')
-    editor.draw.staves();
-}
-
-function getMousePos(evt){
-    editor.mousePos = editor.select.getMousePos(editor.canvas, evt);
-}
-
-function returnInsertNote(){
-  editor.selected.insertNote = editor.getInsertNote();
+function redraw(event) {
+  //redraw on mousemove only in note mode when adding new note
+  if(editor.mode === 'note' && editor.getRadioValue('tools') == 'add') {
+    // get mouse position
+    editor.mousePos = editor.select.getMousePos(editor.canvas, event);
+    // save previous cursor note for latter comparison
+    editor.lastCursorNote = editor.selected.insertNote;
+    // get new note below mouse cursor
+    editor.selected.insertNote = editor.getInsertNote();
+    // redraw only when cursor note changed pitch
+    // (mouse changed y position between staff lines/spaces)
+    if(editor.lastCursorNote !== editor.selected.insertNote)
+      editor.draw.staves();
+  }
 }
 
 jQuery.fn.highlightNote = function () {

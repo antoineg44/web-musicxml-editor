@@ -11,21 +11,22 @@ editor.draw = {
     $('#notation-canvas').attr('width', canvasWidth);
 
     // collect number count for each measure
-    var notesPerMeasureLengths = [];
-    for(var i in vfStaves) {
-      var measure = vfStaves[i];
-      if(measure.note)
-        notesPerMeasureLengths.push(measure.note.length);
-      else
-        notesPerMeasureLengths.push(1);
-    }
+    // var notesPerMeasureLengths = [];
+    // for(var i in vfStaves) {
+    //   var measure = vfStaves[i];
+    //   if(measure.note)
+    //     notesPerMeasureLengths.push(measure.note.length);
+    //   else
+    //     notesPerMeasureLengths.push(1);
+    // }
 
     // find maximum number of notes in measure
-    notesPerMeasureLengths.sort(function(a,b){return b-a;});
-    var maxLength = notesPerMeasureLengths[0];
-    var noteWidth = 40;
+    // notesPerMeasureLengths.sort(function(a,b){return b-a;});
+    // var maxLength = notesPerMeasureLengths[0];
+    // var noteWidth = 40;
     // calculate minimal width for measure, depends on how many notes measure has
-    var minWidth = noteWidth * maxLength;
+    // var minWidth = noteWidth * maxLength;
+    var minWidth = editor.noteWidth * 4;
 
     var attributes = {};
     // var count = 0;
@@ -36,14 +37,16 @@ editor.draw = {
       var stave = vfStaves[m];
 
       // find line break points
-      for(var br=6; br>=0; br--){
-        if(canvasWidth / br >= minWidth){
-          var staveWidth = canvasWidth / br - 10;
-          break;
-        }
-      }
+      // for(var br=6; br>=0; br--){
+      //   if(canvasWidth / br >= minWidth){
+      //     var staveWidth = canvasWidth / br - 10;
+      //     break;
+      //   }
+      // }
 
-      // calculate stave(measure) positions
+      staveWidth = stave.getWidth();
+
+      // calculate newline
       var staveEnd = staveX + staveWidth;
       if(staveEnd > canvasWidth) {
         staveX = 10;
@@ -59,20 +62,25 @@ editor.draw = {
       stave.setY(staveY);
       // if measure doesn't have its own width(set as attribute in xml)
       // if(stave.getWidth() == editor.staveWidth)
-        stave.setWidth(staveWidth);
+      //   stave.setWidth(staveWidth);
       // else
-      //   staveWidth = stave.getWidth();
+        // staveWidth = stave.getWidth();
 
       // set rendering context for stave
       stave.setContext(editor.ctx);
 
       // clef and key signature must be rendered on every first measure on new line
       if(newLine == true) {
-        // stave.addClef(editor.currentClef);
         stave.setClef(editor.currentClef);
         stave.setKeySignature(editor.currentKeySig);
-        // var keySig = new Vex.Flow.KeySignature(editor.currentKeySig);
-        // keySig.addToStave(stave);
+        // number of accidentals in key signature
+        var numOfAcc = editor.table.SHARP_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
+        if(!numOfAcc)
+          numOfAcc = editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
+
+                                  // not good solution, it would grow after each draw call
+        stave.setWidth(stave.getWidth() /*+ 80 + numOfAcc * 20*/);
+
       }
 
       // draw stave
@@ -133,9 +141,19 @@ editor.draw = {
           .css({'fill': 'blue', 'opacity': '0.4'});
       }
 
+      // find time signature in Attributes for current Measure
+      var beats = 4, beat_type = 4;
+      for(var a = 0; a <= m; a++) {
+        // finds attributes of closest previous measure or current measure
+        if(! $.isEmptyObject(xmlAttributes[a]) && attributes.time) {
+          beats = xmlAttributes[a].time.beat;
+          beat_type = xmlAttributes[a].time['beat-type'];
+        }
+      }
+
       var voice = new Vex.Flow.Voice({
-          num_beats: 4,
-          beat_value: 4,
+          num_beats: beats,
+          beat_value: beat_type,
           resolution: Vex.Flow.RESOLUTION
         });
 
@@ -155,10 +173,17 @@ editor.draw = {
 
 
       // This is only helper function to justify and draw a 4/4 voice
-      // TODO: replace it with something like: voice.draw(ctx, stave);
-      Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, vfStaveNotes[m]);
+      // Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, vfStaveNotes[m]);
+
+      // format and justify the notes to 80% of staveWidth
+      new Vex.Flow.Formatter().joinVoices([voice]).format([voice], staveWidth * 0.8);
+                                         // also exists method formatToStave()...
+
+      // render voice
+      voice.draw(editor.ctx, stave);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
+      // TODO: generate fraction for beam groups dynamically according to time signature
       var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[m], {
         groups: [new Vex.Flow.Fraction(3, 8)]
       });

@@ -38,7 +38,8 @@ var vfStaveNotes = [];   // array of arrays with notes to corresponding stave in
 
 var editor = {};
 editor.canvas = $("#notation-canvas")[0];
-editor.renderer = new Vex.Flow.Renderer(editor.canvas, Vex.Flow.Renderer.Backends.SVG);
+editor.renderer = new Vex.Flow.Renderer('notation-canvas', Vex.Flow.Renderer.Backends.SVG);
+// editor.renderer = new Vex.Flow.Renderer(editor.canvas, Vex.Flow.Renderer.Backends.SVG);
 editor.ctx = editor.renderer.getContext();    //SVGContext
 
 editor.clefDropdown = document.getElementById('clef-dropdown');
@@ -48,6 +49,8 @@ editor.timeSigBottom = $('#timeSigBottom').val();
 
 editor.staveWidth = 150;
 editor.staveHeight = 140;
+editor.noteWidth = 40;
+
 editor.mode = "measure";    // measure or note
 
 editor.measures = [   // measures/tacts, in vexflow there is a new stave for each measure

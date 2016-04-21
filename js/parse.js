@@ -4,6 +4,7 @@ prepares vfStaves[] and vfStaveNotes[] for editor.draw.staves() function
 */
 editor.parse = {
   all: function() {
+    console.log('parse');
     // clear global arrays
     vfStaves = [];
     vfStaveNotes = [];
@@ -24,10 +25,6 @@ editor.parse = {
   measure: function(measure, index) {
     // one Vex.Flow.Stave corresponds to one <measure>
     var vfStave = new Vex.Flow.Stave(0, 0, editor.staveWidth);
-    if(measure['@width']) {
-      // in MusicXML measure width unit is one tenth of interline space
-      vfStave.setWidth(measure['@width'] * (vfStave.getSpacingBetweenLines() / 10));
-    }
 
     // push attributes for measure to global array of attributes for measures
     if(measure['attributes'])
@@ -43,9 +40,16 @@ editor.parse = {
         vfStaveNotesPerMeasure.push(vfStaveNote);
       }
       vfStaveNotes.push(vfStaveNotesPerMeasure);
+      // width of measure directly proportional to number of notes
+      vfStave.setWidth(vfStaveNotesPerMeasure.length * editor.noteWidth);
     }
     else    // measure doesn't have notes
       vfStaveNotes.push([]);
+
+    if(measure['@width']) {
+      // in MusicXML measure width unit is one tenth of interline space
+      vfStave.setWidth(measure['@width'] * (vfStave.getSpacingBetweenLines() / 10));
+    }
 
     return vfStave;
   },
@@ -66,6 +70,7 @@ editor.parse = {
         var xmlClefType = clef.sign + '/' + clef.line;
         var vfClefType = editor.table.CLEF_TYPE_DICT[xmlClefType];
         vfStave.setClef(vfClefType);  
+        vfStave.setWidth(vfStave.getWidth() + 80);
         editor.currentClef = vfClefType;
       }
 
@@ -81,6 +86,7 @@ editor.parse = {
           // var keySig = new Vex.Flow.KeySignature(keySpec);
           // keySig.addToStave(vfStave);
           vfStave.setKeySignature(keySpec);
+          vfStave.setWidth(vfStave.getWidth() + (Math.abs(fifths) * 30));
           editor.currentKeySig = keySpec;
         }
       }
@@ -94,19 +100,25 @@ editor.parse = {
           var time = attributes.time;
 
         vfStave.setTimeSignature(time.beats + '/' + time['beat-type']);
+        vfStave.setWidth(vfStave.getWidth() + 100);
       }
     }
     return vfStave;
   },
 
   note: function(note, measureIndex, noteIndex) {
-    var rest = note.rest ? 'r' : '';
-    if(note.pitch) {
-      var key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
+    var rest = '', key;
+    // rest is empty element in MusicXML, to json it is converted as {rest: null}
+    if(note.hasOwnProperty('rest')) {
+      rest = 'r';
+      key = editor.table.DEFAULT_REST_PITCH;
+    }
+    else if(note.pitch) {
+      key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
       // since this project is yet not interested in how note sounds,
       // alter element is not needed; accidental is read from accidental element
     }
-    //get MusicXML divisions from attributes for current measure
+    // get MusicXML divisions from attributes for current measure
     var divisions = 1;
     for(var i = 0; i <= measureIndex; i++) {
       if(xmlAttributes[i].divisions !== undefined)
@@ -120,7 +132,7 @@ editor.parse = {
     //console.log(key+', '+'divisions:'+divisions
     //   +', '+'duration:'+note.duration+' -> '+staveNoteDuration);
 
-    var vfStaveNote = new Vex.Flow.StaveNote({keys: [key], duration: staveNoteDuration});
+    var vfStaveNote = new Vex.Flow.StaveNote({keys: [key], duration: staveNoteDuration+rest});
 
     vfStaveNote.setId('m' + measureIndex + 'n' + noteIndex);   //set id for note DOM element in svg
 
@@ -130,7 +142,7 @@ editor.parse = {
     // e.g. from <dot/><dot/><dot/> it makes only one {dot: null}
     if(note.hasOwnProperty('dot')) {
       vfStaveNote.addDotToAll();
-      console.log('dot');
+      // console.log('dot');
     }
 
     if(note.accidental) {

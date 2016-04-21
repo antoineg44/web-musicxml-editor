@@ -97,8 +97,8 @@ editor.mySelect = {
     previousId: 'm0'
   },
   note: {
-    id: 'n0',
-    previousId: 'n0'
+    id: 'm0n0',
+    previousId: 'm0n0'
   }
 }
 

@@ -207,8 +207,7 @@ editor.draw = {
             // if editor is in mode for working with notes
             if(editor.mode === 'note') {
               // we don't want to change colour of already selected note
-              if(editor.mySelect.measure.id + editor.mySelect.note.id
-                  !== $(this).attr('id').split('-')[1]) {
+              if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
                 // change colour for each note parts - stem, head, dot, accidenal...
                 Vex.forEach($(this).find("*"), function(child) {
                   child.setAttribute("fill", "green");
@@ -220,8 +219,7 @@ editor.draw = {
 
           item.addEventListener("mouseout", function() {
             if(editor.mode === 'note') {
-              if(editor.mySelect.measure.id + editor.mySelect.note.id
-                  !== $(this).attr('id').split('-')[1]) {
+              if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
                 Vex.forEach($(this).find("*"), function(child) {
                   child.setAttribute("fill", "black");
                   child.setAttribute("stroke", "black");
@@ -233,8 +231,7 @@ editor.draw = {
           item.addEventListener("click", function() {
             if(editor.mode === 'note') {
               // if it is not second click on already selected note
-              if(editor.mySelect.measure.id + editor.mySelect.note.id
-                  !== $(this).attr('id').split('-')[1]) {
+              if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
                 Vex.forEach($(this).find("*"), function(child) {
                   child.setAttribute("fill", "red");
                   child.setAttribute("stroke", "red");
@@ -246,12 +243,12 @@ editor.draw = {
                 var noteId = $(this).attr('id');
                 // save id of newly selected note
                 editor.mySelect.measure.id = noteId.slice(3,5);
-                editor.mySelect.note.id = noteId.slice(5);
+                // editor.mySelect.note.id = noteId.slice(5);
+                editor.mySelect.note.id = noteId.split('-')[1];
                 // for backward compatibility, will be removed soon
-                editor.selected.note.selection = +editor.mySelect.note.id[1];
+                editor.selected.note.selection = +editor.mySelect.note.id[3];
                 // unhighlight previous selected note
-                $('svg #vf-'+editor.mySelect.measure.previousId+editor.mySelect.note.previousId)
-                  .unHighlightNote();
+                $('svg #vf-'+editor.mySelect.note.previousId).unHighlightNote();
                 console.log(editor.mySelect.note);
               }
             }
@@ -261,8 +258,7 @@ editor.draw = {
       }
       // highlight selected note
       if(editor.mode === 'note')
-        $('svg #vf-'+editor.mySelect.measure.id+editor.mySelect.note.id)
-          .highlightNote();
+        $('svg #vf-'+editor.mySelect.note.id).highlightNote();
 
     // count++;
     // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});

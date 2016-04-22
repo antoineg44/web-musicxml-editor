@@ -30,7 +30,7 @@ function setupDownloadLink(link) {
 
 // http://stackoverflow.com/questions/376373/pretty-printing-xml-with-javascript
 // answered Mar 24 '10 at 17:18 by schellsan
-// TODO: needs to be fine tuned - put leaf element with it's content on one line
+// line second from the end added by Tomas Hudziec 2016
 function formatXml(xml) {
     var reg = /(>)\s*(<)(\/*)/g;
     var wsexp = / *(.*) +\n/g;
@@ -78,6 +78,8 @@ function formatXml(xml) {
 
         formatted += padding + ln + '\n';
     }
+
+    formatted = formatted.replace(/(>)\n\s*(\w+)/g, '$1$2');
 
     return formatted;
 }

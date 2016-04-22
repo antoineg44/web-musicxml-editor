@@ -134,7 +134,8 @@ editor.parse = {
 
     var vfStaveNote = new Vex.Flow.StaveNote({keys: [key], duration: staveNoteDuration+rest});
 
-    vfStaveNote.setId('m' + measureIndex + 'n' + noteIndex);   //set id for note DOM element in svg
+    // set id for note DOM element in svg
+    vfStaveNote.setId('m' + measureIndex + 'n' + noteIndex);
 
     // currently support for only one dot
     // to support more dots, xml2json.js needs to be changed -

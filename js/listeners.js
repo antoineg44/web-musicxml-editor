@@ -38,4 +38,5 @@ jQuery.fn.unHighlightNote = function () {
   return this;
 }
 
+editor.parse.all();
 editor.draw.staves();

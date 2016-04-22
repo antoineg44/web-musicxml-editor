@@ -20,7 +20,28 @@ var scoreJson = {
         '@id': 'P1',
         measure: [
           {
-            '@number': 1
+            '@number': 1,
+            attributes: {
+              divisions: 4,
+              key: {
+                fifths: 0,
+                mode: 'major',
+              },
+              time: {
+                beats: 4,
+                'beat-type': 4
+              },
+              clef: {
+                sign: 'G',
+                line: 2
+              }
+            },
+            note: [
+              {
+                rest: null,
+                duration: 16,
+              }
+            ]
           }
         ]
       }

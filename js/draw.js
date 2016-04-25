@@ -239,12 +239,12 @@ editor.draw = {
                 // save currently selected id to previous
                 editor.mySelect.measure.previousId = editor.mySelect.measure.id;
                 editor.mySelect.note.previousId = editor.mySelect.note.id;
-                // format of id: id='vf-m1n3' - fourth note in second measure
-                var noteId = $(this).attr('id');
+                // format of id: id='vf-m13n10' - eleventh note in fourteenth measure(indexing from 0)
+                var mnId = $(this).attr('id');
                 // save id of newly selected note
-                editor.mySelect.measure.id = noteId.slice(3,5);
-                // editor.mySelect.note.id = noteId.slice(5);
-                editor.mySelect.note.id = noteId.split('-')[1];
+                editor.mySelect.measure.id = mnId.split('n')[0].split('m')[1];  // '13'
+                // editor.mySelect.note.id = mnId.slice(5);
+                editor.mySelect.note.id = mnId.split('-')[1];   // 'm13n10'
                 // for backward compatibility, will be removed soon
                 editor.selected.note.selection = +editor.mySelect.note.id[3];
                 // unhighlight previous selected note

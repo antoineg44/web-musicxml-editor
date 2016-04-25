@@ -14,12 +14,33 @@ editor.delete = {
       }
     }
   },
+  // deletes note by replacing it with a rest of the same duration
   note: function(){
-    var selectedNoteVoice = 'v1';
-
-    editor.measures[editor.selected.measure.selection - 1][selectedNoteVoice].splice(editor.selected.note.selection, 1);
-    editor.selected.note.selection = null;
-    editor.selected.note.clicked = false;
+    // get and parse id of selected note (id='m13n10')
+    var mnId = editor.mySelect.note.id;
+    var measureId = mnId.split('n')[0].split('m')[1];
+    var noteId = mnId.split('n')[1];
+    var vfStaveNote = vfStaveNotes[measureId][noteId];
+    // if note is already a rest, do nothing
+    if(vfStaveNote.isRest())
+      return;
+    // get notes duration properties
+    var duration = vfStaveNote.getDuration();
+    // create new Vex.Flow.StaveNote for rest
+    var vfRest = new Vex.Flow.StaveNote({
+      keys: [ editor.table.DEFAULT_REST_PITCH ],
+      duration: duration + 'r'
+    });
+    // set id for note DOM element in svg
+    vfRest.setId(mnId);
+    // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
+    if(vfStaveNote.isDotted()) {
+      var dots = vfStaveNote.getDots().length;
+      for(var i = 0; i < dots; i++)
+        vfRest.addDotToAll();
+    }
+    // replace deleted note with a rest
+    vfStaveNotes[measureId].splice(noteId, 1, vfRest);
   },
   clef: function(){
     editor.measures[editor.selected.measure.selection - 1].clef = null;

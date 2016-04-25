@@ -37,7 +37,9 @@ editor.add = {
     var numOfMeasures = scoreJson["score-partwise"].part[0].measure.length;
     var newMeasure = {
       '@number': numOfMeasures + 1,
-    }
+    };
+    // TODO: fill newly created measure with whole rest
+    
     scoreJson["score-partwise"].part[0].measure.push(newMeasure);
   },
   note: function(){

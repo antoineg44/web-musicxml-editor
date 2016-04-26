@@ -80,14 +80,6 @@
 				</div>
 				<div class="tab-pane fade" id="notes-and-rests">
 
-<!-- 					<div class="tool-section">
-						<label>Voice:</label>
-						<select id="voice">
-							<option>1</option>
-							<option>2</option>
-						</select>
-					</div>
- -->
 					<div class="tool-section">
 						<input type="radio" name="tools" value="add" checked>Add
 						<input type="radio" name="tools" value="select">Select
@@ -96,6 +88,8 @@
 					<div class="tool-section">
 						<label>Note: </label>
 						<button onclick="editor.delete.note();">-</button>
+						<button onclick="editor.edit.notePitch();">^</button>
+						<button onclick="editor.edit.notePitch();">v</button>
 					</div>
 
 					<div class="tool-section">
@@ -118,7 +112,7 @@
 						<label>Accidental:</label>
 						<input type="radio" name="note-accidental" value="n">natural
 						<input type="radio" name="note-accidental" value="#" checked>sharp
-						<input type="radio" name="note-accidental" value="##" checked>double sharp
+						<input type="radio" name="note-accidental" value="##">double sharp
 						<input type="radio" name="note-accidental" value="b">flat
 						<input type="radio" name="note-accidental" value="bb">double flat
 					</div>
@@ -160,6 +154,7 @@
 		<script src="js/note_tool.js"></script>
 		<script src="js/parse.js"></script>
 		<script src="js/add.js"></script>
+		<script src="js/edit.js"></script>
 		<script src="js/delete.js"></script>
 		<script src="js/draw.js"></script>
 		<script src="js/select.js"></script>

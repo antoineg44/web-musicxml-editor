@@ -107,14 +107,18 @@ editor.parse = {
   },
 
   note: function(note, measureIndex, noteIndex) {
-    var rest = '', key;
+    var rest = '', step = '', oct = '', dot = '', vfAcc = '';
     // rest is empty element in MusicXML, to json it is converted as {rest: null}
     if(note.hasOwnProperty('rest')) {
       rest = 'r';
-      key = editor.table.DEFAULT_REST_PITCH;
+      // key = editor.table.DEFAULT_REST_PITCH;
+      step = 'b';
+      oct = '4';
     }
     else if(note.pitch) {
-      key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
+      // key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
+      step = note.pitch.step.toLowerCase();
+      oct = note.pitch.octave;
       // since this project is yet not interested in how note sounds,
       // alter element is not needed; accidental is read from accidental element
     }
@@ -128,14 +132,43 @@ editor.parse = {
     // get note length from divisions and duration
     var staveNoteDuration =
       editor.NoteTool.getStaveNoteTypeFromDuration(note.duration, divisions);
+      // to get also dots, add third argument to function - true
+      // but currently dots calculating algorithm doesn't work correctly
 
-    //console.log(key+', '+'divisions:'+divisions
+    // console.log(step+'/'+oct+', '+'divisions:'+divisions
     //   +', '+'duration:'+note.duration+' -> '+staveNoteDuration);
 
-    var vfStaveNote = new Vex.Flow.StaveNote({keys: [key], duration: staveNoteDuration+rest});
+    if(note.accidental) {
+      // accidental element can have attributes
+      var mXmlAcc = (typeof note.accidental === 'string')
+                      ? note.accidental
+                      : note.accidental['#text'];
+      vfAcc = editor.table.ACCIDENTAL_DICT[mXmlAcc];
+    }
+
+    var vfStaveNote = new Vex.Flow.StaveNote({
+      keys: [step+vfAcc+'/'+oct],
+      duration: staveNoteDuration+rest
+    });
+
+    console.log(vfStaveNote.getKeys().toString()+' '+staveNoteDuration);
 
     // set id for note DOM element in svg
     vfStaveNote.setId('m' + measureIndex + 'n' + noteIndex);
+
+    // set accidental
+    if(vfAcc !== '')
+      vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(vfAcc));
+
+    // // set dots with dots calculated from duration and divisions
+    // var dotsArray = staveNoteDuration.match(/d/g);
+    // // how many dots, format of vf duration: 'hdd' - half note with 2 dots
+    // if(dotsArray) {
+    //   dots = dotsArray.length;
+    //   for(var i = 0; i < dots; i++) {
+    //     vfStaveNote.addDotToAll();
+    //   }
+    // }
 
     // currently support for only one dot
     // to support more dots, xml2json.js needs to be changed -
@@ -144,15 +177,6 @@ editor.parse = {
     if(note.hasOwnProperty('dot')) {
       vfStaveNote.addDotToAll();
       // console.log('dot');
-    }
-
-    if(note.accidental) {
-      // accidental element can have attributes
-      var mXmlAcc = (typeof note.accidental === 'string')
-                      ? note.accidental : note.accidental['#text'];
-      var vfAcc = editor.table.ACCIDENTAL_DICT[mXmlAcc];
-      vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(vfAcc));
-      //console.log('acci: '+mXmlAcc+' -> '+vfAcc);
     }
 
     return vfStaveNote;

@@ -18,7 +18,7 @@ editor.table.ACCIDENTAL_DICT = {
 // 'double-flat' doesn't exists in MusicXML, it's named 'flat-flat' instead
 };
 
-editor.table.TONES = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+editor.table.TONES = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
 
 editor.table.DEFAULT_CLEF = 'treble';
 editor.table.DEFAULT_TIME_BEATS = 4;

@@ -103,12 +103,30 @@ editor.NoteTool = {};
         };
     };
 
-    // transposes note by tones
+    // transposes note by whole tones
     // example:
     // key: 'c/4'
     // interval: 2
     // return: 'e/4'
     editor.NoteTool.transposeNote = function transposeNote(key, interval) {
-        // TODO !!!
-        return 'c/5';
+        var step = key[0];
+        var octave = +key[key.length - 1];
+        var maxInterval = 24;
+
+        if(interval > maxInterval) interval = maxInterval;
+        else if(interval < -maxInterval) interval = -maxInterval;
+
+        var mod = editor.table.TONES.length;
+
+        var currentIndex = editor.table.TONES.indexOf(step);
+        var shifted = currentIndex + interval;
+        var newIndex = shifted % mod;
+        if(newIndex < 0) newIndex += mod;
+        var newKey = editor.table.TONES[newIndex];
+
+        var octaveShift = shifted / mod;
+        octaveShift = Math.floor(octaveShift);
+        var newOctave = octave + octaveShift;
+
+        return newKey+'/'+newOctave;
     };

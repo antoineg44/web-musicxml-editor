@@ -151,7 +151,7 @@ editor.parse = {
       duration: staveNoteDuration+rest
     });
 
-    console.log(vfStaveNote.getKeys().toString()+' '+staveNoteDuration);
+    // console.log(vfStaveNote.getKeys().toString()+' '+staveNoteDuration);
 
     // set id for note DOM element in svg
     vfStaveNote.setId('m' + measureIndex + 'n' + noteIndex);

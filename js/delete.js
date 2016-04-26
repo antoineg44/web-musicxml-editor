@@ -41,6 +41,12 @@ editor.delete = {
     }
     // replace deleted note with a rest
     vfStaveNotes[measureId].splice(noteId, 1, vfRest);
+    // delete pitch property from json
+    delete scoreJson["score-partwise"].part[0].measure[measureId].note[noteId].pitch;
+    // create empty rest property
+    scoreJson["score-partwise"].part[0].measure[measureId].note[noteId]['rest'] = null;
+    // I assume, that property order does not matter
+    // also, currently I don't delete some non-rest elements, like stem, lyric, notations (e.g.slur)
   },
   clef: function(){
     editor.measures[editor.selected.measure.selection - 1].clef = null;

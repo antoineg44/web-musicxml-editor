@@ -134,6 +134,7 @@ editor.parse = {
       editor.NoteTool.getStaveNoteTypeFromDuration(note.duration, divisions);
       // to get also dots, add third argument to function - true
       // but currently dots calculating algorithm doesn't work correctly
+      // and dot is taken from <dot/> element
 
     // console.log(step+'/'+oct+', '+'divisions:'+divisions
     //   +', '+'duration:'+note.duration+' -> '+staveNoteDuration);

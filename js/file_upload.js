@@ -31,6 +31,10 @@ window.onload = function() {
             scoreJson = $.parseJSON(jsonFromXml);  
             // turn some only properties into one element array
             scoreJson = onlyChildren2Array(scoreJson);
+            // parse json into vexflow structures
+            editor.parse.all();
+            // draw
+            editor.draw.staves();
           }
           catch(err) {
             console.exception(err);

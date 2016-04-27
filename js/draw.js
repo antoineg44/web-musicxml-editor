@@ -3,7 +3,7 @@ editor.draw = {
     console.log('draw');
 
     var noteValue = editor.getRadioValue('note-value');
-    var selectOrAdd = editor.getRadioValue('tools');
+    // var selectOrAdd = editor.getRadioValue('tools');
 
     // editor.ctx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
     editor.ctx.clear();
@@ -160,14 +160,14 @@ editor.draw = {
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
       // draw the cursor note
-      if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
-          vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
-          {
-            keys: [editor.selected.insertNote],
-            duration: noteValue,
-          }
-        )); 
-      }
+      // if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
+      //     vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
+      //     {
+      //       keys: [editor.selected.insertNote],
+      //       duration: noteValue,
+      //     }
+      //   )); 
+      // }
 
       voice.addTickables(vfStaveNotes[m]);
 

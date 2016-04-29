@@ -57,6 +57,10 @@ editor.draw = {
         newLine = false;
       }
 
+      // set height of canvas
+      if((staveY + editor.staveHeight) > $('#notation-canvas').attr('height'))
+        $('#notation-canvas').attr('height', staveY + editor.staveHeight);
+
       // set position and width of stave 
       stave.setX(staveX);
       stave.setY(staveY);

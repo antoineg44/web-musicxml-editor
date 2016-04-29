@@ -97,10 +97,18 @@ editor.add = {
     editor.measures[selectedMeasure].showTimeSig = true;
   },
   accidental: function(){
-    var selectedMeasure = editor.selected.measure.selection - 1;
-    var selectedNoteVoice = 'v1';
+    // var selectedMeasure = editor.selected.measure.selection - 1;
+    // var selectedNoteVoice = 'v1';
+    // editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = accidental;
     var accidental = editor.getRadioValue('note-accidental');
-    editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = accidental;
+
+    var mnId = editor.mySelect.note.id;
+    var measureId = mnId.split('n')[0].split('m')[1];
+    var noteId = mnId.split('n')[1];
+    var vfStaveNote = vfStaveNotes[measureId][noteId];
+
+    // no support for chords currently
+    vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(accidental));
   }, 
   dot: function(){
     var selectedMeasure = editor.selected.measure.selection - 1;

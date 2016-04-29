@@ -108,20 +108,6 @@ editor.parse = {
 
   note: function(note, measureIndex, noteIndex) {
     var rest = '', step = '', oct = '', dot = '', vfAcc = '';
-    // rest is empty element in MusicXML, to json it is converted as {rest: null}
-    if(note.hasOwnProperty('rest')) {
-      rest = 'r';
-      // key = editor.table.DEFAULT_REST_PITCH;
-      step = 'b';
-      oct = '4';
-    }
-    else if(note.pitch) {
-      // key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
-      step = note.pitch.step.toLowerCase();
-      oct = note.pitch.octave;
-      // since this project is yet not interested in how note sounds,
-      // alter element is not needed; accidental is read from accidental element
-    }
     // get MusicXML divisions from attributes for current measure
     var divisions = 1;
     for(var i = 0; i <= measureIndex; i++) {
@@ -138,6 +124,24 @@ editor.parse = {
 
     // console.log(step+'/'+oct+', '+'divisions:'+divisions
     //   +', '+'duration:'+note.duration+' -> '+staveNoteDuration);
+
+    // rest is empty element in MusicXML, to json it is converted as {rest: null}
+    if(note.hasOwnProperty('rest')) {
+      rest = 'r';
+      // key = editor.table.DEFAULT_REST_PITCH;
+      step = 'b';
+      oct = '4';
+      // whole measure rest
+      if(note.rest && note.rest['@measure'] === 'yes')
+        staveNoteDuration = 'w';
+    }
+    else if(note.pitch) {
+      // key = note.pitch.step.toLowerCase() + '/' + note.pitch.octave;
+      step = note.pitch.step.toLowerCase();
+      oct = note.pitch.octave;
+      // since this project is yet not interested in how note sounds,
+      // alter element is not needed; accidental is read from accidental element
+    }
 
     if(note.accidental) {
       // accidental element can have attributes
@@ -173,6 +177,7 @@ editor.parse = {
 
     // currently support for only one dot
     // to support more dots, xml2json.js needs to be changed -
+    // (or use this improved one: https://github.com/henrikingo/xml2json)
     // - currently it is eating up more dots:
     // e.g. from <dot/><dot/><dot/> it makes only one {dot: null}
     if(note.hasOwnProperty('dot')) {

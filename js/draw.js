@@ -61,6 +61,10 @@ editor.draw = {
       if((staveY + editor.staveHeight) > $('#notation-canvas').attr('height'))
         $('#notation-canvas').attr('height', staveY + editor.staveHeight);
 
+      // if one measure is wider than canvas(e.g. in Chant.xml), extend canvas
+      if(staveWidth > $('#notation-canvas').attr('width'))
+        $('#notation-canvas').attr('width', staveWidth);
+
       // set position and width of stave 
       stave.setX(staveX);
       stave.setY(staveY);
@@ -82,10 +86,19 @@ editor.draw = {
         if(!numOfAcc)
           numOfAcc = editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
 
-                                  // not good solution, it would grow after each draw call
-        stave.setWidth(stave.getWidth() /*+ 80 + numOfAcc * 20*/);
+        // not good solution, it would grow after each draw call
+        // stave.setWidth(stave.getWidth() + 80 + numOfAcc * 20);
 
       }
+      // TODO implement removeClef() and removeSignature() for Vex.Flow.Stave
+      // // remove clef and key signature when not newline
+      // else {
+      //   // don't remove items for the very first stave
+      //   if(m != 0) {
+      //     stave.removeClef();
+      //     stave.removeKeySignature();
+      //   }
+      // }
 
       // draw stave
       stave.draw();
@@ -185,6 +198,15 @@ editor.draw = {
 
       // render voice
       voice.draw(editor.ctx, stave);
+
+      // TODO rather create function calculateStaveWidth(stave())
+      // if last note is behind width of stave, extend stave
+      // var lastNoteX = vfStaveNotes[m][vfStaveNotes[m].length - 1].getNoteHeadEndX();
+      // if((lastNoteX - stave.getX()) > staveWidth) {
+      //   console.log('stave['+m+'] extended, lastNoteX: '+lastNoteX+'staveWidth: '+staveWidth);
+      //   stave.setWidth(lastNoteX + 10);
+      //   stave.draw();
+      // }
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
       // TODO: generate fraction for beam groups dynamically according to time signature

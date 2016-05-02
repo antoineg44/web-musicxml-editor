@@ -119,12 +119,12 @@ editor.draw = {
   // removes particular measure(stave) from svg and draws it again
   measure: function(index) {
     // $('#vf-mg'+index).empty();
-    $('#vf-mg'+index).remove();
+    $('#vf-m'+index).remove();
 
     var stave = vfStaves[index];
 
     // svg measure group
-    editor.ctx.openGroup("measureGroup", "mg"+index, {pointerBBox: true});
+    editor.ctx.openGroup("measure", "m"+index, {pointerBBox: true});
       // draw stave
       stave.draw();
 
@@ -171,12 +171,22 @@ editor.draw = {
 
       voice.addTickables(vfStaveNotes[index]);
 
+      //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
+      // TODO: generate fraction for beam groups dynamically according to time signature
+      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[index], {
+        groups: [new Vex.Flow.Fraction(3, 8)]
+      });
+
       // format and justify the notes to 80% of staveWidth
       new Vex.Flow.Formatter().joinVoices([voice]).format([voice], stave.getWidth() * 0.8);
      // also exists method formatToStave()...
 
       // render voice
       voice.draw(editor.ctx, stave);
+
+      beams.forEach(function(beam) {
+        beam.setContext(editor.ctx).draw();
+      });
 
       // if last note is behind width of stave, extend stave
       // var lastNoteX = vfStaveNotes[m][vfStaveNotes[m].length - 1].getNoteHeadEndX();
@@ -186,16 +196,6 @@ editor.draw = {
       //   stave.draw();
       // }
       // TODO rather create function calculateStaveWidth(stave())
-
-      //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-      // TODO: generate fraction for beam groups dynamically according to time signature
-      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[index], {
-        groups: [new Vex.Flow.Fraction(3, 8)]
-      });
-
-      beams.forEach(function(beam) {
-        beam.setContext(editor.ctx).draw();
-      });
 
     // svg measure group
     editor.ctx.closeGroup();

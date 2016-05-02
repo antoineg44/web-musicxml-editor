@@ -75,7 +75,7 @@ editor.parse = {
       }
 
       if(attributes.key) {
-        if(attributes.key.fifths) {
+        if(attributes.key.hasOwnProperty('fifths')) {
           var fifths = +attributes.key.fifths;
           if(fifths == 0)
             keySpec = 'C';

@@ -4,28 +4,11 @@ editor.draw = {
     console.log('draw');
 
     var noteValue = editor.getRadioValue('note-value');
-    // var selectOrAdd = editor.getRadioValue('tools');
 
-    // editor.ctx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
     editor.ctx.clear();
     canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
     $('#notation-canvas').attr('width', canvasWidth);
 
-    // collect number count for each measure
-    // var notesPerMeasureLengths = [];
-    // for(var i in vfStaves) {
-    //   var measure = vfStaves[i];
-    //   if(measure.note)
-    //     notesPerMeasureLengths.push(measure.note.length);
-    //   else
-    //     notesPerMeasureLengths.push(1);
-    // }
-
-    // find maximum number of notes in measure
-    // notesPerMeasureLengths.sort(function(a,b){return b-a;});
-    // var maxLength = notesPerMeasureLengths[0];
-    // var noteWidth = 40;
-    // calculate minimal width for measure, depends on how many notes measure has
     // var minWidth = noteWidth * maxLength;
     var minWidth = editor.noteWidth * 4;
 
@@ -39,14 +22,6 @@ editor.draw = {
       m = +m;
 
       var stave = vfStaves[m];
-
-      // find line break points
-      // for(var br=6; br>=0; br--){
-      //   if(canvasWidth / br >= minWidth){
-      //     var staveWidth = canvasWidth / br - 10;
-      //     break;
-      //   }
-      // }
 
       var staveWidth = stave.getWidth();
 
@@ -183,6 +158,7 @@ editor.draw = {
 
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
+      // TODO
       // draw the cursor note
       // if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
       //     vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
@@ -195,19 +171,13 @@ editor.draw = {
 
       voice.addTickables(vfStaveNotes[index]);
 
-
-      // This is only helper function to justify and draw a 4/4 voice
-      // Vex.Flow.Formatter.FormatAndDraw(editor.ctx, stave, vfStaveNotes[m]);
-
       // format and justify the notes to 80% of staveWidth
-      var w = Math.round(stave.getWidth() * 0.8);
-      new Vex.Flow.Formatter().joinVoices([voice]).format([voice], w);
-                                         // also exists method formatToStave()...
+      new Vex.Flow.Formatter().joinVoices([voice]).format([voice], stave.getWidth() * 0.8);
+     // also exists method formatToStave()...
 
       // render voice
       voice.draw(editor.ctx, stave);
 
-      // TODO rather create function calculateStaveWidth(stave())
       // if last note is behind width of stave, extend stave
       // var lastNoteX = vfStaveNotes[m][vfStaveNotes[m].length - 1].getNoteHeadEndX();
       // if((lastNoteX - stave.getX()) > staveWidth) {
@@ -215,6 +185,7 @@ editor.draw = {
       //   stave.setWidth(lastNoteX + 10);
       //   stave.draw();
       // }
+      // TODO rather create function calculateStaveWidth(stave())
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
       // TODO: generate fraction for beam groups dynamically according to time signature
@@ -222,10 +193,6 @@ editor.draw = {
         groups: [new Vex.Flow.Fraction(3, 8)]
       });
 
-      // if(editor.frameCount % 30 == 0){
-      //   console.log(editor.notes); 
-      // }
-      
       beams.forEach(function(beam) {
         beam.setContext(editor.ctx).draw();
       });

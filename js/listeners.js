@@ -120,5 +120,6 @@ jQuery.fn.unHighlightNote = function () {
   return this;
 }
 
+// TODO move elsewhere
 editor.parse.all();
 editor.draw.score();

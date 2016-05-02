@@ -1,6 +1,6 @@
 /*
 performs transformation from scoreJson to vfStaves[] and vfStaveNotes[]
-prepares vfStaves[] and vfStaveNotes[] for editor.draw.staves() function
+prepares vfStaves[] and vfStaveNotes[] for editor.draw.score() function
 */
 editor.parse = {
   all: function() {

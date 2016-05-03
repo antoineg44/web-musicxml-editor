@@ -1,4 +1,4 @@
-$("#control-panel")[0].addEventListener('click', editor.draw.score);
+// $("#control-panel")[0].addEventListener('click', editor.draw.score);
 $("#editor-tabs")[0].addEventListener('click', editor.draw.score);
 
 // editor.canvas.addEventListener('click', editor.select.measure);
@@ -36,7 +36,7 @@ function attachListenersToMeasureRect(measureRectElem) {
     if(editor.mySelect.measure.id !== measureRectElem.attr('id')) {
       editor.mySelect.measure.previousId = editor.mySelect.measure.id;
       editor.mySelect.measure.id = measureRectElem.attr('id');
-      editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
+      // editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
       var prevId = editor.mySelect.measure.previousId;
       $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
       $('svg .measureRect#'+editor.mySelect.measure.id)
@@ -59,10 +59,10 @@ function attachListenersToNote(noteElem) {
     if(editor.mode === 'note') {
       // we don't want to change colour of already selected note
       if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
-        // change colour for each note parts - stem, head, dot, accidenal...
+        // change colour for each note parts - stem, head, dot, accidental...
         Vex.forEach($(this).find("*"), function(child) {
-          child.setAttribute("fill", "green");
-          child.setAttribute("stroke", "green");
+          child.setAttribute("fill", "orange");
+          child.setAttribute("stroke", "orange");
         });
       }
     }

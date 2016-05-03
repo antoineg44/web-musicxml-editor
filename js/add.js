@@ -17,7 +17,15 @@ editor.add = {
     xmlAttributes.splice(measureIndex + 1, 0, {});
     // fill measure with whole rest
     var wholeRest = new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "wr" });
+    wholeRest.setId('m' + measureIndex + 'n0');
     vfStaveNotes.splice(measureIndex + 1, 0, [wholeRest]);
+
+    // re-number all following notes ids in measures in part
+    for(var m = measureIndex + 1; m < vfStaveNotes.length; m++) {
+      for(var n = 0; n < vfStaveNotes[m].length; n++) {
+        vfStaveNotes[m][n].setId('m' + m + 'n' + n);
+      }
+    }
 
     // add new measure to scoreJson
     var newMeasure = {
@@ -41,13 +49,9 @@ editor.add = {
   note: function(){
           
     // var thisNoteOrRest = editor.getRadioValue('note-or-rest');  //"" or "r"
-    // var thisNoteValue = editor.getRadioValue('note-value');     //w ,h ,q ,8 ,16
-    // // var thisNoteOrChord = editor.getRadioValue('note-or-chord');
-    // // var toolValue = editor.getRadioValue('tools');
+    // var thisNoteValue = editor.getRadioValue('note-value');     //w, h, q, 8, 16
 
     // // find the mouse position and insert the correct note
-    // // if(editor.selected.measure.doubleClick === true && toolValue == 'add'){
-    // // if(toolValue == 'add'){
 
     //   var insertNote = editor.getInsertNote();
 
@@ -74,7 +78,6 @@ editor.add = {
     //       }
     //     );
     //   }
-    // // }
   },
   clef: function(){
     // var dropdownValue = editor.clefDropdown.value;
@@ -93,7 +96,7 @@ editor.add = {
     // editor.measures[selectedMeasure].showTimeSig = true;
   },
   accidental: function(){
-    var accidental = editor.getRadioValue('note-accidental');
+    var vexAcc = editor.getRadioValue('note-accidental');
 
     var mnId = editor.mySelect.note.id;
     var measureIndex = mnId.split('n')[0].split('m')[1];
@@ -101,11 +104,17 @@ editor.add = {
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
 
     if(!vfStaveNote.isRest()) {
-      vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(accidental));
+      // TODO change to setAccidental()
+      vfStaveNote.addAccidental(0, new Vex.Flow.Accidental(vexAcc));
       // no support for chords currently
 
-      // TODO add accidental to json also
-      // ...
+      // add accidental to json
+      var xmlAcc = '';
+      for(var xmlname in editor.table.ACCIDENTAL_DICT) {
+        if(vexAcc === editor.table.ACCIDENTAL_DICT[xmlname])
+          xmlAcc = xmlname;
+      }
+      scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental = xmlAcc;
     }
   }, 
   dot: function(){

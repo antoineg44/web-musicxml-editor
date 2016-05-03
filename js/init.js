@@ -126,7 +126,7 @@ editor.mySelect = {
 
 editor.getRadioValue = function(name){
   var radios = document.getElementsByName(name);
-  for(i=0; i<radios.length; i++){
+  for(var i = 0; i < radios.length; i++){
     if(radios[i].checked){
       return radios[i].value;
       break;
@@ -147,8 +147,8 @@ editor.getInsertNote = function(evt){
   var checkboxValue = $('#dotted-checkbox').is(":checked");
   var d = checkboxValue ? 'd' : '';
 
-  for(i=5; i>=0; i--){
-    for(l=0; l<notesArray.length; l++){
+  for(var i = 5; i >= 0; i--){
+    for(var l = 0; l < notesArray.length; l++){
       var noteOffset = (count * 35) - (l * 5 - 17);
       if(editor.mousePos.y >= y + noteOffset && editor.mousePos.y <= 5 + y + noteOffset){
         var insertNote = notesArray[l] + (i+1) + d;
@@ -162,15 +162,4 @@ editor.getInsertNote = function(evt){
     count++;
   }
   return insertNote;
-},
-
-function printAttributes () {
-  var attributes = {};
-  for (var i in scoreJson["score-partwise"].part.measure) {
-    var measure = scoreJson["score-partwise"].part.measure[i];
-    if (measure['attributes']) {
-      attributes = measure['attributes'];
-    }
-  }
-  // console.log(editor.notes1);
 }

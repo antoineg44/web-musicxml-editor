@@ -100,7 +100,7 @@ editor.parse = {
           var time = attributes.time;
 
         vfStave.setTimeSignature(time.beats + '/' + time['beat-type']);
-        vfStave.setWidth(vfStave.getWidth() + 100);
+        vfStave.setWidth(vfStave.getWidth() + 80);
       }
     }
     return vfStave;

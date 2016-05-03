@@ -5,9 +5,13 @@ editor.draw = {
 
     var noteValue = editor.getRadioValue('note-value');
 
-    editor.ctx.clear();
-    canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
+    var canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
+    var canvasHeight = document.getElementById('canvas-wrapper').clientHeight;
     $('#notation-canvas').attr('width', canvasWidth);
+
+    // TODO resize ctx here and also on lines 43 - 49
+    // editor.ctx.resize(canvasWidth, canvasHeight);
+    editor.ctx.clear();
 
     // var minWidth = noteWidth * maxLength;
     var minWidth = editor.noteWidth * 4;
@@ -17,7 +21,7 @@ editor.draw = {
     var staveX = 10, staveY = 0;
 
     // loop over all measures
-    for(var m in vfStaves) {
+    for(var m = 0; m < vfStaves.length; m++) {
       // string to integer
       m = +m;
 
@@ -36,9 +40,9 @@ editor.draw = {
         newLine = false;
       }
 
-      // set height of canvas
-      if((staveY + editor.staveHeight) > $('#notation-canvas').attr('height'))
-        $('#notation-canvas').attr('height', staveY + editor.staveHeight);
+      // gradually extend height of canvas
+      // if((staveY + editor.staveHeight) > $('#notation-canvas').attr('height'))
+      //   $('#notation-canvas').attr('height', staveY + editor.staveHeight);
 
       // if one measure is wider than canvas(e.g. in Chant.xml), extend canvas
       if(staveWidth > $('#notation-canvas').attr('width'))
@@ -85,13 +89,9 @@ editor.draw = {
       // set start x position for next measure
       staveX = staveX + staveWidth;
 
-      // adding event listeners to note objects
-      for(n in vfStaveNotes[m]){
-          // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
-          // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
-          var item = vfStaveNotes[m][n].getElem();
-          attachListenersToNote(item);
-      }
+      // set height of canvas after last rendered measure
+      if(m == vfStaves.length - 1)
+        $('#notation-canvas').attr('height', staveY + editor.staveHeight);
 
     } // loop over measures
 
@@ -107,9 +107,6 @@ editor.draw = {
     // highlight selected note
     else if(editor.mode === 'note')
       $('svg #vf-'+editor.mySelect.note.id).highlightNote();
-
-    // count++;
-    // $('#notation-canvas > svg').attr({'viewBox': '0 0 800 1056'});
 
   },
 
@@ -144,7 +141,7 @@ editor.draw = {
       var beats = 4, beat_type = 4;
       for(var a = 0; a <= index; a++) {
         // finds attributes of closest previous measure or current measure
-        if(! $.isEmptyObject(xmlAttributes[a]) && attributes.time) {
+        if(! $.isEmptyObject(xmlAttributes[a]) && xmlAttributes[a].time) {
           beats = xmlAttributes[a].time.beats;
           beat_type = xmlAttributes[a].time['beat-type'];
         }
@@ -172,9 +169,8 @@ editor.draw = {
       voice.addTickables(vfStaveNotes[index]);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-      // TODO: generate fraction for beam groups dynamically according to time signature
       var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[index], {
-        groups: [new Vex.Flow.Fraction(3, 8)]
+        groups: [new Vex.Flow.Fraction(beats, beat_type)]
       });
 
       // format and justify the notes to 80% of staveWidth
@@ -199,6 +195,31 @@ editor.draw = {
 
     // svg measure group
     editor.ctx.closeGroup();
+
+    // adding event listeners to note objects
+    for(var n = 0; n < vfStaveNotes[index].length; n++){
+      // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
+      // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
+      var item = vfStaveNotes[index][n].getElem();
+      attachListenersToNote(item);
+    }
+
+  },
+
+  selectedMeasure: function() {
+    var measureIndex = 0;
+    if(editor.mode === 'note') {
+      measureIndex = +editor.mySelect.note.id.split('n')[0].split('m')[1];
+    }
+    else if(editor.mode === 'measure') {
+      measureIndex = +editor.mySelect.measure.id.split('m')[1];
+    }
+
+    editor.draw.measure(measureIndex);
+
+    // highlight selected note
+    if(editor.mode === 'note')
+      $('svg #vf-'+editor.mySelect.note.id).highlightNote();
 
   }
 

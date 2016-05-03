@@ -1,4 +1,5 @@
 editor.delete = {
+  // removes selected measure
   measure: function() {
     // protection from removing last remaining measure
     if(scoreJson["score-partwise"].part[0].measure.length <= 1) {
@@ -7,7 +8,7 @@ editor.delete = {
     }
 
     // TODO attributes need to be solved
-    
+
     // TODO clef, timesig and keysig must remain on very first measure
 
     var measureIndex = +editor.mySelect.measure.id.split('m')[1];
@@ -16,6 +17,13 @@ editor.delete = {
     vfStaves.splice(measureIndex, 1);
     xmlAttributes.splice(measureIndex, 1);
     vfStaveNotes.splice(measureIndex, 1);
+
+    // re-number all following notes ids in measures in part
+    for(var m = measureIndex; m < vfStaveNotes.length; m++) {
+      for(var n = 0; n < vfStaveNotes[m].length; n++) {
+        vfStaveNotes[m][n].setId('m' + m + 'n' + n);
+      }
+    }
 
     // remove measure from scoreJson
     scoreJson["score-partwise"].part[0].measure.splice(measureIndex, 1);
@@ -65,14 +73,14 @@ editor.delete = {
     // also, currently I don't delete some non-rest elements, like stem, lyric, notations (e.g.slur)
   },
   clef: function(){
-    editor.measures[editor.selected.measure.selection - 1].clef = null;
+    // editor.measures[editor.selected.measure.selection - 1].clef = null;
   },
   timeSignature: function(){
-    editor.measures[editor.selected.measure.selection - 1].showTimeSig = false;
+    // editor.measures[editor.selected.measure.selection - 1].showTimeSig = false;
   },
   accidental: function(){
-    var selectedMeasure = editor.selected.measure.selection - 1;
-    var selectedNoteVoice = 'v1';
-    editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = null;
+    // var selectedMeasure = editor.selected.measure.selection - 1;
+    // var selectedNoteVoice = 'v1';
+    // editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = null;
   }
 }

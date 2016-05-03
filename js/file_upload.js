@@ -65,7 +65,7 @@ function onlyChildren2Array(scoreJson) {
   if(! $.isArray(scoreJson["score-partwise"].part[0].measure) )
     scoreJson["score-partwise"].part[0].measure =
       [ scoreJson["score-partwise"].part[0].measure ];
-  for (var i in scoreJson["score-partwise"].part[0].measure)
+  for(var i = 0; i < scoreJson["score-partwise"].part[0].measure.length; i++)
     if(! $.isArray(scoreJson["score-partwise"].part[0].measure[i].note) )
       scoreJson["score-partwise"].part[0].measure[i].note =
         [ scoreJson["score-partwise"].part[0].measure[i].note ];

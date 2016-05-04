@@ -1,16 +1,16 @@
 // $("#control-panel")[0].addEventListener('click', editor.draw.score);
 $("#editor-tabs")[0].addEventListener('click', editor.draw.score);
 
-// editor.canvas.addEventListener('click', editor.select.measure);
-// editor.canvas.addEventListener('click', editor.select.note);
-// editor.canvas.addEventListener('click', editor.add.note);
-// editor.canvas.addEventListener('mousemove', redraw);
+// editor.svgElem.addEventListener('click', editor.select.measure);
+// editor.svgElem.addEventListener('click', editor.select.note);
+// editor.svgElem.addEventListener('click', editor.add.note);
+// editor.svgElem.addEventListener('mousemove', redraw);
 
 function redraw(event) {
   //redraw on mousemove only in note mode when adding new note
   // if(editor.mode === 'note' && getRadioValue('tools') == 'add') {
     // get mouse position
-    editor.mousePos = editor.select.getMousePos(editor.canvas, event);
+    editor.mousePos = editor.select.getMousePos(editor.svgElem, event);
     // save previous cursor note for latter comparison
     editor.lastCursorNote = editor.selected.insertNote;
     // get new note below mouse cursor

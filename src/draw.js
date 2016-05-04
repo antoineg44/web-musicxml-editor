@@ -5,9 +5,9 @@ editor.draw = {
 
     var noteValue = getRadioValue('note-value');
 
-    var canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
-    var canvasHeight = document.getElementById('canvas-wrapper').clientHeight;
-    $('#notation-canvas').attr('width', canvasWidth);
+    var canvasWidth = document.getElementById('svg-wrapper').clientWidth;
+    var canvasHeight = document.getElementById('svg-wrapper').clientHeight;
+    $('#svg-container').attr('width', canvasWidth);
 
     // TODO resize ctx here and also on lines 43 - 49
     // editor.ctx.resize(canvasWidth, canvasHeight);
@@ -41,12 +41,12 @@ editor.draw = {
       }
 
       // gradually extend height of canvas
-      // if((staveY + editor.staveHeight) > $('#notation-canvas').attr('height'))
-      //   $('#notation-canvas').attr('height', staveY + editor.staveHeight);
+      // if((staveY + editor.staveHeight) > $('#svg-container').attr('height'))
+      //   $('#svg-container').attr('height', staveY + editor.staveHeight);
 
       // if one measure is wider than canvas(e.g. in Chant.xml), extend canvas
-      if(staveWidth > $('#notation-canvas').attr('width'))
-        $('#notation-canvas').attr('width', staveWidth);
+      if(staveWidth > $('#svg-container').attr('width'))
+        $('#svg-container').attr('width', staveWidth);
 
       // set position and width of stave 
       stave.setX(staveX);
@@ -91,7 +91,7 @@ editor.draw = {
 
       // set height of canvas after last rendered measure
       if(m == vfStaves.length - 1)
-        $('#notation-canvas').attr('height', staveY + editor.staveHeight);
+        $('#svg-container').attr('height', staveY + editor.staveHeight);
 
     } // loop over measures
 

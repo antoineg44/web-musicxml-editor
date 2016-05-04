@@ -58,9 +58,9 @@ var xmlAttributes = [];  // array of MusicXML attributes for each measure
 var vfStaveNotes = [];   // array of arrays with notes to corresponding stave in vfStaves
 
 var editor = {};
-editor.canvas = $("#notation-canvas")[0];
-editor.renderer = new Vex.Flow.Renderer('notation-canvas', Vex.Flow.Renderer.Backends.SVG);
-// editor.renderer = new Vex.Flow.Renderer(editor.canvas, Vex.Flow.Renderer.Backends.SVG);
+editor.svgElem = $("#svg-container")[0];
+editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
+// editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
 editor.ctx = editor.renderer.getContext();    //SVGContext
 
 editor.clefDropdown = document.getElementById('clef-dropdown');

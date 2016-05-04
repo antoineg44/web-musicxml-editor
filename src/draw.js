@@ -101,12 +101,12 @@ editor.draw = {
         attachListenersToMeasureRect($(this));
       });
       // highlight selected measure
-      $('svg .measureRect#'+editor.mySelect.measure.id)
+      $('svg .measureRect#'+editor.selected.measure.id)
         .css({'fill': 'blue', 'opacity': '0.4'});
     }
     // highlight selected note
     else if(editor.mode === 'note')
-      $('svg #vf-'+editor.mySelect.note.id).colourNote("red");
+      $('svg #vf-'+editor.selected.note.id).colourNote("red");
 
   },
 
@@ -160,7 +160,7 @@ editor.draw = {
       // if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
       //     vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
       //     {
-      //       keys: [editor.selected.insertNote],
+      //       keys: [editor.selected.insertNoteKey],
       //       duration: noteValue,
       //     }
       //   )); 
@@ -202,6 +202,8 @@ editor.draw = {
       // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
       var item = vfStaveNotes[index][n].getElem();
       attachListenersToNote(item);
+      // var noteBBox = vfStaveNotes[index][n].getBoundingBox();
+      // noteBBox.draw(editor.ctx);
     }
 
   },
@@ -210,15 +212,17 @@ editor.draw = {
     var measureIndex = 0;
     // get measure index from id of selected object
     if(editor.mode === 'note')
-      measureIndex = +editor.mySelect.note.id.split('n')[0].split('m')[1];
+      measureIndex = +editor.selected.note.id.split('n')[0].split('m')[1];
     else if(editor.mode === 'measure')
-      measureIndex = +editor.mySelect.measure.id.split('m')[1];
+      measureIndex = +editor.selected.measure.id.split('m')[1];
+
+    console.log('redraw measure['+measureIndex+']');
 
     editor.draw.measure(measureIndex);
 
     // highlight selected note
     if(editor.mode === 'note')
-      $('svg #vf-'+editor.mySelect.note.id).colourNote("red");
+      $('svg #vf-'+editor.selected.note.id).colourNote("red");
   }
 
 }

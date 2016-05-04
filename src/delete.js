@@ -8,10 +8,14 @@ editor.delete = {
     }
 
     // TODO attributes need to be solved
+    // if next measure doesn't have attributes, give it attributes from deleted measure
+    // if next measure has attributes, merge them with attributes from deleted measure
+    // with priority on next measure attributes, use merge from vexui util.js
+
 
     // TODO clef, timesig and keysig must remain on very first measure
 
-    var measureIndex = +editor.mySelect.measure.id.split('m')[1];
+    var measureIndex = +editor.selected.measure.id.split('m')[1];
 
     // remove measure from global arrays
     vfStaves.splice(measureIndex, 1);
@@ -34,12 +38,12 @@ editor.delete = {
     }
     // if deleted measure was last, mark current last measure as selected
     if(measureIndex >= scoreJson["score-partwise"].part[0].measure.length - 1)
-      editor.mySelect.measure.id = 'm'+(scoreJson["score-partwise"].part[0].measure.length - 1);
+      editor.selected.measure.id = 'm'+(scoreJson["score-partwise"].part[0].measure.length - 1);
   },
   // deletes note by replacing it with a rest of the same duration
   note: function(){
     // get and parse id of selected note (id='m13n10')
-    var mnId = editor.mySelect.note.id;
+    var mnId = editor.selected.note.id;
     var measureIndex = mnId.split('n')[0].split('m')[1];
     var noteIndex = mnId.split('n')[1];
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];

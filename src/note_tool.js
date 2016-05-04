@@ -53,6 +53,7 @@ editor.NoteTool = {};
         }
 
         if (count === 20)
+            // TODO throw exception
             console.error('No proper StaveNote type');
 
         var dots = 0;

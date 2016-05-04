@@ -12,12 +12,12 @@ function redraw(event) {
     // get mouse position
     editor.mousePos = editor.select.getMousePos(editor.svgElem, event);
     // save previous cursor note for latter comparison
-    editor.lastCursorNote = editor.selected.insertNote;
+    editor.lastCursorNote = editor.selected.insertNoteKey;
     // get new note below mouse cursor
-    editor.selected.insertNote = getInsertNote();
+    editor.selected.insertNoteKey = getinsertNoteKey();
     // redraw only when cursor note changed pitch
     // (mouse changed y position between staff lines/spaces)
-    if(editor.lastCursorNote !== editor.selected.insertNote)
+    if(editor.lastCursorNote !== editor.selected.insertNoteKey)
       editor.draw.score();
   // }
 }
@@ -32,22 +32,22 @@ function attachListenersToMeasureRect(measureRectElem) {
     $(this).css({'fill': 'blue', 'opacity': '0.4'});
     console.log($(this).attr('id'));
     // if it is not second click on already selected measure
-    if(editor.mySelect.measure.id !== $(this).attr('id')) {
+    if(editor.selected.measure.id !== $(this).attr('id')) {
       // save currently selected id to previous
-      editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-      editor.mySelect.measure.id = $(this).attr('id');
-      var prevId = editor.mySelect.measure.previousId;
+      editor.selected.measure.previousId = editor.selected.measure.id;
+      editor.selected.measure.id = $(this).attr('id');
+      var prevId = editor.selected.measure.previousId;
       $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
-      $('svg .measureRect#'+editor.mySelect.measure.id)
+      $('svg .measureRect#'+editor.selected.measure.id)
         .css({'fill': 'blue', 'opacity': '0.4'});
     }
   });
   measureRectElem.on('mouseenter', function() {
-    if(editor.mySelect.measure.id !== $(this).attr('id'))
+    if(editor.selected.measure.id !== $(this).attr('id'))
       $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
   });
   measureRectElem.on('mouseleave', function() {
-    if(editor.mySelect.measure.id !== $(this).attr('id'))
+    if(editor.selected.measure.id !== $(this).attr('id'))
       $(this).css({'fill': 'transparent'}); 
   });
 }
@@ -57,7 +57,7 @@ function attachListenersToNote(noteElem) {
     // if editor is in mode for working with notes
     if(editor.mode === 'note') {
       // we don't want to change colour of already selected note
-      if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
+      if(editor.selected.note.id !== $(this).attr('id').split('-')[1]) {
         // change colour for each note parts - stem, head, dot, accidental...
         $(this).colourNote("orange");
       }
@@ -66,7 +66,7 @@ function attachListenersToNote(noteElem) {
 
   noteElem.addEventListener("mouseout", function() {
     if(editor.mode === 'note') {
-      if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
+      if(editor.selected.note.id !== $(this).attr('id').split('-')[1]) {
         $(this).colourNote("black");
       }
     }
@@ -75,19 +75,19 @@ function attachListenersToNote(noteElem) {
   noteElem.addEventListener("click", function() {
     if(editor.mode === 'note') {
       // if it is not second click on already selected note
-      if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
+      if(editor.selected.note.id !== $(this).attr('id').split('-')[1]) {
         $(this).colourNote("red");
         // save currently selected id to previous
-        editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-        editor.mySelect.note.previousId = editor.mySelect.note.id;
+        editor.selected.measure.previousId = editor.selected.measure.id;
+        editor.selected.note.previousId = editor.selected.note.id;
         // format of id: id='vf-m13n10' - eleventh note in fourteenth measure(indexing from 0)
         var mnId = $(this).attr('id');
         // save id of newly selected note
-        editor.mySelect.measure.id = mnId.split('n')[0].split('m')[1];  // '13'
-        editor.mySelect.note.id = mnId.split('-')[1];                   // 'm13n10'
+        editor.selected.measure.id = mnId.split('-')[1].split('n')[0];  // 'm13'
+        editor.selected.note.id = mnId.split('-')[1];                   // 'm13n10'
         // unhighlight previous selected note
-        $('svg #vf-'+editor.mySelect.note.previousId).colourNote("black");
-        console.log(editor.mySelect.note);
+        $('svg #vf-'+editor.selected.note.previousId).colourNote("black");
+        console.log(editor.selected.note);
       }
     }
   }, false);

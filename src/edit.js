@@ -2,7 +2,7 @@ editor.edit = {
   // changes selected notes pitch
   notePitch: function(interval){
     // get and parse id of selected note (id='m13n10')
-    var mnId = editor.mySelect.note.id;
+    var mnId = editor.selected.note.id;
     var measureIndex = mnId.split('n')[0].split('m')[1];
     var noteIndex = mnId.split('n')[1];
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];

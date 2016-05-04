@@ -75,45 +75,8 @@ editor.noteWidth = 40;
 
 editor.mode = "measure";    // measure or note
 
-// editor.measures = [   // measures/tacts, in vexflow there is a new stave for each measure
-//   {
-//     clef: 'treble',
-//     timeSigTop: 4,
-//     timeSigBottom: 4,
-//     showTimeSig: true,
-//     keySig: 'C',
-//     width: 200,
-//     noteCount: 0,
-//     v1: []
-//   },
-// ];
-
-// The "selected" object is used for storing details of the current selection.
 editor.selected = {
-  insertNote: null,
-  measure: {
-    selection: null,
-    previousSelection: null,
-    doubleClick: false,
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  },
-  note: {
-    selection: null,
-    previousSelection: null,
-    clicked: false,
-    doubleClick: false,
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    voice: 1,
-  }
-}
-
-editor.mySelect = {
+  insertNoteKey: null,
   measure: {
     id: 'm0',
     previousId: 'm0'

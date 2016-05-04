@@ -5,7 +5,7 @@ editor.add = {
   // inserts new measure filled with whole rest AFTER selected measure
   measure: function(){
     // get and parse id of selected measure (id='m13')
-    var measureIndex = +editor.mySelect.measure.id.split('m')[1];
+    var measureIndex = +editor.selected.measure.id.split('m')[1];
 
     // create new Vex.Flow.Stave, positions will be set in draw function
     var vfNewStave = new Vex.Flow.Stave(0, 0, editor.staveWidth);
@@ -53,7 +53,7 @@ editor.add = {
 
     // // find the mouse position and insert the correct note
 
-    //   var insertNote = getInsertNote();
+    //   var insertNoteKey = getinsertNoteKey();
 
     //   var selectedNoteVoice = 'v1';
     //   var selectedMeasure = editor.selected.measure.selection - 1;
@@ -63,7 +63,7 @@ editor.add = {
     //   if(editor.measures[selectedMeasure].hasOwnProperty(selectedNoteVoice)){
     //     editor.measures[selectedMeasure][selectedNoteVoice].push(
     //       { 
-    //         keys: [insertNote], 
+    //         keys: [insertNoteKey], 
     //         duration: thisNoteValue + thisNoteOrRest,
     //         dotted: checkboxValue,
     //       }
@@ -72,7 +72,7 @@ editor.add = {
     //     editor.measures[selectedMeasure][selectedNoteVoice] = [];
     //     editor.measures[selectedMeasure][selectedNoteVoice].push(
     //       { 
-    //         keys: [insertNote], 
+    //         keys: [insertNoteKey], 
     //         duration: thisNoteValue + thisNoteOrRest,
     //         dotted: checkboxValue,
     //       }
@@ -98,7 +98,7 @@ editor.add = {
   accidental: function(){
     var vexAcc = getRadioValue('note-accidental');
 
-    var mnId = editor.mySelect.note.id;
+    var mnId = editor.selected.note.id;
     var measureIndex = mnId.split('n')[0].split('m')[1];
     var noteIndex = mnId.split('n')[1];
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];

@@ -8,13 +8,13 @@ $("#editor-tabs")[0].addEventListener('click', editor.draw.score);
 
 function redraw(event) {
   //redraw on mousemove only in note mode when adding new note
-  // if(editor.mode === 'note' && editor.getRadioValue('tools') == 'add') {
+  // if(editor.mode === 'note' && getRadioValue('tools') == 'add') {
     // get mouse position
     editor.mousePos = editor.select.getMousePos(editor.canvas, event);
     // save previous cursor note for latter comparison
     editor.lastCursorNote = editor.selected.insertNote;
     // get new note below mouse cursor
-    editor.selected.insertNote = editor.getInsertNote();
+    editor.selected.insertNote = getInsertNote();
     // redraw only when cursor note changed pitch
     // (mouse changed y position between staff lines/spaces)
     if(editor.lastCursorNote !== editor.selected.insertNote)
@@ -23,20 +23,19 @@ function redraw(event) {
 }
 
 function attachListenersToMeasureRect(measureRectElem) {
-  // to avoid multiple handler attach
+  // to avoid multiple handlers attachment
   if(measureRectElem.data('handlers-added'))
     return true;
-
   measureRectElem.data('handlers-added', true);
 
   measureRectElem.on('click', function() {
-    measureRectElem.css({'fill': 'blue', 'opacity': '0.4'});
-    console.log(measureRectElem.attr('id'));
+    $(this).css({'fill': 'blue', 'opacity': '0.4'});
+    console.log($(this).attr('id'));
     // if it is not second click on already selected measure
-    if(editor.mySelect.measure.id !== measureRectElem.attr('id')) {
+    if(editor.mySelect.measure.id !== $(this).attr('id')) {
+      // save currently selected id to previous
       editor.mySelect.measure.previousId = editor.mySelect.measure.id;
-      editor.mySelect.measure.id = measureRectElem.attr('id');
-      // editor.selected.measure.selection = +editor.mySelect.measure.id[1] + 1;
+      editor.mySelect.measure.id = $(this).attr('id');
       var prevId = editor.mySelect.measure.previousId;
       $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
       $('svg .measureRect#'+editor.mySelect.measure.id)
@@ -44,12 +43,12 @@ function attachListenersToMeasureRect(measureRectElem) {
     }
   });
   measureRectElem.on('mouseenter', function() {
-    if(editor.mySelect.measure.id !== measureRectElem.attr('id'))
-      measureRectElem.css({'fill': 'blue', 'opacity': '0.1'}); 
+    if(editor.mySelect.measure.id !== $(this).attr('id'))
+      $(this).css({'fill': 'blue', 'opacity': '0.1'}); 
   });
   measureRectElem.on('mouseleave', function() {
-    if(editor.mySelect.measure.id !== measureRectElem.attr('id'))
-      measureRectElem.css({'fill': 'transparent'}); 
+    if(editor.mySelect.measure.id !== $(this).attr('id'))
+      $(this).css({'fill': 'transparent'}); 
   });
 }
 
@@ -60,10 +59,7 @@ function attachListenersToNote(noteElem) {
       // we don't want to change colour of already selected note
       if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
         // change colour for each note parts - stem, head, dot, accidental...
-        Vex.forEach($(this).find("*"), function(child) {
-          child.setAttribute("fill", "orange");
-          child.setAttribute("stroke", "orange");
-        });
+        $(this).colourNote("orange");
       }
     }
   }, false);
@@ -71,10 +67,7 @@ function attachListenersToNote(noteElem) {
   noteElem.addEventListener("mouseout", function() {
     if(editor.mode === 'note') {
       if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
-        Vex.forEach($(this).find("*"), function(child) {
-          child.setAttribute("fill", "black");
-          child.setAttribute("stroke", "black");
-        });
+        $(this).colourNote("black");
       }
     }
   }, false);
@@ -83,10 +76,7 @@ function attachListenersToNote(noteElem) {
     if(editor.mode === 'note') {
       // if it is not second click on already selected note
       if(editor.mySelect.note.id !== $(this).attr('id').split('-')[1]) {
-        Vex.forEach($(this).find("*"), function(child) {
-          child.setAttribute("fill", "red");
-          child.setAttribute("stroke", "red");
-        });
+        $(this).colourNote("red");
         // save currently selected id to previous
         editor.mySelect.measure.previousId = editor.mySelect.measure.id;
         editor.mySelect.note.previousId = editor.mySelect.note.id;
@@ -94,9 +84,9 @@ function attachListenersToNote(noteElem) {
         var mnId = $(this).attr('id');
         // save id of newly selected note
         editor.mySelect.measure.id = mnId.split('n')[0].split('m')[1];  // '13'
-        editor.mySelect.note.id = mnId.split('-')[1];   // 'm13n10'
+        editor.mySelect.note.id = mnId.split('-')[1];                   // 'm13n10'
         // unhighlight previous selected note
-        $('svg #vf-'+editor.mySelect.note.previousId).unHighlightNote();
+        $('svg #vf-'+editor.mySelect.note.previousId).colourNote("black");
         console.log(editor.mySelect.note);
       }
     }
@@ -104,22 +94,15 @@ function attachListenersToNote(noteElem) {
 
 }
 
-jQuery.fn.highlightNote = function () {
+jQuery.fn.colourNote = function (colour) {
   Vex.forEach(this.find("*"), function(child) {
-    child.setAttribute("fill", "red");
-    child.setAttribute("stroke", "red");
-  });
-  return this;
-}
-
-jQuery.fn.unHighlightNote = function () {
-  Vex.forEach(this.find("*"), function(child) {
-    child.setAttribute("fill", "black");
-    child.setAttribute("stroke", "black");
+    child.setAttribute("fill", colour);
+    child.setAttribute("stroke", colour);
   });
   return this;
 }
 
 // TODO move elsewhere
+// called at start of whole program
 editor.parse.all();
 editor.draw.score();

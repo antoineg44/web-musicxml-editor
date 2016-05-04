@@ -48,12 +48,12 @@ editor.add = {
   },
   note: function(){
           
-    // var thisNoteOrRest = editor.getRadioValue('note-or-rest');  //"" or "r"
-    // var thisNoteValue = editor.getRadioValue('note-value');     //w, h, q, 8, 16
+    // var thisNoteOrRest = getRadioValue('note-or-rest');  //"" or "r"
+    // var thisNoteValue = getRadioValue('note-value');     //w, h, q, 8, 16
 
     // // find the mouse position and insert the correct note
 
-    //   var insertNote = editor.getInsertNote();
+    //   var insertNote = getInsertNote();
 
     //   var selectedNoteVoice = 'v1';
     //   var selectedMeasure = editor.selected.measure.selection - 1;
@@ -96,7 +96,7 @@ editor.add = {
     // editor.measures[selectedMeasure].showTimeSig = true;
   },
   accidental: function(){
-    var vexAcc = editor.getRadioValue('note-accidental');
+    var vexAcc = getRadioValue('note-accidental');
 
     var mnId = editor.mySelect.note.id;
     var measureIndex = mnId.split('n')[0].split('m')[1];

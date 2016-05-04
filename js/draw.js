@@ -3,7 +3,7 @@ editor.draw = {
   score: function() {
     console.log('draw');
 
-    var noteValue = editor.getRadioValue('note-value');
+    var noteValue = getRadioValue('note-value');
 
     var canvasWidth = document.getElementById('canvas-wrapper').clientWidth;
     var canvasHeight = document.getElementById('canvas-wrapper').clientHeight;
@@ -106,7 +106,7 @@ editor.draw = {
     }
     // highlight selected note
     else if(editor.mode === 'note')
-      $('svg #vf-'+editor.mySelect.note.id).highlightNote();
+      $('svg #vf-'+editor.mySelect.note.id).colourNote("red");
 
   },
 
@@ -208,19 +208,17 @@ editor.draw = {
 
   selectedMeasure: function() {
     var measureIndex = 0;
-    if(editor.mode === 'note') {
+    // get measure index from id of selected object
+    if(editor.mode === 'note')
       measureIndex = +editor.mySelect.note.id.split('n')[0].split('m')[1];
-    }
-    else if(editor.mode === 'measure') {
+    else if(editor.mode === 'measure')
       measureIndex = +editor.mySelect.measure.id.split('m')[1];
-    }
 
     editor.draw.measure(measureIndex);
 
     // highlight selected note
     if(editor.mode === 'note')
-      $('svg #vf-'+editor.mySelect.note.id).highlightNote();
-
+      $('svg #vf-'+editor.mySelect.note.id).colourNote("red");
   }
 
 }

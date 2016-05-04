@@ -75,18 +75,18 @@ editor.noteWidth = 40;
 
 editor.mode = "measure";    // measure or note
 
-editor.measures = [   // measures/tacts, in vexflow there is a new stave for each measure
-  {
-    clef: 'treble',
-    timeSigTop: 4,
-    timeSigBottom: 4,
-    showTimeSig: true,
-    keySig: 'C',
-    width: 200,
-    noteCount: 0,
-    v1: []
-  },
-];
+// editor.measures = [   // measures/tacts, in vexflow there is a new stave for each measure
+//   {
+//     clef: 'treble',
+//     timeSigTop: 4,
+//     timeSigBottom: 4,
+//     showTimeSig: true,
+//     keySig: 'C',
+//     width: 200,
+//     noteCount: 0,
+//     v1: []
+//   },
+// ];
 
 // The "selected" object is used for storing details of the current selection.
 editor.selected = {
@@ -122,44 +122,4 @@ editor.mySelect = {
     id: 'm0n0',
     previousId: 'm0n0'
   }
-}
-
-editor.getRadioValue = function(name){
-  var radios = document.getElementsByName(name);
-  for(var i = 0; i < radios.length; i++){
-    if(radios[i].checked){
-      return radios[i].value;
-      break;
-    }
-  }
-}
-
-/*
-TODO: documentary comment...
-*/
-editor.getInsertNote = function(evt){
-  // find the mouse position and return the correct note for that position.
-  var y = vfStaves[editor.mySelect.measure.id[1]].y;
-  // var y = editor.selected.measure.y;
-  var notesArray = ['c/','d/','e/','f/','g/','a/','b/'];
-  var count = 0;
-
-  var checkboxValue = $('#dotted-checkbox').is(":checked");
-  var d = checkboxValue ? 'd' : '';
-
-  for(var i = 5; i >= 0; i--){
-    for(var l = 0; l < notesArray.length; l++){
-      var noteOffset = (count * 35) - (l * 5 - 17);
-      if(editor.mousePos.y >= y + noteOffset && editor.mousePos.y <= 5 + y + noteOffset){
-        var insertNote = notesArray[l] + (i+1) + d;
-        var found = true;
-        break;
-      }
-      if(found == true){
-        break;
-      }
-    }
-    count++;
-  }
-  return insertNote;
 }

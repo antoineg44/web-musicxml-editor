@@ -35,13 +35,12 @@ function redrawMeasureWithCursorNote(event) {
 
   // mouse cursor is within note column
   if(isCursorInBoundingBox(bb, editor.mousePos.current) ) {
-
-    editor.svgElem.addEventListener('click', editor.add.note, false); 
-
     // save mouse position
     editor.mousePos.previous = editor.mousePos.current;
     // get new note below mouse cursor
-    editor.selected.cursorNoteKey = getcursorNoteKey();
+    editor.selected.cursorNoteKey = getCursorNoteKey();
+    
+    editor.svgElem.addEventListener('click', editor.add.note, false); 
 
     // redraw only when cursor note changed pitch
     // (mouse changed y position between staff lines/spaces)
@@ -92,7 +91,7 @@ function getRadioValue(name) {
 TODO: documentary comment...
 */
 // TODO rewrite with use of vfStave.getLineForY(editor.mousePos.current.y)
-function getcursorNoteKey() {
+function getCursorNoteKey() {
   // find the mouse position and return the correct note for that position.
   var y = vfStaves[editor.selected.measure.id.split('m')[1]].y;
   // var y = editor.selected.measure.y;

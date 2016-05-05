@@ -49,35 +49,35 @@ editor.add = {
   note: function(){
     console.log('add note');
     // var thisNoteOrRest = getRadioValue('note-or-rest');  //"" or "r"
-    // var thisNoteValue = getRadioValue('note-value');     //w, h, q, 8, 16
+    var noteValue = getRadioValue('note-value');     //w, h, q, 8, 16
+    var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
 
-    // // find the mouse position and insert the correct note
+    // get and parse id of selected note (id='m13n10')
+    var mnId = editor.selected.note.id;
+    var measureIndex = mnId.split('n')[0].split('m')[1];
+    var noteIndex = mnId.split('n')[1];
+    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
 
-    //   var cursorNoteKey = getcursorNoteKey();
+    // create new Vex.Flow.StaveNote
+    var vfNote = new Vex.Flow.StaveNote({
+      keys: [ editor.selected.cursorNoteKey ],
+      duration: noteValue + dot,
+      auto_stem: true
+    });
+    // set id for note DOM element in svg
+    vfNote.setId(mnId);
 
-    //   var selectedNoteVoice = 'v1';
-    //   var selectedMeasure = editor.selected.measure.selection - 1;
+    if(dot === 'd')
+      vfNote.addDotToAll();
 
-    //   var checkboxValue = $('#dotted-checkbox').is(":checked");
+    // put new note in place of selected rest
+    vfStaveNotes[measureIndex].splice(noteIndex, 1, vfNote);
 
-    //   if(editor.measures[selectedMeasure].hasOwnProperty(selectedNoteVoice)){
-    //     editor.measures[selectedMeasure][selectedNoteVoice].push(
-    //       { 
-    //         keys: [cursorNoteKey], 
-    //         duration: thisNoteValue + thisNoteOrRest,
-    //         dotted: checkboxValue,
-    //       }
-    //     );
-    //   }else{
-    //     editor.measures[selectedMeasure][selectedNoteVoice] = [];
-    //     editor.measures[selectedMeasure][selectedNoteVoice].push(
-    //       { 
-    //         keys: [cursorNoteKey], 
-    //         duration: thisNoteValue + thisNoteOrRest,
-    //         dotted: checkboxValue,
-    //       }
-    //     );
-    //   }
+    // TODO put new note into scoreJson also
+
+    editor.svgElem.removeEventListener('click', editor.add.note, false); 
+    editor.draw.selectedMeasure(false);
+
   },
   clef: function(){
     // var dropdownValue = editor.clefDropdown.value;

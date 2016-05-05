@@ -14,7 +14,7 @@ function redraw(event) {
     // save previous cursor note for latter comparison
     editor.lastCursorNote = editor.selected.cursorNoteKey;
     // get new note below mouse cursor
-    editor.selected.cursorNoteKey = getcursorNoteKey();
+    editor.selected.cursorNoteKey = getCursorNoteKey();
     // redraw only when cursor note changed pitch
     // (mouse changed y position between staff lines/spaces)
     if(editor.lastCursorNote !== editor.selected.cursorNoteKey)

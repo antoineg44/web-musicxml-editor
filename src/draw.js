@@ -171,12 +171,15 @@ editor.draw = {
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
       if(editor.mode === 'note' && +selMeasureIndex === index && cursorNoteEnabled) {
+        var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
         // create cursor note
         var cursorNote = new Vex.Flow.StaveNote({
           keys: [editor.selected.cursorNoteKey],
-          duration: noteValue,
+          duration: noteValue + dot,
+          auto_stem: true
         });
         // console.log(cursorNote);
+        if(dot === 'd') cursorNote.addDotToAll();
 
         cursorNote.setStave(stave);
 
@@ -193,7 +196,11 @@ editor.draw = {
           .joinVoices([voice, cursorNoteVoice])
           .format([voice, cursorNoteVoice], stave.getWidth() * 0.8);
 
+        // cursor note is only note in its voice, so it is on place of the very first note
+        // we need to shift it to selected note x position
         var xShift = selVFStaveNote.getX();
+        // shift back by width of accidentals on left side of first note in measure
+        xShift -= vfStaveNotes[index][0].getMetrics().modLeftPx;
         cursorNote.setXShift(xShift);
 
         cursorNoteVoice.draw(editor.ctx, stave);

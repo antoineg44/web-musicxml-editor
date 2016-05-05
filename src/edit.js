@@ -18,7 +18,8 @@ editor.edit = {
     // create new Vex.Flow.StaveNote
     var vfNote = new Vex.Flow.StaveNote({
       keys: [ newKey ],
-      duration: duration
+      duration: duration,
+      auto_stem: true
     });
     // set id for note DOM element in svg
     vfNote.setId(mnId);

@@ -16,6 +16,8 @@ editor.delete = {
     // TODO clef, timesig and keysig must remain on very first measure
 
     var measureIndex = +editor.selected.measure.id.split('m')[1];
+    // to avoid inconsistency between measure and note id
+    editor.selected.note.id = 'm' + measureIndex + 'n0';
 
     // remove measure from global arrays
     vfStaves.splice(measureIndex, 1);
@@ -37,8 +39,11 @@ editor.delete = {
       scoreJson["score-partwise"].part[0].measure[m]["@number"] = m;
     }
     // if deleted measure was last, mark current last measure as selected
-    if(measureIndex >= scoreJson["score-partwise"].part[0].measure.length - 1)
+    if(measureIndex >= scoreJson["score-partwise"].part[0].measure.length - 1) {
       editor.selected.measure.id = 'm'+(scoreJson["score-partwise"].part[0].measure.length - 1);
+      // mark first note in that measure as selected
+      editor.selected.note.id = editor.selected.measure.id + 'n0';
+    }
   },
   // deletes note by replacing it with a rest of the same duration
   note: function(){

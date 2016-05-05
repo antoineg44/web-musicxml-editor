@@ -154,7 +154,8 @@ editor.parse = {
     var vfStaveNote = new Vex.Flow.StaveNote({
       keys: [step+vfAcc+'/'+oct],
       duration: staveNoteDuration+rest,
-      clef: rest === '' ? editor.currentClef : 'treble'
+      clef: rest === '' ? editor.currentClef : 'treble',
+      auto_stem: true
     });
 
     // console.log(vfStaveNote.getKeys().toString()+' '+staveNoteDuration);

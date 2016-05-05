@@ -59,8 +59,8 @@ var vfStaveNotes = [];   // array of arrays with notes to corresponding stave in
 
 var editor = {};
 editor.svgElem = $("#svg-container")[0];
-editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
-// editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
+// editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
+editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
 editor.ctx = editor.renderer.getContext();    //SVGContext
 
 editor.clefDropdown = document.getElementById('clef-dropdown');
@@ -76,7 +76,7 @@ editor.noteWidth = 40;
 editor.mode = "measure";    // measure or note
 
 editor.selected = {
-  insertNoteKey: 'b/4',
+  cursorNoteKey: 'b/4',
   measure: {
     id: 'm0',
     previousId: 'm0'
@@ -86,3 +86,14 @@ editor.selected = {
     previousId: 'm0n0'
   }
 }
+
+editor.mousePos = {
+  current: {
+    x: 0,
+    y: 0
+  },
+  previous: {
+    x: 0,
+    y: 0
+  }
+};

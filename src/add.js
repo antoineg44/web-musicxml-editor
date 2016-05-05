@@ -53,7 +53,7 @@ editor.add = {
 
     // // find the mouse position and insert the correct note
 
-    //   var insertNoteKey = getInsertNoteKey();
+    //   var cursorNoteKey = getcursorNoteKey();
 
     //   var selectedNoteVoice = 'v1';
     //   var selectedMeasure = editor.selected.measure.selection - 1;
@@ -63,7 +63,7 @@ editor.add = {
     //   if(editor.measures[selectedMeasure].hasOwnProperty(selectedNoteVoice)){
     //     editor.measures[selectedMeasure][selectedNoteVoice].push(
     //       { 
-    //         keys: [insertNoteKey], 
+    //         keys: [cursorNoteKey], 
     //         duration: thisNoteValue + thisNoteOrRest,
     //         dotted: checkboxValue,
     //       }
@@ -72,7 +72,7 @@ editor.add = {
     //     editor.measures[selectedMeasure][selectedNoteVoice] = [];
     //     editor.measures[selectedMeasure][selectedNoteVoice].push(
     //       { 
-    //         keys: [insertNoteKey], 
+    //         keys: [cursorNoteKey], 
     //         duration: thisNoteValue + thisNoteOrRest,
     //         dotted: checkboxValue,
     //       }

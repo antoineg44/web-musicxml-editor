@@ -10,14 +10,14 @@ function redraw(event) {
   //redraw on mousemove only in note mode when adding new note
   // if(editor.mode === 'note' && getRadioValue('tools') == 'add') {
     // get mouse position
-    editor.mousePos = editor.select.getMousePos(editor.svgElem, event);
+    editor.mousePos.current = getMousePos(editor.svgElem, event);
     // save previous cursor note for latter comparison
-    editor.lastCursorNote = editor.selected.insertNoteKey;
+    editor.lastCursorNote = editor.selected.cursorNoteKey;
     // get new note below mouse cursor
-    editor.selected.insertNoteKey = getInsertNoteKey();
+    editor.selected.cursorNoteKey = getcursorNoteKey();
     // redraw only when cursor note changed pitch
     // (mouse changed y position between staff lines/spaces)
-    if(editor.lastCursorNote !== editor.selected.insertNoteKey)
+    if(editor.lastCursorNote !== editor.selected.cursorNoteKey)
       editor.draw.score();
   // }
 }

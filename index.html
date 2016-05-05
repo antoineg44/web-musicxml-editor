@@ -94,14 +94,14 @@
  -->
           <div class="tool-section">
             <label>Note: </label>
-            <button onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure();">^</button>
-            <button onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure();">v</button>
-            <button onclick="editor.delete.note(); editor.draw.selectedMeasure();">-</button>
+            <button onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure(false);">^</button>
+            <button onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure(false);">v</button>
+            <button onclick="editor.delete.note(); editor.draw.selectedMeasure(false);">-</button>
           </div>
 
           <div class="tool-section">
             <label>Dotted:</label>
-            <input type="checkbox" id="dotted-checkbox" onclick="editor.add.dot() ;editor.draw.selectedMeasure();"/>
+            <input type="checkbox" id="dotted-checkbox" onclick="editor.add.dot() ;editor.draw.selectedMeasure(false);"/>
           </div>
 
           <br>
@@ -125,8 +125,8 @@
           </div>
 
           <div class="tool-section">
-            <button id="add-accidental" onclick="editor.add.accidental() ;editor.draw.selectedMeasure();">+</button>
-            <button id="delete-accidental" onclick="editor.delete.accidental() ;editor.draw.selectedMeasure();">-</button>
+            <button id="add-accidental" onclick="editor.add.accidental() ;editor.draw.selectedMeasure(false);">+</button>
+            <button id="delete-accidental" onclick="editor.delete.accidental() ;editor.draw.selectedMeasure(false);">-</button>
           </div>
 
           <div class="tool-section">

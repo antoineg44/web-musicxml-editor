@@ -10,6 +10,8 @@ editor.draw = {
     // TODO resize ctx here and also on lines 43 - 49
     // editor.ctx.resize(canvasWidth, canvasHeight);
     editor.ctx.clear();
+    // no cursor note will be displayed
+    editor.selected.cursorNoteKey = null;
 
     // var minWidth = noteWidth * maxLength;
     var minWidth = editor.noteWidth * 4;
@@ -82,7 +84,7 @@ editor.draw = {
       // }
 
 
-      editor.draw.measure(m);
+      editor.draw.measure(m, false);
 
       // set start x position for next measure
       staveX = staveX + staveWidth;
@@ -112,7 +114,7 @@ editor.draw = {
 
 
   // removes particular measure(stave) from svg and draws it again
-  measure: function(index) {
+  measure: function(index, cursorNoteEnabled) {
     var noteValue = getRadioValue('note-value');
 
     // $('#vf-mg'+index).empty();
@@ -167,11 +169,11 @@ editor.draw = {
       var selNoteIndex = mnId.split('n')[1];
       var selVFStaveNote = vfStaveNotes[selMeasureIndex][selNoteIndex];
 
-      // draw the cursor note
-      if(editor.mode === 'note' && +selMeasureIndex === index) {
+      // draw the cursor note, if drawing selected measure and cursor note is enabled
+      if(editor.mode === 'note' && +selMeasureIndex === index && cursorNoteEnabled) {
         // create cursor note
         var cursorNote = new Vex.Flow.StaveNote({
-          keys: [editor.selected.insertNoteKey],
+          keys: [editor.selected.cursorNoteKey],
           duration: noteValue,
         });
         // console.log(cursorNote);
@@ -193,7 +195,7 @@ editor.draw = {
 
         var xShift = selVFStaveNote.getX();
         cursorNote.setXShift(xShift);
-        
+
         cursorNoteVoice.draw(editor.ctx, stave);
       }
       // measure mode, no cursor note
@@ -237,7 +239,7 @@ editor.draw = {
 
   },
 
-  selectedMeasure: function() {
+  selectedMeasure: function(cursorNoteEnabled) {
     var measureIndex = 0;
     // get measure index from id of selected object
     if(editor.mode === 'note')
@@ -247,7 +249,7 @@ editor.draw = {
 
     console.log('redraw measure['+measureIndex+']');
 
-    editor.draw.measure(measureIndex);
+    editor.draw.measure(measureIndex, cursorNoteEnabled);
 
     // highlight selected note
     if(editor.mode === 'note')

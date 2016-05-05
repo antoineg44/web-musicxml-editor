@@ -13,25 +13,16 @@ editor.parse = {
     var vfStave;
     // loop over all <measures>(MusicXML measures) and make Vex.Flow.Staves from them
     for(var i = 0; i < scoreJson["score-partwise"].part[0].measure.length; i++) {
-      vfStave = editor.parse.measure(scoreJson["score-partwise"].part[0].measure[i], i);
+      vfStave = editor.parse.attributes(i);
 
-      vfStave = editor.parse.attributes(vfStave, i);
+      vfStave = editor.parse.measure(scoreJson["score-partwise"].part[0].measure[i], i, vfStave);
 
       // push measure to global array, draw() will read from it
       vfStaves.push(vfStave);
     }
   },
 
-  measure: function(measure, index) {
-    // one Vex.Flow.Stave corresponds to one <measure>
-    var vfStave = new Vex.Flow.Stave(0, 0, editor.staveWidth);
-
-    // push attributes for measure to global array of attributes for measures
-    if(measure['attributes'])
-      xmlAttributes.push(measure['attributes']);
-    else
-      xmlAttributes.push({});
-
+  measure: function(measure, index, vfStave) {
     var vfStaveNote, vfStaveNotesPerMeasure = [];
     if(measure.note) {
       // loop over all notes in measure
@@ -42,6 +33,8 @@ editor.parse = {
       vfStaveNotes.push(vfStaveNotesPerMeasure);
       // width of measure directly proportional to number of notes
       vfStave.setWidth(vfStaveNotesPerMeasure.length * editor.noteWidth);
+      if(vfStave.getWidth() < editor.staveWidth)
+        vfStave.setWidth(editor.staveWidth);
     }
     else    // measure doesn't have notes
       vfStaveNotes.push([]);
@@ -54,10 +47,17 @@ editor.parse = {
     return vfStave;
   },
 
-  attributes: function(vfStave, measureIndex) {
+  attributes: function(measureIndex) {
+    var attributes = scoreJson["score-partwise"].part[0].measure[measureIndex]['attributes'] || {};
+
+    // push attributes for measure to global array of attributes for measures
+    xmlAttributes.push(attributes);
+
+    // create one Vex.Flow.Stave, it corresponds to one <measure>
+    var vfStave = new Vex.Flow.Stave(0, 0, editor.staveWidth);
+
     // setting attributes for measure
-    if(! $.isEmptyObject(xmlAttributes[measureIndex])) {
-      attributes = xmlAttributes[measureIndex];
+    if(! $.isEmptyObject(attributes)) {
 
       if(attributes.clef) {
         if($.isArray(attributes.clef)) {
@@ -153,7 +153,8 @@ editor.parse = {
 
     var vfStaveNote = new Vex.Flow.StaveNote({
       keys: [step+vfAcc+'/'+oct],
-      duration: staveNoteDuration+rest
+      duration: staveNoteDuration+rest,
+      clef: rest === '' ? editor.currentClef : 'treble'
     });
 
     // console.log(vfStaveNote.getKeys().toString()+' '+staveNoteDuration);

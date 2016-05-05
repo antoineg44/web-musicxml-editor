@@ -3,8 +3,6 @@ editor.draw = {
   score: function() {
     console.log('draw');
 
-    var noteValue = getRadioValue('note-value');
-
     var canvasWidth = document.getElementById('svg-wrapper').clientWidth;
     var canvasHeight = document.getElementById('svg-wrapper').clientHeight;
     $('#svg-container').attr('width', canvasWidth);
@@ -115,6 +113,8 @@ editor.draw = {
 
   // removes particular measure(stave) from svg and draws it again
   measure: function(index) {
+    var noteValue = getRadioValue('note-value');
+
     // $('#vf-mg'+index).empty();
     $('#vf-m'+index).remove();
 
@@ -155,17 +155,6 @@ editor.draw = {
 
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
-      // TODO
-      // draw the cursor note
-      // if(i == editor.selected.measure.selection - 1 && selectOrAdd == 'add'){
-      //     vfStaveNotes[m].notes.push(new Vex.Flow.StaveNote(
-      //     {
-      //       keys: [editor.selected.insertNoteKey],
-      //       duration: noteValue,
-      //     }
-      //   )); 
-      // }
-
       voice.addTickables(vfStaveNotes[index]);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
@@ -173,11 +162,51 @@ editor.draw = {
         groups: [new Vex.Flow.Fraction(beats, beat_type)]
       });
 
-      // format and justify the notes to 80% of staveWidth
-      new Vex.Flow.Formatter().joinVoices([voice]).format([voice], stave.getWidth() * 0.8);
-     // also exists method formatToStave()...
+      var mnId = editor.selected.note.id;
+      var selMeasureIndex = mnId.split('n')[0].split('m')[1];
+      var selNoteIndex = mnId.split('n')[1];
+      var selVFStaveNote = vfStaveNotes[selMeasureIndex][selNoteIndex];
 
-      // render voice
+      // draw the cursor note
+      if(editor.mode === 'note' && +selMeasureIndex === index) {
+        // create cursor note
+        var cursorNote = new Vex.Flow.StaveNote({
+          keys: [editor.selected.insertNoteKey],
+          duration: noteValue,
+        });
+        // console.log(cursorNote);
+
+        cursorNote.setStave(stave);
+
+        // create separate voice for cursor note
+        var cursorNoteVoice = new Vex.Flow.Voice({
+            num_beats: beats,
+            beat_value: beat_type,
+            resolution: Vex.Flow.RESOLUTION
+          });
+        cursorNoteVoice.setStrict(false);
+        cursorNoteVoice.addTickables([cursorNote]);
+
+        new Vex.Flow.Formatter()
+          .joinVoices([voice, cursorNoteVoice])
+          .format([voice, cursorNoteVoice], stave.getWidth() * 0.8);
+
+        var xShift = selVFStaveNote.getX();
+        cursorNote.setXShift(xShift);
+        
+        cursorNoteVoice.draw(editor.ctx, stave);
+      }
+      // measure mode, no cursor note
+      else {
+        // format and justify the notes to 80% of staveWidth
+        new Vex.Flow.Formatter()
+          .joinVoices([voice])
+          .format([voice], stave.getWidth() * 0.8);
+        // also exists method formatToStave()...
+        // but it is rather helper function I guess, like FormatAndDraw() in Voice
+      }
+
+      // draw normal voice always
       voice.draw(editor.ctx, stave);
 
       beams.forEach(function(beam) {

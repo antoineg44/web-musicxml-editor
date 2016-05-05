@@ -23,22 +23,30 @@ function redrawMeasureWithCursorNote(event) {
   var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
   var vfStave = vfStaves[measureIndex];
 
-  var bb = vfStave.getBoundingBox();
+  var bb = vfStave.getBoundingBox();  // TODO see how it gets y coordinates in vexflow-debug.js
   var begin = vfStaveNote.getNoteHeadBeginX() - 5;
   bb.setX(begin);
   bb.setW(vfStaveNote.getNoteHeadEndX() - begin + 5);
   // bb.setW(20);
-  bb.draw(editor.ctx);
+  // bb.draw(editor.ctx);
 
   if(isCursorWithinRectangle( bb.getX(), bb.getY(), bb.getW(), bb.getH(),
                               editor.mousePos.x, editor.mousePos.y ) ) {
-    editor.draw.selectedMeasure();
+
+    // save previous cursor note for latter comparison
+    editor.lastCursorNote = editor.selected.insertNoteKey;
+    editor.selected.insertNoteKey = getInsertNoteKey();
+
+    if(editor.lastCursorNote !== editor.selected.insertNoteKey) {
+      // console.log(editor.selected.insertNoteKey);
+      editor.draw.selectedMeasure();
+    }
   }
 
   // save previous cursor note for latter comparison
   // editor.lastCursorNote = editor.selected.insertNoteKey;
   // get new note below mouse cursor
-  // editor.selected.insertNoteKey = getinsertNoteKey();
+  // editor.selected.insertNoteKey = getInsertNoteKey();
   // redraw only when cursor note changed pitch
   // (mouse changed y position between staff lines/spaces)
   // if(editor.lastCursorNote !== editor.selected.insertNoteKey)
@@ -61,18 +69,16 @@ var rect = canvas.getBoundingClientRect();
 
 function getRadioValue(name) {
   var radios = document.getElementsByName(name);
-  for(var i = 0; i < radios.length; i++){
-    if(radios[i].checked){
+  for(var i = 0; i < radios.length; i++)
+    if(radios[i].checked)
       return radios[i].value;
-      break;
-    }
-  }
 }
 
 /*
 TODO: documentary comment...
 */
-function getinsertNoteKey(evt) {
+// TODO rewrite with use of vfStave.getLineForY(editor.mousePos.y)
+function getInsertNoteKey() {
   // find the mouse position and return the correct note for that position.
   var y = vfStaves[editor.selected.measure.id.split('m')[1]].y;
   // var y = editor.selected.measure.y;

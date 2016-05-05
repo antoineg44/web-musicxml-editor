@@ -53,7 +53,7 @@ editor.add = {
 
     // // find the mouse position and insert the correct note
 
-    //   var insertNoteKey = getinsertNoteKey();
+    //   var insertNoteKey = getInsertNoteKey();
 
     //   var selectedNoteVoice = 'v1';
     //   var selectedMeasure = editor.selected.measure.selection - 1;

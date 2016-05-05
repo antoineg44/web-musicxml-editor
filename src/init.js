@@ -76,7 +76,7 @@ editor.noteWidth = 40;
 editor.mode = "measure";    // measure or note
 
 editor.selected = {
-  insertNoteKey: null,
+  insertNoteKey: 'b/4',
   measure: {
     id: 'm0',
     previousId: 'm0'

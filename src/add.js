@@ -47,7 +47,7 @@ editor.add = {
     }
   },
   note: function(){
-          
+    console.log('add note');
     // var thisNoteOrRest = getRadioValue('note-or-rest');  //"" or "r"
     // var thisNoteValue = getRadioValue('note-value');     //w, h, q, 8, 16
 

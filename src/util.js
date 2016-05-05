@@ -3,6 +3,11 @@ function switchToNoteMode() {
   editor.svgElem.addEventListener('mousemove', redrawMeasureWithCursorNote, false);
 }
 
+function switchToMeasureMode() {
+  editor.mode = 'measure';
+  editor.svgElem.removeEventListener('mousemove', redrawMeasureWithCursorNote, false);
+}
+
 // draws note, which is to be added, below mouse cursor when it is
 // moving in column of selected note(only rest currenly)
 function redrawMeasureWithCursorNote(event) {
@@ -30,10 +35,11 @@ function redrawMeasureWithCursorNote(event) {
 
   // mouse cursor is within note column
   if(isCursorInBoundingBox(bb, editor.mousePos.current) ) {
+
+    editor.svgElem.addEventListener('click', editor.add.note, false); 
+
     // save mouse position
     editor.mousePos.previous = editor.mousePos.current;
-    // save previous cursor note for latter comparison
-    editor.lastCursorNote = editor.selected.cursorNoteKey;
     // get new note below mouse cursor
     editor.selected.cursorNoteKey = getcursorNoteKey();
 
@@ -43,29 +49,29 @@ function redrawMeasureWithCursorNote(event) {
       // console.log(editor.selected.cursorNoteKey);
       editor.draw.selectedMeasure(true);
 
+
 // TODO after click replace selected rest with cursor note and highlight it
   // (implement add note for this)
 
     }
+    // save previous cursor note for latter comparison
+    editor.lastCursorNote = editor.selected.cursorNoteKey;
   }
   // mouse cursor is NOT within note column
   else {
+
+    editor.svgElem.removeEventListener('click', editor.add.note, false); 
+
     // mouse cursor just left note column(previous position was inside n.c.)
     if(isCursorInBoundingBox(bb, editor.mousePos.previous) ) {
       // redraw measure to erase cursor note
       editor.draw.selectedMeasure(false);
+      editor.mousePos.previous = editor.mousePos.current;
+      editor.lastCursorNote = '';
     }
-    // save mouse position
-    editor.mousePos.previous = editor.mousePos.current;
   }
 
 }
-
-function switchToMeasureMode() {
-  editor.mode = 'measure';
-  editor.svgElem.removeEventListener('mousemove', redrawMeasureWithCursorNote, false);
-}
-
 
 function getMousePos(canvas, evt) {
 var rect = canvas.getBoundingClientRect();

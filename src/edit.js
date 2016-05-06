@@ -16,21 +16,21 @@ editor.edit = {
     // transpose note
     var newKey = editor.NoteTool.transposeNote(key, interval);
     // create new Vex.Flow.StaveNote
-    var vfNote = new Vex.Flow.StaveNote({
+    var newNote = new Vex.Flow.StaveNote({
       keys: [ newKey ],
       duration: duration,
       auto_stem: true
     });
     // set id for note DOM element in svg
-    vfNote.setId(mnId);
+    newNote.setId(mnId);
     // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
     if(vfStaveNote.isDotted()) {
       var dots = vfStaveNote.getDots().length;
       for(var i = 0; i < dots; i++)
-        vfNote.addDotToAll();
+        newNote.addDotToAll();
     }
     // replace old note with a transposed one
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, vfNote);
+    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
     // change pitch property in json
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
       .step = newKey[0].toUpperCase();

@@ -49,34 +49,49 @@ editor.add = {
   note: function(){
     console.log('add note');
     // var thisNoteOrRest = getRadioValue('note-or-rest');  //"" or "r"
-    var noteValue = getRadioValue('note-value');     //w, h, q, 8, 16
-    var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
+    // var noteValue = getRadioValue('note-value');     //w, h, q, 8, 16
+    // var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
 
     // get and parse id of selected note (id='m13n10')
     var mnId = editor.selected.note.id;
-    var measureIndex = mnId.split('n')[0].split('m')[1];
-    var noteIndex = mnId.split('n')[1];
+    var measureIndex = +mnId.split('n')[0].split('m')[1];
+    var noteIndex = +mnId.split('n')[1];
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
 
+    var noteValue = vfStaveNote.getDuration();     //w, h, q, 8, 16
+    var dot = vfStaveNote.isDotted() ? 'd' : '';
+
     // create new Vex.Flow.StaveNote
-    var vfNote = new Vex.Flow.StaveNote({
+    var newNote = new Vex.Flow.StaveNote({
       keys: [ editor.selected.cursorNoteKey ],
       duration: noteValue + dot,
       auto_stem: true
     });
     // set id for note DOM element in svg
-    vfNote.setId(mnId);
+    newNote.setId(mnId);
 
     if(dot === 'd')
-      vfNote.addDotToAll();
+      newNote.addDotToAll();
 
     // put new note in place of selected rest
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, vfNote);
+    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
 
     // TODO put new note into scoreJson also
 
     editor.svgElem.removeEventListener('click', editor.add.note, false); 
     editor.draw.selectedMeasure(false);
+
+    // fluent creating of score:
+    // add new measure, if current one is the last one and the note is also the last one
+    if(measureIndex === vfStaves.length - 1 &&
+       noteIndex === vfStaveNotes[measureIndex].length - 1) {
+      editor.add.measure();
+      // select first note in added measure
+      measureIndex++;
+      editor.selected.measure.id = 'm' + measureIndex;
+      editor.selected.note.id = 'm' + measureIndex + 'n0';
+      editor.draw.score();
+    }
 
   },
   clef: function(){

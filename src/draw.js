@@ -22,8 +22,6 @@ editor.draw = {
 
     // loop over all measures
     for(var m = 0; m < vfStaves.length; m++) {
-      // string to integer
-      m = +m;
 
       var stave = vfStaves[m];
 
@@ -69,19 +67,20 @@ editor.draw = {
         if(!numOfAcc)
           numOfAcc = editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
 
-        // not good solution, it would grow after each draw call
+        // TODO extend width of measure with clef | keysig | timesig
         // stave.setWidth(stave.getWidth() + 80 + numOfAcc * 20);
+        // not good solution, it would grow after each draw call
 
       }
-      // TODO implement removeClef() and removeSignature() for Vex.Flow.Stave
-      // // remove clef and key signature when not newline
-      // else {
-      //   // don't remove items for the very first stave
-      //   if(m != 0) {
-      //     stave.removeClef();
-      //     stave.removeKeySignature();
-      //   }
-      // }
+      // remove clef and key signature when not newline
+      else {
+        // don't remove properties for the very first stave
+        if(m != 0) {
+          // vexflow extension
+          stave.removeClef();
+          stave.removeKeySignature();
+        }
+      }
 
 
       editor.draw.measure(m, false);
@@ -115,8 +114,6 @@ editor.draw = {
 
   // removes particular measure(stave) from svg and draws it again
   measure: function(index, cursorNoteEnabled) {
-    var noteValue = getRadioValue('note-value');
-
     // $('#vf-mg'+index).empty();
     $('#vf-m'+index).remove();
 
@@ -171,7 +168,12 @@ editor.draw = {
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
       if(editor.mode === 'note' && +selMeasureIndex === index && cursorNoteEnabled) {
-        var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
+        // var noteValue = getRadioValue('note-value');
+        // var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
+        // get note properties
+        var noteValue = selVFStaveNote.getDuration();     //w, h, q, 8, 16
+        var dot = selVFStaveNote.isDotted() ? 'd' : '';
+
         // create cursor note
         var cursorNote = new Vex.Flow.StaveNote({
           keys: [editor.selected.cursorNoteKey],

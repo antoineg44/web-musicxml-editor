@@ -47,20 +47,15 @@ editor.add = {
     }
   },
   note: function(){
-    console.log('add note');
-    // var thisNoteOrRest = getRadioValue('note-or-rest');  //"" or "r"
-    // var noteValue = getRadioValue('note-value');     //w, h, q, 8, 16
-    // var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
-
     // get and parse id of selected note (id='m13n10')
-    var mnId = editor.selected.note.id;
-    var measureIndex = +mnId.split('n')[0].split('m')[1];
-    var noteIndex = +mnId.split('n')[1];
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
 
     var noteValue = getRadioValue('note-value');
     // var noteValue = vfStaveNote.getDuration();     //w, h, q, 8, 16
-    var dot = vfStaveNote.isDotted() ? 'd' : '';
+    var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
+    // var dot = vfStaveNote.isDotted() ? 'd' : '';
 
     // create new Vex.Flow.StaveNote
     var newNote = new Vex.Flow.StaveNote({
@@ -69,7 +64,7 @@ editor.add = {
       auto_stem: true
     });
     // set id for note DOM element in svg
-    newNote.setId(mnId);
+    newNote.setId(editor.selected.note.id);
 
     if(dot === 'd')
       newNote.addDotToAll();
@@ -120,10 +115,7 @@ editor.add = {
   accidental: function(){
     var vexAcc = getRadioValue('note-accidental');
 
-    var mnId = editor.selected.note.id;
-    var measureIndex = mnId.split('n')[0].split('m')[1];
-    var noteIndex = mnId.split('n')[1];
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = getSelectedNote();
 
     if(!vfStaveNote.isRest()) {
       // TODO change to setAccidental()

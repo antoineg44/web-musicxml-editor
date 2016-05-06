@@ -52,7 +52,7 @@ function attachListenersToNote(noteElem) {
   noteElem.addEventListener("mouseover", function() {
     // if editor is in mode for working with notes
     if(editor.mode === 'note') {
-      // we don't want to change colour of already selected note
+      // don't change colour of already selected note
       if(editor.selected.note.id !== $(this).attr('id').split('-')[1]) {
         // change colour for each note parts - stem, head, dot, accidental...
         $(this).colourNote("orange");
@@ -83,6 +83,14 @@ function attachListenersToNote(noteElem) {
         editor.selected.note.id = mnId.split('-')[1];                   // 'm13n10'
         // unhighlight previous selected note
         $('svg #vf-'+editor.selected.note.previousId).colourNote("black");
+        var vfStaveNote = getSelectedNote();
+        if(vfStaveNote.getAccidentals())
+          var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
+        // uncheck already checked radio button
+        $("input:radio[name='note-accidental']:checked").prop("checked", false);
+        // set radio button for accidental of selected note
+        if(accOfSelNote)
+          $("input:radio[name='note-accidental'][value='"+accOfSelNote+"']").prop("checked", true);
       }
     }
   }, false);
@@ -97,7 +105,45 @@ jQuery.fn.colourNote = function (colour) {
   return this;
 }
 
+// allow to uncheck note-accidental radio
+$("input:radio[name='note-accidental']").on("click",function() {
+  var radio = $(this);
+
+  // get selected note
+  var selNote = getSelectedNote();
+
+  // don't set accidental for rest
+  if(selNote.isRest()) {
+    // uncheck this checked radio button after while
+    setTimeout(function() {
+      $("input:radio[name='note-accidental']:checked").prop("checked", false);     
+    }, 50);
+    return;
+  }
+
+  // radio already checked, uncheck it
+  if(radio.is(".selAcc")) {
+    console.log('uncheck');
+    radio.prop("checked",false).removeClass("selAcc");
+    selNote.removeAccidental();
+  }
+  // radio unchecked, check it
+  else {
+    console.log('check');
+    $("input:radio[name='"+radio.prop("name")+"'].selAcc").removeClass("selAcc");
+    radio.addClass("selAcc");
+    var vexAcc = $(this).prop("value");
+    console.log($(this).prop("value"));
+    selNote.setAccidental(0, new Vex.Flow.Accidental(vexAcc));
+  }
+  editor.draw.selectedMeasure();
+});
+
 // TODO move elsewhere
 // called at start of whole program
 editor.parse.all();
 editor.draw.score();
+switchToNoteMode();
+
+// uncheck checked accidental radio button
+$("input:radio[name='note-accidental']:checked").prop("checked", false);

@@ -2,9 +2,8 @@ editor.edit = {
   // changes selected notes pitch
   notePitch: function(interval){
     // get and parse id of selected note (id='m13n10')
-    var mnId = editor.selected.note.id;
-    var measureIndex = mnId.split('n')[0].split('m')[1];
-    var noteIndex = mnId.split('n')[1];
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
     // if note is rest, do nothing
     if(vfStaveNote.isRest())
@@ -23,7 +22,7 @@ editor.edit = {
       auto_stem: true
     });
     // set id for note DOM element in svg
-    newNote.setId(mnId);
+    newNote.setId(editor.selected.note.id);
     // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
     if(vfStaveNote.isDotted()) {
       var dots = vfStaveNote.getDots().length;
@@ -39,6 +38,8 @@ editor.edit = {
       .octave = newKey[newKey.length - 1];
     // delete accidental if any
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental;
+    // uncheck checked accidental radio button
+    $("input:radio[name='note-accidental']:checked").prop("checked", false);
   },
 
   // TODO

@@ -45,9 +45,8 @@ editor.delete = {
   // deletes note by replacing it with a rest of the same duration
   note: function(){
     // get and parse id of selected note (id='m13n10')
-    var mnId = editor.selected.note.id;
-    var measureIndex = mnId.split('n')[0].split('m')[1];
-    var noteIndex = mnId.split('n')[1];
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
     // if note is already a rest, do nothing
     if(vfStaveNote.isRest())
@@ -60,7 +59,7 @@ editor.delete = {
       duration: duration + 'r'
     });
     // set id for note DOM element in svg
-    vfRest.setId(mnId);
+    vfRest.setId(editor.selected.note.id);
     // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
     if(vfStaveNote.isDotted()) {
       var dots = vfStaveNote.getDots().length;
@@ -77,6 +76,8 @@ editor.delete = {
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex]['rest'] = null;
     // I assume, that property order does not matter
     // also, currently I don't delete some non-rest elements, like stem, lyric, notations (e.g.slur)
+    // uncheck checked accidental radio button
+    $("input:radio[name='note-accidental']:checked").prop("checked", false);
   },
   clef: function(){
     // editor.measures[editor.selected.measure.selection - 1].clef = null;

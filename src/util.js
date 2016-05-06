@@ -21,11 +21,8 @@ function redrawMeasureWithCursorNote(event) {
   editor.mousePos.current = getMousePos(editor.svgElem, event);
 
   // get selected measure and note
-  var mnId = editor.selected.note.id;
-  var measureIndex = mnId.split('n')[0].split('m')[1];
-  var noteIndex = mnId.split('n')[1];
-  var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
-  var vfStave = vfStaves[measureIndex];
+  var vfStaveNote = getSelectedNote();
+  var vfStave = getSelectedMeasure();
 
   // currently support only for replacing rest with a new note
   // building chords feature will be added soon
@@ -122,6 +119,29 @@ function getCursorNoteKey() {
     count++;
   }
   return cursorNoteKey;
+}
+
+function getSelectedNoteIndex() {
+  var mnId = editor.selected.note.id;
+  return +mnId.split('n')[1];
+}
+
+function getSelectedMeasureIndex() {
+  var mnId = editor.selected.note.id;
+  return +mnId.split('n')[0].split('m')[1];
+}
+
+function getSelectedNote() {
+  var mnId = editor.selected.note.id;
+  var measureIndex = mnId.split('n')[0].split('m')[1];
+  var noteIndex = mnId.split('n')[1];
+  return vfStaveNotes[measureIndex][noteIndex];
+}
+
+function getSelectedMeasure() {
+  var mnId = editor.selected.note.id;
+  var measureIndex = mnId.split('n')[0].split('m')[1];
+  return vfStaves[measureIndex];
 }
 
 function isCursorInBoundingBox(bBox, cursorPos) {

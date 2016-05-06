@@ -15,8 +15,8 @@
        <nav class="navbar navbar-default navbar-fixed-top" id="fixed-header">
         <ul class="nav nav-tabs" id="editor-tabs">
           <li role="presentation"><a href="#file" onclick="" data-toggle="tab">File</a></li>
-          <li role="presentation" class="active"><a href="#measures" onclick="switchToMeasureMode();" data-toggle="tab">Measures</a></li>
-          <li role="presentation"><a href="#notes" onclick="switchToNoteMode();" data-toggle="tab">Notes</a></li>
+          <li role="presentation"><a href="#measures" onclick="switchToMeasureMode();" data-toggle="tab">Measures</a></li>
+          <li role="presentation" class="active"><a href="#notes" onclick="switchToNoteMode();" data-toggle="tab">Notes</a></li>
         </ul>
         <div class="tab-content" id="control-panel">
         <div class="tab-pane fade in" id="file">
@@ -27,7 +27,7 @@
             <a href="" id="link" onclick="setupDownloadLink(this)" download="">export</a>
           </div>
         </div>
-        <div class="tab-pane fade in active" id="measures">
+        <div class="tab-pane fade in" id="measures">
           <div class="tool-section">
             <label>Measure:</label>
             <button onclick="editor.add.measure();editor.draw.score();">+</button>
@@ -85,7 +85,7 @@
             <button onclick="editor.delete.timeSignature();">-</button>
           </div>
         </div>
-        <div class="tab-pane fade" id="notes">
+        <div class="tab-pane fade in active" id="notes">
 
           <div class="tool-section">
             <label>Note: </label>
@@ -103,55 +103,50 @@
 
           <div class="tool-section">
             <label>Value:</label>
-            <input type="radio" name="note-value" style="display: inline;" id="note_1" value="w">
+            <input type="radio" name="note-value" style="display: none;" id="note_1" value="w">
             <label for="note_1">
-              <img src="icons/note_1.svg" alt="whole note" width="50%" height="50%" style="cursor: pointer;">
+              <img src="icons/note_1.svg" class="smallerIcon" alt="whole note" width="50%" height="50%">
             </label>
-            <input type="radio" name="note-value" style="display: inline;" id="note_2" value="h">
+            <input type="radio" name="note-value" style="display: none;" id="note_2" value="h">
             <label for="note_2">
-              <img src="icons/note_2.svg" alt="half note" width="30%" height="30%" style="cursor: pointer;">
+              <img src="icons/note_2.svg" class="biggerIcon" alt="half note" width="30%" height="30%">
             </label>
-            <input type="radio" name="note-value" style="display: inline;" id="note_4" value="q" checked>
+            <input type="radio" name="note-value" style="display: none;" id="note_4" value="q" checked>
             <label for="note_4">
-              <img src="icons/note_4.svg" alt="quarter note" width="30%" height="30%" style="cursor: pointer;">
+              <img src="icons/note_4.svg" class="biggerIcon" alt="quarter note" width="30%" height="30%">
             </label>
-            <input type="radio" name="note-value" style="display: inline;" id="note_8" value="8">
+            <input type="radio" name="note-value" style="display: none;" id="note_8" value="8">
             <label for="note_8">
-              <img src="icons/note_8.svg" alt="8th note" width="50%" height="50%" style="cursor: pointer;">
+              <img src="icons/note_8.svg" class="smallerIcon" alt="8th note" width="50%" height="50%">
             </label>
-            <input type="radio" name="note-value" style="display: inline;" id="note_16" value="16">
+            <input type="radio" name="note-value" style="display: none;" id="note_16" value="16">
             <label for="note_16">
-              <img src="icons/note_16.svg" alt="16th note" width="50%" height="50%" style="cursor: pointer;">
+              <img src="icons/note_16.svg" class="smallerIcon" alt="16th note" width="50%" height="50%">
             </label>
           </div>
 
           <div class="tool-section">
             <label>Accidental:</label>
-            <input type="radio" name="note-accidental" id="double-flat" value="bb">
+            <input type="radio" name="note-accidental" style="display: none;" id="double-flat" value="bb">
             <label for="double-flat">
-              <img src="icons/double-flat.svg" alt="double-flat" width="50%" height="50%" style="cursor: pointer;">
+              <img src="icons/double-flat.svg" class="smallerIcon" alt="double-flat" width="50%" height="50%">
             </label>
-            <input type="radio" name="note-accidental" id="flat" value="b">
+            <input type="radio" name="note-accidental" style="display: none;" id="flat" value="b">
             <label for="flat">
-              <img src="icons/flat.svg" alt="flat" width="30%" height="30%" style="cursor: pointer;">
+              <img src="icons/flat.svg" class="biggerIcon" alt="flat" width="30%" height="30%">
             </label>
-            <input type="radio" name="note-accidental" id="natural" value="n">
+            <input type="radio" name="note-accidental" style="display: none;" id="natural" value="n">
             <label for="natural">
-              <img src="icons/natural.svg" alt="natural" width="30%" height="30%" style="cursor: pointer;">
+              <img src="icons/natural.svg" class="biggerIcon" alt="natural" width="30%" height="30%">
             </label>
-            <input type="radio" name="note-accidental" id="sharp" value="#" checked>
+            <input type="radio" name="note-accidental" style="display: none;" id="sharp" value="#">
             <label for="sharp">
-              <img src="icons/sharp.svg" alt="sharp" width="30%" height="30%" style="cursor: pointer;">
+              <img src="icons/sharp.svg" class="biggerIcon" alt="sharp" width="30%" height="30%">
             </label>
-            <input type="radio" name="note-accidental" id="double-sharp" value="##">
+            <input type="radio" name="note-accidental" style="display: none;" id="double-sharp" value="##">
             <label for="double-sharp">
-              <img src="icons/double-sharp.svg" alt="double-sharp" width="50%" height="50%" style="cursor: pointer;">
+              <img src="icons/double-sharp.svg" class="smallerIcon" alt="double-sharp" width="50%" height="50%">
             </label>
-          </div>
-
-          <div class="tool-section">
-            <button id="add-accidental" onclick="editor.add.accidental() ;editor.draw.selectedMeasure(false);">+</button>
-            <button id="delete-accidental" onclick="editor.delete.accidental() ;editor.draw.selectedMeasure(false);">-</button>
           </div>
 
         </div>

@@ -7,17 +7,14 @@ editor.delete = {
       return;
     }
 
-    // TODO attributes need to be solved
-    // if next measure doesn't have attributes, give it attributes from deleted measure
-    // if next measure has attributes, merge them with attributes from deleted measure
-    // with priority on next measure attributes, use merge from vexui util.js
-
-
-    // TODO clef, timesig and keysig must remain on very first measure
-
     var measureIndex = +editor.selected.measure.id.split('m')[1];
     // to avoid inconsistency between measure and note id
     editor.selected.note.id = 'm' + measureIndex + 'n0';
+
+    // merge attributes of measure being deleted with next measure attributes
+    if(measureIndex !== vfStaves.length - 1) {
+      mergeProperties(xmlAttributes[measureIndex + 1], xmlAttributes[measureIndex]);
+    }
 
     // remove measure from global arrays
     vfStaves.splice(measureIndex, 1);

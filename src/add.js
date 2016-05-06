@@ -58,7 +58,8 @@ editor.add = {
     var noteIndex = +mnId.split('n')[1];
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
 
-    var noteValue = vfStaveNote.getDuration();     //w, h, q, 8, 16
+    var noteValue = getRadioValue('note-value');
+    // var noteValue = vfStaveNote.getDuration();     //w, h, q, 8, 16
     var dot = vfStaveNote.isDotted() ? 'd' : '';
 
     // create new Vex.Flow.StaveNote
@@ -76,7 +77,13 @@ editor.add = {
     // put new note in place of selected rest
     vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
 
-    // TODO put new note into scoreJson also
+    // put new note into scoreJson also
+    delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].rest;
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch = {};
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
+      .step = editor.selected.cursorNoteKey[0].toUpperCase();
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
+      .octave = editor.selected.cursorNoteKey[editor.selected.cursorNoteKey.length - 1];
 
     editor.svgElem.removeEventListener('click', editor.add.note, false); 
     editor.draw.selectedMeasure(false);

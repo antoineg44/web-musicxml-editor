@@ -99,8 +99,10 @@ editor.parse = {
         else
           var time = attributes.time;
 
-        vfStave.setTimeSignature(time.beats + '/' + time['beat-type']);
+        var timeSpec = time.beats + '/' + time['beat-type'];
+        vfStave.setTimeSignature(timeSpec);
         vfStave.setWidth(vfStave.getWidth() + 80);
+        editor.currentTimeSig = timeSpec;
       }
     }
     return vfStave;

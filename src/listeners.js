@@ -1,26 +1,20 @@
 // $("#control-panel")[0].addEventListener('click', editor.draw.score);
-$("#editor-tabs")[0].addEventListener('click', editor.draw.score);
+// $("#editor-tabs")[0].addEventListener('click', editor.draw.score);
 
 // editor.svgElem.addEventListener('click', editor.select.measure);
 // editor.svgElem.addEventListener('click', editor.select.note);
 // editor.svgElem.addEventListener('click', editor.add.note);
 // editor.svgElem.addEventListener('mousemove', redraw);
 
-function redraw(event) {
-  //redraw on mousemove only in note mode when adding new note
-  // if(editor.mode === 'note' && getRadioValue('tools') == 'add') {
-    // get mouse position
-    editor.mousePos.current = getMousePos(editor.svgElem, event);
-    // save previous cursor note for latter comparison
-    editor.lastCursorNote = editor.selected.cursorNoteKey;
-    // get new note below mouse cursor
-    editor.selected.cursorNoteKey = getCursorNoteKey();
-    // redraw only when cursor note changed pitch
-    // (mouse changed y position between staff lines/spaces)
-    if(editor.lastCursorNote !== editor.selected.cursorNoteKey)
+debouncedResize = null;
+$(window).resize(function() {
+  if (! debouncedResize)
+    debouncedResize = setTimeout(function() {
       editor.draw.score();
-  // }
-}
+      debouncedResize = null;
+    }, 50);
+});
+// $(window).resize(editor.draw.score);
 
 function attachListenersToMeasureRect(measureRectElem) {
   // to avoid multiple handlers attachment
@@ -36,6 +30,8 @@ function attachListenersToMeasureRect(measureRectElem) {
       // save currently selected id to previous
       editor.selected.measure.previousId = editor.selected.measure.id;
       editor.selected.measure.id = $(this).attr('id');
+      editor.selected.note.previousId = editor.selected.note.id;
+      editor.selected.note.id = $(this).attr('id') + 'n0';
       var prevId = editor.selected.measure.previousId;
       $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
       $('svg .measureRect#'+editor.selected.measure.id)
@@ -87,7 +83,6 @@ function attachListenersToNote(noteElem) {
         editor.selected.note.id = mnId.split('-')[1];                   // 'm13n10'
         // unhighlight previous selected note
         $('svg #vf-'+editor.selected.note.previousId).colourNote("black");
-        console.log(editor.selected.note);
       }
     }
   }, false);

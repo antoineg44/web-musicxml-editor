@@ -21,9 +21,9 @@ editor.draw = {
     var staveX = 10, staveY = 0;
 
     // loop over all measures
-    for(var m = 0; m < vfStaves.length; m++) {
+    for(var staveIndex = 0; staveIndex < vfStaves.length; staveIndex++) {
 
-      var stave = vfStaves[m];
+      var stave = vfStaves[staveIndex];
 
       var staveWidth = stave.getWidth();
 
@@ -59,9 +59,10 @@ editor.draw = {
       stave.setContext(editor.ctx);
 
       // clef and key signature must be rendered on every first measure on new line
-      if(newLine == true) {
+      if(newLine === true || staveIndex === 0) {
         stave.setClef(editor.currentClef);
         stave.setKeySignature(editor.currentKeySig);
+        if(!newLine) stave.setTimeSignature(editor.currentTimeSig);
         // number of accidentals in key signature
         var numOfAcc = editor.table.SHARP_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
         if(!numOfAcc)
@@ -74,22 +75,19 @@ editor.draw = {
       }
       // remove clef and key signature when not newline
       else {
-        // don't remove properties for the very first stave
-        if(m != 0) {
-          // vexflow extension
-          stave.removeClef();
-          stave.removeKeySignature();
-        }
+        // vexflow extension
+        stave.removeClef();
+        stave.removeKeySignature();
       }
 
 
-      editor.draw.measure(m, false);
+      editor.draw.measure(staveIndex, false);
 
       // set start x position for next measure
       staveX = staveX + staveWidth;
 
       // set height of canvas after last rendered measure
-      if(m == vfStaves.length - 1)
+      if(staveIndex == vfStaves.length - 1)
         $('#svg-container').attr('height', staveY + editor.staveHeight);
 
     } // loop over measures
@@ -168,11 +166,11 @@ editor.draw = {
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
       if(editor.mode === 'note' && +selMeasureIndex === index && cursorNoteEnabled) {
-        // var noteValue = getRadioValue('note-value');
-        // var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
+        var noteValue = getRadioValue('note-value');
+        var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
         // get note properties
-        var noteValue = selVFStaveNote.getDuration();     //w, h, q, 8, 16
-        var dot = selVFStaveNote.isDotted() ? 'd' : '';
+        // var noteValue = selVFStaveNote.getDuration();     //w, h, q, 8, 16
+        // var dot = selVFStaveNote.isDotted() ? 'd' : '';
 
         // create cursor note
         var cursorNote = new Vex.Flow.StaveNote({

@@ -13,144 +13,154 @@
     <div class="row">
       <div class="col-xs-12"> -->
        <nav class="navbar navbar-default navbar-fixed-top" id="fixed-header">
+
         <ul class="nav nav-tabs" id="editor-tabs">
           <li role="presentation"><a href="#file" onclick="" data-toggle="tab">File</a></li>
-          <li role="presentation"><a href="#measures" onclick="switchToMeasureMode();" data-toggle="tab">Measures</a></li>
-          <li role="presentation" class="active"><a href="#notes" onclick="switchToNoteMode();" data-toggle="tab">Notes</a></li>
+          <li role="presentation"><a href="#measure" onclick="switchToMeasureMode();" data-toggle="tab">Measure</a></li>
+          <li role="presentation" class="active"><a href="#note" onclick="switchToNoteMode();" data-toggle="tab">Note</a></li>
         </ul>
+
         <div class="tab-content" id="control-panel">
-        <div class="tab-pane fade in" id="file">
-          <div class="tool-section">
-            <label>MusicXML File:</label>
-            import<input type="file" id="fileInput">
-            <button onclick="editor.parse.all();">parse</button>
-            <a href="" id="link" onclick="setupDownloadLink(this)" download="">export</a>
+
+          <div class="tab-pane fade in" id="file">
+            <div class="tool-section" style="display: inline-block;">
+              <label>MusicXML import:</label>
+              <input type="file" id="fileInput">
+              <!-- <button onclick="editor.parse.all();">parse</button> -->
+            </div>
+            <div class="tool-section">
+              <a href="" id="link" onclick="setupDownloadLink(this)" download="">MusicXML export</a>
+            </div>
+          </div>
+
+          <div class="tab-pane fade in" id="measure">
+            <div class="tool-section">
+              <label>Measure:</label>
+              <button onclick="editor.add.measure();editor.draw.score();">+</button>
+              <button onclick="editor.delete.measure();editor.draw.score();">-</button>
+            </div>
+            <div class="tool-section">
+              <label>Clef:</label>
+              <select id="clef-dropdown">
+                <option>treble</option>
+                <option>bass</option>
+                <option>alto</option>
+                <option>tenor</option>
+              </select>
+              <button onclick="editor.add.clef();">+</button>
+              <button onclick="editor.delete.clef();">-</button>
+            </div>
+            <div class="tool-section">
+              <label>Key Signature:</label>
+              <select id="key-signature">
+                <option>C</option>
+                <option>G</option>
+                <option>D</option>
+                <option>A</option>
+                <option>E</option>
+                <option>B</option>
+                <option>F#</option>
+                <option>C#</option>
+                <option>F</option>
+                <option>Bb</option>
+                <option>Eb</option>
+                <option>Ab</option>
+                <option>Db</option>
+                <option>Gb</option>
+                <option>Cb</option>
+              </select>
+              <button onclick="editor.add.keySignature();">+</button>
+            </div>
+            <div class="tool-section">
+              <label>Time Signature</label>
+              <select id="timeSigTop">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+              <select id="timeSigBottom">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="4" selected>4</option>
+                <option value="8">8</option>
+                <option value="16">16</option>
+              </select>
+              <button onclick="editor.add.timeSignature();">+</button>
+              <button onclick="editor.delete.timeSignature();">-</button>
+            </div>
+          </div>
+          <div class="tab-pane fade in active" id="note">
+
+            <div class="tool-section">
+              <label>Pitch:</label>
+              <button onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure(false);">^</button>
+              <button onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure(false);">v</button>
+            </div>
+
+            <!-- <br> -->
+
+            <div class="tool-section">
+              <label>Duration:</label>
+              <input type="radio" name="note-value" style="display: none;" id="note_1" value="w">
+              <label for="note_1">
+                <img src="icons/note_1.svg" class="smallerIcon" alt="whole note" width="50%" height="50%">
+              </label>
+              <input type="radio" name="note-value" style="display: none;" id="note_2" value="h">
+              <label for="note_2">
+                <img src="icons/note_2.svg" class="biggerIcon" alt="half note" width="30%" height="30%">
+              </label>
+              <input type="radio" name="note-value" style="display: none;" id="note_4" value="q" checked>
+              <label for="note_4">
+                <img src="icons/note_4.svg" class="biggerIcon" alt="quarter note" width="30%" height="30%">
+              </label>
+              <input type="radio" name="note-value" style="display: none;" id="note_8" value="8">
+              <label for="note_8">
+                <img src="icons/note_8.svg" class="smallerIcon" alt="8th note" width="50%" height="50%">
+              </label>
+              <input type="radio" name="note-value" style="display: none;" id="note_16" value="16">
+              <label for="note_16">
+                <img src="icons/note_16.svg" class="smallerIcon" alt="16th note" width="50%" height="50%">
+              </label>
+            </div>
+
+            <div class="tool-section">
+              <label>Dot:</label>
+              <input type="checkbox" id="dotted-checkbox" onclick="editor.add.dot() ;editor.draw.selectedMeasure(false);"/>
+            </div>
+
+            <div class="tool-section">
+              <label>Accidental:</label>
+              <input type="radio" name="note-accidental" style="display: none;" id="double-flat" value="bb">
+              <label for="double-flat">
+                <img src="icons/double-flat.svg" class="smallerIcon" alt="double-flat" width="50%" height="50%">
+              </label>
+              <input type="radio" name="note-accidental" style="display: none;" id="flat" value="b">
+              <label for="flat">
+                <img src="icons/flat.svg" class="biggerIcon" alt="flat" width="30%" height="30%">
+              </label>
+              <input type="radio" name="note-accidental" style="display: none;" id="natural" value="n">
+              <label for="natural">
+                <img src="icons/natural.svg" class="biggerIcon" alt="natural" width="30%" height="30%">
+              </label>
+              <input type="radio" name="note-accidental" style="display: none;" id="sharp" value="#">
+              <label for="sharp">
+                <img src="icons/sharp.svg" class="biggerIcon" alt="sharp" width="30%" height="30%">
+              </label>
+              <input type="radio" name="note-accidental" style="display: none;" id="double-sharp" value="##">
+              <label for="double-sharp">
+                <img src="icons/double-sharp.svg" class="smallerIcon" alt="double-sharp" width="50%" height="50%">
+              </label>
+            </div>
+
+            <div class="tool-section">
+              <!-- <label>Pitch: </label> -->
+              <button onclick="editor.delete.note(); editor.draw.selectedMeasure(false);">delete</button>
+            </div>
+
           </div>
         </div>
-        <div class="tab-pane fade in" id="measures">
-          <div class="tool-section">
-            <label>Measure:</label>
-            <button onclick="editor.add.measure();editor.draw.score();">+</button>
-            <button onclick="editor.delete.measure();editor.draw.score();">-</button>
-          </div>
-          <div class="tool-section">
-            <label>Clef:</label>
-            <select id="clef-dropdown">
-              <option>treble</option>
-              <option>bass</option>
-              <option>alto</option>
-              <option>tenor</option>
-            </select>
-            <button onclick="editor.add.clef();">+</button>
-            <button onclick="editor.delete.clef();">-</button>
-          </div>
-          <div class="tool-section">
-            <label>Key Signature:</label>
-            <select id="key-signature">
-              <option>C</option>
-              <option>G</option>
-              <option>D</option>
-              <option>A</option>
-              <option>E</option>
-              <option>B</option>
-              <option>F#</option>
-              <option>C#</option>
-              <option>F</option>
-              <option>Bb</option>
-              <option>Eb</option>
-              <option>Ab</option>
-              <option>Db</option>
-              <option>Gb</option>
-              <option>Cb</option>
-            </select>
-            <button onclick="editor.add.keySignature();">+</button>
-          </div>
-          <div class="tool-section">
-            <label>Time Signature</label>
-            <select id="timeSigTop">
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4" selected>4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-            </select>
-            <select id="timeSigBottom">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4" selected>4</option>
-              <option value="8">8</option>
-              <option value="16">16</option>
-            </select>
-            <button onclick="editor.add.timeSignature();">+</button>
-            <button onclick="editor.delete.timeSignature();">-</button>
-          </div>
-        </div>
-        <div class="tab-pane fade in active" id="notes">
-
-          <div class="tool-section">
-            <label>Note: </label>
-            <button onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure(false);">^</button>
-            <button onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure(false);">v</button>
-            <button onclick="editor.delete.note(); editor.draw.selectedMeasure(false);">-</button>
-          </div>
-
-          <div class="tool-section">
-            <label>Dotted:</label>
-            <input type="checkbox" id="dotted-checkbox" onclick="editor.add.dot() ;editor.draw.selectedMeasure(false);"/>
-          </div>
-
-          <br>
-
-          <div class="tool-section">
-            <label>Value:</label>
-            <input type="radio" name="note-value" style="display: none;" id="note_1" value="w">
-            <label for="note_1">
-              <img src="icons/note_1.svg" class="smallerIcon" alt="whole note" width="50%" height="50%">
-            </label>
-            <input type="radio" name="note-value" style="display: none;" id="note_2" value="h">
-            <label for="note_2">
-              <img src="icons/note_2.svg" class="biggerIcon" alt="half note" width="30%" height="30%">
-            </label>
-            <input type="radio" name="note-value" style="display: none;" id="note_4" value="q" checked>
-            <label for="note_4">
-              <img src="icons/note_4.svg" class="biggerIcon" alt="quarter note" width="30%" height="30%">
-            </label>
-            <input type="radio" name="note-value" style="display: none;" id="note_8" value="8">
-            <label for="note_8">
-              <img src="icons/note_8.svg" class="smallerIcon" alt="8th note" width="50%" height="50%">
-            </label>
-            <input type="radio" name="note-value" style="display: none;" id="note_16" value="16">
-            <label for="note_16">
-              <img src="icons/note_16.svg" class="smallerIcon" alt="16th note" width="50%" height="50%">
-            </label>
-          </div>
-
-          <div class="tool-section">
-            <label>Accidental:</label>
-            <input type="radio" name="note-accidental" style="display: none;" id="double-flat" value="bb">
-            <label for="double-flat">
-              <img src="icons/double-flat.svg" class="smallerIcon" alt="double-flat" width="50%" height="50%">
-            </label>
-            <input type="radio" name="note-accidental" style="display: none;" id="flat" value="b">
-            <label for="flat">
-              <img src="icons/flat.svg" class="biggerIcon" alt="flat" width="30%" height="30%">
-            </label>
-            <input type="radio" name="note-accidental" style="display: none;" id="natural" value="n">
-            <label for="natural">
-              <img src="icons/natural.svg" class="biggerIcon" alt="natural" width="30%" height="30%">
-            </label>
-            <input type="radio" name="note-accidental" style="display: none;" id="sharp" value="#">
-            <label for="sharp">
-              <img src="icons/sharp.svg" class="biggerIcon" alt="sharp" width="30%" height="30%">
-            </label>
-            <input type="radio" name="note-accidental" style="display: none;" id="double-sharp" value="##">
-            <label for="double-sharp">
-              <img src="icons/double-sharp.svg" class="smallerIcon" alt="double-sharp" width="50%" height="50%">
-            </label>
-          </div>
-
-        </div>
-      </div>
       </nav>
 <!--     </div>
   </div>

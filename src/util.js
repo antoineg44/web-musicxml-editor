@@ -101,14 +101,11 @@ function getCursorNoteKey() {
   var notesArray = ['c/','d/','e/','f/','g/','a/','b/'];
   var count = 0;
 
-  var checkboxValue = $('#dotted-checkbox').is(":checked");
-  var d = checkboxValue ? 'd' : '';
-
   for(var i = 5; i >= 0; i--){
     for(var l = 0; l < notesArray.length; l++){
       var noteOffset = (count * 35) - (l * 5 - 17);
       if(editor.mousePos.current.y >= y + noteOffset && editor.mousePos.current.y <= 5 + y + noteOffset){
-        var cursorNoteKey = notesArray[l] + (i+1) + d;
+        var cursorNoteKey = notesArray[l] + (i+1);
         var found = true;
         break;
       }

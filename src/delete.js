@@ -56,7 +56,7 @@ editor.delete = {
     // create new Vex.Flow.StaveNote for rest
     var vfRest = new Vex.Flow.StaveNote({
       keys: [ editor.table.DEFAULT_REST_PITCH ],
-      duration: duration + 'r'
+      duration: duration + 'r'   // TODO add dots before 'r': /d*/
     });
     // set id for note DOM element in svg
     vfRest.setId(editor.selected.note.id);

@@ -17,7 +17,7 @@ editor.edit = {
     // create new Vex.Flow.StaveNote
     var newNote = new Vex.Flow.StaveNote({
       keys: [ newKey ],
-      duration: duration,
+      duration: duration,   // TODO add dots: /d*/
       clef: editor.currentClef,
       auto_stem: true
     });

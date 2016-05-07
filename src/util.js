@@ -141,6 +141,23 @@ function getSelectedMeasure() {
   return vfStaves[measureIndex];
 }
 
+// highlights properties of selected note on control panel
+function highlightSelectedNoteProperties() {
+  var vfStaveNote = getSelectedNote();
+  if(vfStaveNote.getAccidentals())
+    var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
+  // uncheck already checked radio button
+  $("input:radio[name='note-accidental']:checked").prop("checked", false);
+  // set radio button for accidental of selected note
+  if(accOfSelNote)
+    $("input:radio[name='note-accidental'][value='"+accOfSelNote+"']").prop("checked", true);
+  // set radio button for duration of selected note
+  var durOfSelNote = vfStaveNote.getDuration();
+  $("input:radio[name='note-value'][value='"+durOfSelNote+"']").prop("checked", true);
+  // set dotted checkbox
+  $("#dotted-checkbox").prop("checked", vfStaveNote.isDotted());
+}
+
 function isCursorInBoundingBox(bBox, cursorPos) {
   return cursorPos.x > bBox.getX() && cursorPos.x < bBox.getX() + bBox.getW() &&
          cursorPos.y > bBox.getY() && cursorPos.y < bBox.getY() + bBox.getH();
@@ -155,19 +172,19 @@ function isCursorInBoundingBox(bBox, cursorPos) {
  * @returns A new object representing the merged objects. If both objects passed as param have the same prop, then obj2 property is returned.
  */
 // author Andre Bakker, VexUI: https://github.com/andrebakker/VexUI
-// function mergeProperties(obj1, obj2){
-//   var obj3 = {};
-//     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-//     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-//     return obj3;
-// }
+function mergeProperties(obj1, obj2){
+  var obj3 = {};
+    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    return obj3;
+}
 
 // or use this from vexflow:
 
 // Merge `destination` hash with `source` hash, overwriting like keys
 // in `source` if necessary.
-function mergeProperties(destination, source) {
+function vfMergeProperties(destination, source) {
   for (var property in source)
     destination[property] = source[property];
   return destination;
-};
+}

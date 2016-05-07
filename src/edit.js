@@ -42,10 +42,8 @@ editor.edit = {
     $("input:radio[name='note-accidental']:checked").prop("checked", false);
   },
 
-  // TODO
+  // TODO change duration in json also
   noteDuration: function() {
-    console.log('change note duration');
-
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
     var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
@@ -69,7 +67,7 @@ editor.edit = {
 
     if(accOfSelNote)
       newNote.addAccidental(0, new Vex.Flow.Accidental(accOfSelNote));
-    
+
     // set id for note DOM element in svg
     newNote.setId(editor.selected.note.id);
     // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
@@ -81,7 +79,50 @@ editor.edit = {
     // replace old note with a transposed one
     vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
 
+    // change duration in json
+    // get divisions
+    var divisions = 0;
+    // finds attributes of closest previous measure or current measure
+    for(var a = 0; a <= measureIndex; a++)
+      if(! $.isEmptyObject(xmlAttributes[a]) && xmlAttributes[a].divisions)
+        divisions = xmlAttributes[a].divisions;
 
+    if(!divisions)
+      console.error('divisions for measures 1 to '+(measureIndex+1)+' are not set');
 
+    var xmlDuration = editor.NoteTool.getDurationFromStaveNote(newNote, divisions);
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].duration = xmlDuration;
+
+  },
+
+  noteDot: function() {
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
+    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+
+    if(vfStaveNote.isDotted()) {
+      vfStaveNote.removeDot();
+      delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].dot;
+    }
+    else {
+      vfStaveNote.setDot();
+      scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].dot = null;
+    }
+  },
+
+  noteAccidental: function(vexAcc) {
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
+    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+
+    vfStaveNote.setAccidental(0, new Vex.Flow.Accidental(vexAcc));
+
+    // add accidental to json
+    var xmlAcc = '';
+    for(var xmlname in editor.table.ACCIDENTAL_DICT)
+      if(vexAcc === editor.table.ACCIDENTAL_DICT[xmlname])
+        xmlAcc = xmlname;
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental = xmlAcc;
   }
+
 }

@@ -111,14 +111,14 @@ editor.draw = {
 
 
   // removes particular measure(stave) from svg and draws it again
-  measure: function(index, cursorNoteEnabled) {
-    // $('#vf-mg'+index).empty();
-    $('#vf-m'+index).remove();
+  measure: function(measureIndex, cursorNoteEnabled) {
+    // $('#vf-mg'+measureIndex).empty();
+    $('#vf-m'+measureIndex).remove();
 
-    var stave = vfStaves[index];
+    var stave = vfStaves[measureIndex];
 
     // svg measure group
-    editor.ctx.openGroup("measure", "m"+index, {pointerBBox: true});
+    editor.ctx.openGroup("measure", "m"+measureIndex, {pointerBBox: true});
       // draw stave
       stave.draw();
 
@@ -129,14 +129,14 @@ editor.draw = {
                       editor.staveHeight,
                       {
                         'class': 'measureRect',
-                        'id': 'm'+index,
+                        'id': 'm'+measureIndex,
                         'fill': 'transparent'
                       }
                     );
 
       // find time signature in Attributes for current Measure
       var beats = 4, beat_type = 4;
-      for(var a = 0; a <= index; a++) {
+      for(var a = 0; a <= measureIndex; a++) {
         // finds attributes of closest previous measure or current measure
         if(! $.isEmptyObject(xmlAttributes[a]) && xmlAttributes[a].time) {
           beats = xmlAttributes[a].time.beats;
@@ -152,10 +152,10 @@ editor.draw = {
 
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
-      voice.addTickables(vfStaveNotes[index]);
+      voice.addTickables(vfStaveNotes[measureIndex]);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[index], {
+      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[measureIndex], {
         groups: [new Vex.Flow.Fraction(beats, beat_type)]
       });
 
@@ -165,7 +165,7 @@ editor.draw = {
       var selVFStaveNote = vfStaveNotes[selMeasureIndex][selNoteIndex];
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
-      if(editor.mode === 'note' && +selMeasureIndex === index && cursorNoteEnabled) {
+      if(editor.mode === 'note' && +selMeasureIndex === measureIndex && cursorNoteEnabled) {
         var noteValue = getRadioValue('note-value');
         var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
         // get note properties
@@ -200,7 +200,7 @@ editor.draw = {
         // we need to shift it to selected note x position
         var xShift = selVFStaveNote.getX();
         // shift back by width of accidentals on left side of first note in measure
-        xShift -= vfStaveNotes[index][0].getMetrics().modLeftPx;
+        xShift -= vfStaveNotes[measureIndex][0].getMetrics().modLeftPx;
         cursorNote.setXShift(xShift);
 
         cursorNoteVoice.draw(editor.ctx, stave);
@@ -235,12 +235,12 @@ editor.draw = {
     editor.ctx.closeGroup();
 
     // adding event listeners to note objects
-    for(var n = 0; n < vfStaveNotes[index].length; n++){
+    for(var n = 0; n < vfStaveNotes[measureIndex].length; n++){
       // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
       // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
-      var item = vfStaveNotes[index][n].getElem();
+      var item = vfStaveNotes[measureIndex][n].getElem();
       attachListenersToNote(item);
-      // var noteBBox = vfStaveNotes[index][n].getBoundingBox();
+      // var noteBBox = vfStaveNotes[measureIndex][n].getBoundingBox();
       // noteBBox.draw(editor.ctx);
     }
 

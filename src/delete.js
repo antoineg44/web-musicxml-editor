@@ -13,7 +13,7 @@ editor.delete = {
 
     // merge attributes of measure being deleted with next measure attributes
     if(measureIndex !== vfStaves.length - 1) {
-      mergeProperties(xmlAttributes[measureIndex + 1], xmlAttributes[measureIndex]);
+      vfMergeProperties(xmlAttributes[measureIndex + 1], xmlAttributes[measureIndex]);
     }
 
     // remove measure from global arrays
@@ -86,8 +86,12 @@ editor.delete = {
     // editor.measures[editor.selected.measure.selection - 1].showTimeSig = false;
   },
   accidental: function(){
-    // var selectedMeasure = editor.selected.measure.selection - 1;
-    // var selectedNoteVoice = 'v1';
-    // editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].accidental = null;
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
+    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+
+    vfStaveNote.removeAccidental();
+
+    delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental;
   }
 }

@@ -19,7 +19,7 @@ editor.NoteTool = {};
         var numDots;
 
         if(staveNote.isDotted())
-            numDots = staveNote.getDots().length;
+            numDots = staveNote.dots;
         else
             numDots = 0;
 
@@ -27,6 +27,8 @@ editor.NoteTool = {};
         var offset = index - editor.table.NOTE_VEX_QUARTER_INDEX;
         var duration = Math.pow(2, offset) * divisions;
         duration = duration * 2 - duration * Math.pow(2, -numDots);
+
+        console.log(noteType+', '+divisions+'->'+duration);
 
         return duration;
     };

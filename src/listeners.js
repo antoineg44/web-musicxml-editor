@@ -6,6 +6,7 @@
 // editor.svgElem.addEventListener('click', editor.add.note);
 // editor.svgElem.addEventListener('mousemove', redraw);
 
+// redraw whole score when window resizes
 debouncedResize = null;
 $(window).resize(function() {
   if (! debouncedResize)
@@ -16,6 +17,7 @@ $(window).resize(function() {
 });
 // $(window).resize(editor.draw.score);
 
+// for highlighting measures
 function attachListenersToMeasureRect(measureRectElem) {
   // to avoid multiple handlers attachment
   if(measureRectElem.data('handlers-added'))
@@ -48,6 +50,7 @@ function attachListenersToMeasureRect(measureRectElem) {
   });
 }
 
+// for highlighting notes
 function attachListenersToNote(noteElem) {
   noteElem.addEventListener("mouseover", function() {
     // if editor is in mode for working with notes
@@ -84,16 +87,7 @@ function attachListenersToNote(noteElem) {
         // unhighlight previous selected note
         $('svg #vf-'+editor.selected.note.previousId).colourNote("black");
         // highlight properties on control panel accordingly
-        var vfStaveNote = getSelectedNote();
-        if(vfStaveNote.getAccidentals())
-          var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
-        // uncheck already checked radio button
-        $("input:radio[name='note-accidental']:checked").prop("checked", false);
-        // set radio button for accidental of selected note
-        if(accOfSelNote)
-          $("input:radio[name='note-accidental'][value='"+accOfSelNote+"']").prop("checked", true);
-        var durOfSelNote = vfStaveNote.getDuration();
-        $("input:radio[name='note-value'][value='"+durOfSelNote+"']").prop("checked", true);
+        highlightSelectedNoteProperties();
       }
     }
   }, false);
@@ -128,7 +122,7 @@ $("input:radio[name='note-accidental']").on("click",function() {
   if(radio.is(".selAcc")) {
     console.log('uncheck');
     radio.prop("checked",false).removeClass("selAcc");
-    selNote.removeAccidental();
+    editor.delete.accidental();
   }
   // radio unchecked, check it
   else {
@@ -137,27 +131,35 @@ $("input:radio[name='note-accidental']").on("click",function() {
     radio.addClass("selAcc");
     var vexAcc = $(this).prop("value");
     console.log($(this).prop("value"));
-    selNote.setAccidental(0, new Vex.Flow.Accidental(vexAcc));
+    editor.edit.noteAccidental(vexAcc);
   }
   editor.draw.selectedMeasure();
 });
 
+// changing note value(duration)
 $("input:radio[name='note-value']").on("change",function() {
   editor.edit.noteDuration();
   editor.draw.selectedMeasure();
 });
 
+// call is already in HTML
+// toggle notes dot
+// $("#dotted-checkbox").on("change",function() {
+//   console.log('dot checkbox change');
+//   editor.edit.noteDot();
+//   editor.draw.selectedMeasure();
+// });
 
 // TODO move elsewhere
-// called at start of whole program
-
+// called at start of whole program:
 // uncheck checked accidental radio button
 $("input:radio[name='note-accidental']:checked").prop("checked", false);
 // uncheck note-value radio button
 $("input:radio[name='note-value']:checked").prop("checked", false);
 // check whole note radio button
 $("input:radio[name='note-value'][value='w']").prop("checked", true);
-
+// uncheck doted checkbox
+$("#dotted-checkbox").prop("checked", false);
 editor.parse.all();
 editor.draw.score();
 switchToNoteMode();

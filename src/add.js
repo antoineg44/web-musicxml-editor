@@ -124,10 +124,9 @@ editor.add = {
 
       // add accidental to json
       var xmlAcc = '';
-      for(var xmlname in editor.table.ACCIDENTAL_DICT) {
+      for(var xmlname in editor.table.ACCIDENTAL_DICT)
         if(vexAcc === editor.table.ACCIDENTAL_DICT[xmlname])
           xmlAcc = xmlname;
-      }
       scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental = xmlAcc;
     }
   }, 

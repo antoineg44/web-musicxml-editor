@@ -43,5 +43,45 @@ editor.edit = {
   },
 
   // TODO
-  noteDuration: function() {}
+  noteDuration: function() {
+    console.log('change note duration');
+
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
+    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+
+    var noteDuration = getRadioValue('note-value');
+
+    // get notes pitch; currently no chord support
+    var key = vfStaveNote.getKeys()[0];   // e.g. 'g##/4'
+    var rest = vfStaveNote.isRest() ? 'r' : '';
+
+    if(vfStaveNote.getAccidentals())
+      var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
+
+    // create new Vex.Flow.StaveNote
+    var newNote = new Vex.Flow.StaveNote({
+      keys: [ key ],
+      duration: noteDuration + rest,   // TODO add dots: /d*/
+      clef: editor.currentClef,
+      auto_stem: true
+    });
+
+    if(accOfSelNote)
+      newNote.addAccidental(0, new Vex.Flow.Accidental(accOfSelNote));
+    
+    // set id for note DOM element in svg
+    newNote.setId(editor.selected.note.id);
+    // set dots for a rest, however, currently supports only one dot(see parse.js line 140)
+    if(vfStaveNote.isDotted()) {
+      var dots = vfStaveNote.getDots().length;
+      for(var i = 0; i < dots; i++)
+        newNote.addDotToAll();
+    }
+    // replace old note with a transposed one
+    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
+
+
+
+  }
 }

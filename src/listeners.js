@@ -83,6 +83,7 @@ function attachListenersToNote(noteElem) {
         editor.selected.note.id = mnId.split('-')[1];                   // 'm13n10'
         // unhighlight previous selected note
         $('svg #vf-'+editor.selected.note.previousId).colourNote("black");
+        // highlight properties on control panel accordingly
         var vfStaveNote = getSelectedNote();
         if(vfStaveNote.getAccidentals())
           var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
@@ -91,6 +92,8 @@ function attachListenersToNote(noteElem) {
         // set radio button for accidental of selected note
         if(accOfSelNote)
           $("input:radio[name='note-accidental'][value='"+accOfSelNote+"']").prop("checked", true);
+        var durOfSelNote = vfStaveNote.getDuration();
+        $("input:radio[name='note-value'][value='"+durOfSelNote+"']").prop("checked", true);
       }
     }
   }, false);
@@ -105,7 +108,7 @@ jQuery.fn.colourNote = function (colour) {
   return this;
 }
 
-// allow to uncheck note-accidental radio
+// setting/removing accidental to/from note via radio buttons
 $("input:radio[name='note-accidental']").on("click",function() {
   var radio = $(this);
 
@@ -139,11 +142,22 @@ $("input:radio[name='note-accidental']").on("click",function() {
   editor.draw.selectedMeasure();
 });
 
+$("input:radio[name='note-value']").on("change",function() {
+  editor.edit.noteDuration();
+  editor.draw.selectedMeasure();
+});
+
+
 // TODO move elsewhere
 // called at start of whole program
-editor.parse.all();
-editor.draw.score();
-switchToNoteMode();
 
 // uncheck checked accidental radio button
 $("input:radio[name='note-accidental']:checked").prop("checked", false);
+// uncheck note-value radio button
+$("input:radio[name='note-value']:checked").prop("checked", false);
+// check whole note radio button
+$("input:radio[name='note-value'][value='w']").prop("checked", true);
+
+editor.parse.all();
+editor.draw.score();
+switchToNoteMode();

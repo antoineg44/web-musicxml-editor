@@ -4,7 +4,7 @@ editor.edit = {
     // get and parse id of selected note (id='m13n10')
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
     // if note is rest, do nothing
     if(vfStaveNote.isRest())
       return;
@@ -14,11 +14,13 @@ editor.edit = {
     var key = vfStaveNote.getKeys()[0];   // e.g. 'g##/4'
     // transpose note
     var newKey = editor.NoteTool.transposeNote(key, interval);
+    // get current clef
+    var currentClef = getCurAttrForMeasure(measureIndex, 'vfClef');
     // create new Vex.Flow.StaveNote
     var newNote = new Vex.Flow.StaveNote({
       keys: [ newKey ],
       duration: duration,   // TODO add dots: /d*/
-      clef: editor.currentClef,
+      clef: currentClef,
       auto_stem: true
     });
     // set id for note DOM element in svg
@@ -30,7 +32,7 @@ editor.edit = {
         newNote.addDotToAll();
     }
     // replace old note with a transposed one
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
+    gl_VfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
     // change pitch property in json
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
       .step = newKey[0].toUpperCase();
@@ -46,7 +48,7 @@ editor.edit = {
   noteDuration: function() {
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
 
     var noteDuration = getRadioValue('note-value');
 
@@ -57,11 +59,14 @@ editor.edit = {
     if(vfStaveNote.getAccidentals())
       var accOfSelNote = vfStaveNote.getAccidentals()[0].type;
 
+    // get current clef
+    var currentClef = getCurAttrForMeasure(measureIndex, 'vfClef');
+
     // create new Vex.Flow.StaveNote
     var newNote = new Vex.Flow.StaveNote({
       keys: [ key ],
       duration: noteDuration + rest,   // TODO add dots: /d*/
-      clef: editor.currentClef,
+      clef: currentClef,
       auto_stem: true
     });
 
@@ -77,15 +82,15 @@ editor.edit = {
         newNote.addDotToAll();
     }
     // replace old note with a transposed one
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
+    gl_VfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
 
     // change duration in json
     // get divisions
     var divisions = 0;
     // finds attributes of closest previous measure or current measure
     for(var a = 0; a <= measureIndex; a++)
-      if(! $.isEmptyObject(xmlAttributes[a]) && xmlAttributes[a].divisions)
-        divisions = xmlAttributes[a].divisions;
+      if(! $.isEmptyObject(gl_StaveAttributes[a]) && gl_StaveAttributes[a].xmlDivisions)
+        divisions = gl_StaveAttributes[a].xmlDivisions;
 
     if(!divisions)
       console.error('divisions for measures 1 to '+(measureIndex+1)+' are not set');
@@ -98,7 +103,7 @@ editor.edit = {
   noteDot: function() {
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
 
     if(vfStaveNote.isDotted()) {
       vfStaveNote.removeDot();
@@ -113,7 +118,7 @@ editor.edit = {
   noteAccidental: function(vexAcc) {
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
 
     vfStaveNote.setAccidental(0, new Vex.Flow.Accidental(vexAcc));
 

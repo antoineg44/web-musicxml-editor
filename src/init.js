@@ -53,9 +53,9 @@ var uploadedFileName = 'score';
 
 // one <measure> in MusicXML -> one Vex.Flow.Stave
 // all of these three arrays below use share same index
-var vfStaves = [];       // array with currently rendered vexflow measures(Vex.Flow.Stave)
-var xmlAttributes = [];  // array of MusicXML attributes for each measure
-var vfStaveNotes = [];   // array of arrays with notes to corresponding stave in vfStaves
+var gl_VfStaves = [];       // array with currently rendered vexflow measures(Vex.Flow.Stave)
+var gl_StaveAttributes = [];  // array of attributes for each measure
+var gl_VfStaveNotes = [];   // array of arrays with notes to corresponding stave in gl_VfStaves
 
 var editor = {};
 editor.svgElem = $("#svg-container")[0];

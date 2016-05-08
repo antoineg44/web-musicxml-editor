@@ -12,19 +12,19 @@ editor.delete = {
     editor.selected.note.id = 'm' + measureIndex + 'n0';
 
     // merge attributes of measure being deleted with next measure attributes
-    if(measureIndex !== vfStaves.length - 1) {
-      vfMergeProperties(xmlAttributes[measureIndex + 1], xmlAttributes[measureIndex]);
+    if(measureIndex !== gl_VfStaves.length - 1) {
+      mergePropertiesInPlace(gl_StaveAttributes[measureIndex], gl_StaveAttributes[measureIndex + 1]);
     }
 
     // remove measure from global arrays
-    vfStaves.splice(measureIndex, 1);
-    xmlAttributes.splice(measureIndex, 1);
-    vfStaveNotes.splice(measureIndex, 1);
+    gl_VfStaves.splice(measureIndex, 1);
+    gl_StaveAttributes.splice(measureIndex, 1);
+    gl_VfStaveNotes.splice(measureIndex, 1);
 
     // re-number all following notes ids in measures in part
-    for(var m = measureIndex; m < vfStaveNotes.length; m++) {
-      for(var n = 0; n < vfStaveNotes[m].length; n++) {
-        vfStaveNotes[m][n].setId('m' + m + 'n' + n);
+    for(var m = measureIndex; m < gl_VfStaveNotes.length; m++) {
+      for(var n = 0; n < gl_VfStaveNotes[m].length; n++) {
+        gl_VfStaveNotes[m][n].setId('m' + m + 'n' + n);
       }
     }
 
@@ -47,7 +47,7 @@ editor.delete = {
     // get and parse id of selected note (id='m13n10')
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
     // if note is already a rest, do nothing
     if(vfStaveNote.isRest())
       return;
@@ -67,7 +67,7 @@ editor.delete = {
         vfRest.addDotToAll();
     }
     // replace deleted note with a rest
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, vfRest);
+    gl_VfStaveNotes[measureIndex].splice(noteIndex, 1, vfRest);
     // delete pitch property from json
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch;
     // delete accidental if any
@@ -88,7 +88,7 @@ editor.delete = {
   accidental: function(){
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
 
     vfStaveNote.removeAccidental();
 

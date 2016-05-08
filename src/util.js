@@ -96,7 +96,7 @@ TODO: documentary comment...
 // TODO rewrite with use of vfStave.getLineForY(editor.mousePos.current.y)
 function getCursorNoteKey() {
   // find the mouse position and return the correct note for that position.
-  var y = vfStaves[editor.selected.measure.id.split('m')[1]].y;
+  var y = gl_VfStaves[editor.selected.measure.id.split('m')[1]].y;
   // var y = editor.selected.measure.y;
   var notesArray = ['c/','d/','e/','f/','g/','a/','b/'];
   var count = 0;
@@ -132,13 +132,20 @@ function getSelectedNote() {
   var mnId = editor.selected.note.id;
   var measureIndex = mnId.split('n')[0].split('m')[1];
   var noteIndex = mnId.split('n')[1];
-  return vfStaveNotes[measureIndex][noteIndex];
+  return gl_VfStaveNotes[measureIndex][noteIndex];
 }
 
 function getSelectedMeasure() {
   var mnId = editor.selected.note.id;
   var measureIndex = mnId.split('n')[0].split('m')[1];
-  return vfStaves[measureIndex];
+  return gl_VfStaves[measureIndex];
+}
+
+// get current attribute for measure
+function getCurAttrForMeasure(measureIndex, attrname) {
+  for(var i = measureIndex; i >= 0; i--)
+    if(gl_StaveAttributes[i][attrname])
+      return gl_StaveAttributes[i][attrname];
 }
 
 // highlights properties of selected note on control panel
@@ -161,10 +168,7 @@ function highlightSelectedNoteProperties() {
 function isCursorInBoundingBox(bBox, cursorPos) {
   return cursorPos.x > bBox.getX() && cursorPos.x < bBox.getX() + bBox.getW() &&
          cursorPos.y > bBox.getY() && cursorPos.y < bBox.getY() + bBox.getH();
-};
-
-
-// for TODO in delete.js on line 10 use one of these functions:
+}
 
 /**
  * @param obj1 The first object
@@ -173,18 +177,15 @@ function isCursorInBoundingBox(bBox, cursorPos) {
  */
 // author Andre Bakker, VexUI: https://github.com/andrebakker/VexUI
 function mergeProperties(obj1, obj2){
-  var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-    return obj3;
+  var merged = {};
+    for (var attrname in obj1) { merged[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { merged[attrname] = obj2[attrname]; }
+    return merged;
 }
-
-// or use this from vexflow:
 
 // Merge `destination` hash with `source` hash, overwriting like keys
 // in `source` if necessary.
-function vfMergeProperties(destination, source) {
+function mergePropertiesInPlace(source, destination) {
   for (var property in source)
     destination[property] = source[property];
-  return destination;
 }

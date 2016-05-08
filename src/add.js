@@ -12,18 +12,18 @@ editor.add = {
     // add measure to global array of Vex.Flow Staves
     // splice adds before, but we need to insert after - reason for measureIndex + 1
     // splice also takes higher index than biggest as biggest
-    vfStaves.splice(measureIndex + 1, 0, vfNewStave);
+    gl_VfStaves.splice(measureIndex + 1, 0, vfNewStave);
     // add empty attributes for measure
-    xmlAttributes.splice(measureIndex + 1, 0, {});
+    gl_StaveAttributes.splice(measureIndex + 1, 0, {});
     // fill measure with whole rest
     var wholeRest = new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "wr" });
     wholeRest.setId('m' + measureIndex + 'n0');
-    vfStaveNotes.splice(measureIndex + 1, 0, [wholeRest]);
+    gl_VfStaveNotes.splice(measureIndex + 1, 0, [wholeRest]);
 
     // re-number all following notes ids in measures in part
-    for(var m = measureIndex + 1; m < vfStaveNotes.length; m++) {
-      for(var n = 0; n < vfStaveNotes[m].length; n++) {
-        vfStaveNotes[m][n].setId('m' + m + 'n' + n);
+    for(var m = measureIndex + 1; m < gl_VfStaveNotes.length; m++) {
+      for(var n = 0; n < gl_VfStaveNotes[m].length; n++) {
+        gl_VfStaveNotes[m][n].setId('m' + m + 'n' + n);
       }
     }
 
@@ -50,7 +50,7 @@ editor.add = {
     // get and parse id of selected note (id='m13n10')
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
-    var vfStaveNote = vfStaveNotes[measureIndex][noteIndex];
+    var vfStaveNote = gl_VfStaveNotes[measureIndex][noteIndex];
 
     var noteValue = getRadioValue('note-value');
     // var noteValue = vfStaveNote.getDuration();     //w, h, q, 8, 16
@@ -70,7 +70,7 @@ editor.add = {
       newNote.addDotToAll();
 
     // put new note in place of selected rest
-    vfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
+    gl_VfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
 
     // put new note into scoreJson also
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].rest;
@@ -85,8 +85,8 @@ editor.add = {
 
     // fluent creating of score:
     // add new measure, if current one is the last one and the note is also the last one
-    if(measureIndex === vfStaves.length - 1 &&
-       noteIndex === vfStaveNotes[measureIndex].length - 1) {
+    if(measureIndex === gl_VfStaves.length - 1 &&
+       noteIndex === gl_VfStaveNotes[measureIndex].length - 1) {
       editor.add.measure();
       // select first note in added measure
       measureIndex++;
@@ -129,13 +129,5 @@ editor.add = {
           xmlAcc = xmlname;
       scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].accidental = xmlAcc;
     }
-  }, 
-  dot: function(){
-    // var selectedMeasure = editor.selected.measure.selection - 1;
-    // var selectedNoteVoice = 'v1';
-    // var checkboxValue = $('#dotted-checkbox').is(":checked");
-    // // var isSelectedNoteDotted = editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted;
-
-    // editor.measures[selectedMeasure][selectedNoteVoice][editor.selected.note.selection].dotted = checkboxValue;
   }
 }

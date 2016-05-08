@@ -14,18 +14,21 @@ editor.draw = {
     editor.selected.cursorNoteKey = null;
 
     // var minWidth = noteWidth * maxLength;
-    var minWidth = editor.noteWidth * 4;
+    // var minWidth = editor.noteWidth * 4;
 
     var attributes = {};
     // var count = 0;
     var staveX = 10, staveY = 0;
 
     // loop over all measures
-    for(var staveIndex = 0; staveIndex < vfStaves.length; staveIndex++) {
+    for(var staveIndex = 0; staveIndex < gl_VfStaves.length; staveIndex++) {
 
-      var stave = vfStaves[staveIndex];
+      var stave = gl_VfStaves[staveIndex];
 
       var staveWidth = stave.getWidth();
+
+      // add changes in attributes for current measure to attributes object
+      attributes = mergeProperties(attributes, gl_StaveAttributes[staveIndex]);
 
       // calculate newline
       var staveEnd = staveX + staveWidth;
@@ -60,13 +63,13 @@ editor.draw = {
 
       // clef and key signature must be rendered on every first measure on new line
       if(newLine === true || staveIndex === 0) {
-        stave.setClef(editor.currentClef);
-        stave.setKeySignature(editor.currentKeySig);
-        if(!newLine) stave.setTimeSignature(editor.currentTimeSig);
+        stave.setClef(attributes.vfClef);
+        stave.setKeySignature(attributes.vfKeySpec);
+        if(!newLine && attributes.vfTimeSpec) stave.setTimeSignature(attributes.vfTimeSpec);
         // number of accidentals in key signature
-        var numOfAcc = editor.table.SHARP_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
+        var numOfAcc = editor.table.SHARP_MAJOR_KEY_SIGNATURES.indexOf(attributes.vfKeySpec) + 1;
         if(!numOfAcc)
-          numOfAcc = editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(editor.currentKeySig) + 1;
+          numOfAcc = editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(attributes.vfKeySpec) + 1;
 
         // TODO extend width of measure with clef | keysig | timesig
         // stave.setWidth(stave.getWidth() + 80 + numOfAcc * 20);
@@ -87,7 +90,7 @@ editor.draw = {
       staveX = staveX + staveWidth;
 
       // set height of canvas after last rendered measure
-      if(staveIndex == vfStaves.length - 1)
+      if(staveIndex == gl_VfStaves.length - 1)
         $('#svg-container').attr('height', staveY + editor.staveHeight);
 
     } // loop over measures
@@ -115,7 +118,7 @@ editor.draw = {
     // $('#vf-mg'+measureIndex).empty();
     $('#vf-m'+measureIndex).remove();
 
-    var stave = vfStaves[measureIndex];
+    var stave = gl_VfStaves[measureIndex];
 
     // svg measure group
     editor.ctx.openGroup("measure", "m"+measureIndex, {pointerBBox: true});
@@ -136,11 +139,13 @@ editor.draw = {
 
       // find time signature in Attributes for current Measure
       var beats = 4, beat_type = 4;
-      for(var a = 0; a <= measureIndex; a++) {
+      for(var a = measureIndex; a >= 0; a--) {
         // finds attributes of closest previous measure or current measure
-        if(! $.isEmptyObject(xmlAttributes[a]) && xmlAttributes[a].time) {
-          beats = xmlAttributes[a].time.beats;
-          beat_type = xmlAttributes[a].time['beat-type'];
+        if(! $.isEmptyObject(gl_StaveAttributes[a]) && gl_StaveAttributes[a].vfTimeSpec) {
+          var timeSplitted = gl_StaveAttributes[a].vfTimeSpec.split('/');
+          beats = timeSplitted[0];
+          beat_type = timeSplitted[1];
+          break;
         }
       }
 
@@ -152,17 +157,17 @@ editor.draw = {
 
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
-      voice.addTickables(vfStaveNotes[measureIndex]);
+      voice.addTickables(gl_VfStaveNotes[measureIndex]);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-      var beams = new Vex.Flow.Beam.generateBeams(vfStaveNotes[measureIndex], {
+      var beams = new Vex.Flow.Beam.generateBeams(gl_VfStaveNotes[measureIndex], {
         groups: [new Vex.Flow.Fraction(beats, beat_type)]
       });
 
       var mnId = editor.selected.note.id;
       var selMeasureIndex = mnId.split('n')[0].split('m')[1];
       var selNoteIndex = mnId.split('n')[1];
-      var selVFStaveNote = vfStaveNotes[selMeasureIndex][selNoteIndex];
+      var selVFStaveNote = gl_VfStaveNotes[selMeasureIndex][selNoteIndex];
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
       if(editor.mode === 'note' && +selMeasureIndex === measureIndex && cursorNoteEnabled) {
@@ -200,7 +205,7 @@ editor.draw = {
         // we need to shift it to selected note x position
         var xShift = selVFStaveNote.getX();
         // shift back by width of accidentals on left side of first note in measure
-        xShift -= vfStaveNotes[measureIndex][0].getMetrics().modLeftPx;
+        xShift -= gl_VfStaveNotes[measureIndex][0].getMetrics().modLeftPx;
         cursorNote.setXShift(xShift);
 
         cursorNoteVoice.draw(editor.ctx, stave);
@@ -223,7 +228,7 @@ editor.draw = {
       });
 
       // if last note is behind width of stave, extend stave
-      // var lastNoteX = vfStaveNotes[m][vfStaveNotes[m].length - 1].getNoteHeadEndX();
+      // var lastNoteX = gl_VfStaveNotes[m][gl_VfStaveNotes[m].length - 1].getNoteHeadEndX();
       // if((lastNoteX - stave.getX()) > staveWidth) {
       //   console.log('stave['+m+'] extended, lastNoteX: '+lastNoteX+'staveWidth: '+staveWidth);
       //   stave.setWidth(lastNoteX + 10);
@@ -235,12 +240,12 @@ editor.draw = {
     editor.ctx.closeGroup();
 
     // adding event listeners to note objects
-    for(var n = 0; n < vfStaveNotes[measureIndex].length; n++){
+    for(var n = 0; n < gl_VfStaveNotes[measureIndex].length; n++){
       // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
       // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
-      var item = vfStaveNotes[measureIndex][n].getElem();
+      var item = gl_VfStaveNotes[measureIndex][n].getElem();
       attachListenersToNote(item);
-      // var noteBBox = vfStaveNotes[measureIndex][n].getBoundingBox();
+      // var noteBBox = gl_VfStaveNotes[measureIndex][n].getBoundingBox();
       // noteBBox.draw(editor.ctx);
     }
 

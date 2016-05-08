@@ -36,9 +36,11 @@ editor.draw = {
         staveX = 10;
         staveY = staveY + editor.staveHeight;
         newLine = true;
+        // gl_StaveAttributes[staveIndex].isFirstOnLine = true;
       }
       else {
         newLine = false;
+        // gl_StaveAttributes[staveIndex].isFirstOnLine = false;
       }
 
       // gradually extend height of canvas
@@ -95,17 +97,8 @@ editor.draw = {
 
     } // loop over measures
 
-    // mouse events listeners on <rect> for selecting measures
-    if(editor.mode === 'measure') {
-      $('svg .measureRect').each(function() {
-        attachListenersToMeasureRect($(this));
-      });
-      // highlight selected measure
-      $('svg .measureRect#'+editor.selected.measure.id)
-        .css({'fill': 'blue', 'opacity': '0.4'});
-    }
     // highlight selected note
-    else if(editor.mode === 'note')
+    if(editor.mode === 'note')
       $('svg #vf-'+editor.selected.note.id).colourNote("red");
 
   },
@@ -114,14 +107,22 @@ editor.draw = {
 
 
   // removes particular measure(stave) from svg and draws it again
-  measure: function(measureIndex, cursorNoteEnabled) {
-    // $('#vf-mg'+measureIndex).empty();
-    $('#vf-m'+measureIndex).remove();
+  measure: function(drawnMeasureIndex, cursorNoteEnabled) {
+    // $('#vf-mg'+drawnMeasureIndex).empty();
+    $('#vf-m'+drawnMeasureIndex).remove();
 
-    var stave = gl_VfStaves[measureIndex];
+    var stave = gl_VfStaves[drawnMeasureIndex];
+
+    // set stave properties
+    var clef = gl_StaveAttributes[drawnMeasureIndex].vfClef;
+    if(clef) stave.setClef(clef);
+    var keySig = gl_StaveAttributes[drawnMeasureIndex].vfKeySpec;
+    if(keySig) stave.setKeySignature(keySig);
+    var timeSig = gl_StaveAttributes[drawnMeasureIndex].vfTimeSpec;
+    if(timeSig) stave.setTimeSignature(timeSig);
 
     // svg measure group
-    editor.ctx.openGroup("measure", "m"+measureIndex, {pointerBBox: true});
+    editor.ctx.openGroup("measure", "m"+drawnMeasureIndex, {pointerBBox: true});
       // draw stave
       stave.draw();
 
@@ -132,14 +133,14 @@ editor.draw = {
                       editor.staveHeight,
                       {
                         'class': 'measureRect',
-                        'id': 'm'+measureIndex,
+                        'id': 'm'+drawnMeasureIndex,
                         'fill': 'transparent'
                       }
                     );
 
       // find time signature in Attributes for current Measure
       var beats = 4, beat_type = 4;
-      for(var a = measureIndex; a >= 0; a--) {
+      for(var a = drawnMeasureIndex; a >= 0; a--) {
         // finds attributes of closest previous measure or current measure
         if(! $.isEmptyObject(gl_StaveAttributes[a]) && gl_StaveAttributes[a].vfTimeSpec) {
           var timeSplitted = gl_StaveAttributes[a].vfTimeSpec.split('/');
@@ -157,20 +158,19 @@ editor.draw = {
 
       voice.setStrict(false);    //TODO: let it be strict for check notes duration in measure
 
-      voice.addTickables(gl_VfStaveNotes[measureIndex]);
+      voice.addTickables(gl_VfStaveNotes[drawnMeasureIndex]);
 
       //https://github.com/0xfe/vexflow/wiki/Automatic-Beaming:
-      var beams = new Vex.Flow.Beam.generateBeams(gl_VfStaveNotes[measureIndex], {
+      var beams = new Vex.Flow.Beam.generateBeams(gl_VfStaveNotes[drawnMeasureIndex], {
         groups: [new Vex.Flow.Fraction(beats, beat_type)]
       });
 
-      var mnId = editor.selected.note.id;
-      var selMeasureIndex = mnId.split('n')[0].split('m')[1];
-      var selNoteIndex = mnId.split('n')[1];
+      var selMeasureIndex = getSelectedMeasureIndex();
+      var selNoteIndex = getSelectedNoteIndex();
       var selVFStaveNote = gl_VfStaveNotes[selMeasureIndex][selNoteIndex];
 
       // draw the cursor note, if drawing selected measure and cursor note is enabled
-      if(editor.mode === 'note' && +selMeasureIndex === measureIndex && cursorNoteEnabled) {
+      if(editor.mode === 'note' && +selMeasureIndex === drawnMeasureIndex && cursorNoteEnabled) {
         var noteValue = getRadioValue('note-value');
         var dot = $('#dotted-checkbox').is(":checked") ? 'd' : '';
         // get note properties
@@ -205,7 +205,7 @@ editor.draw = {
         // we need to shift it to selected note x position
         var xShift = selVFStaveNote.getX();
         // shift back by width of accidentals on left side of first note in measure
-        xShift -= gl_VfStaveNotes[measureIndex][0].getMetrics().modLeftPx;
+        xShift -= gl_VfStaveNotes[drawnMeasureIndex][0].getMetrics().modLeftPx;
         cursorNote.setXShift(xShift);
 
         cursorNoteVoice.draw(editor.ctx, stave);
@@ -227,6 +227,17 @@ editor.draw = {
         beam.setContext(editor.ctx).draw();
       });
 
+      // mouse events listeners on <rect> for selecting measures
+      if(editor.mode === 'measure') {
+        $('svg .measureRect#m'+drawnMeasureIndex).each(function() {
+          attachListenersToMeasureRect($(this));
+        });
+        // highlight selected measure
+        if(drawnMeasureIndex === selMeasureIndex)
+          $('svg .measureRect#m'+selMeasureIndex)
+            .css({'fill': 'blue', 'opacity': '0.4'});
+      }
+
       // if last note is behind width of stave, extend stave
       // var lastNoteX = gl_VfStaveNotes[m][gl_VfStaveNotes[m].length - 1].getNoteHeadEndX();
       // if((lastNoteX - stave.getX()) > staveWidth) {
@@ -240,24 +251,25 @@ editor.draw = {
     editor.ctx.closeGroup();
 
     // adding event listeners to note objects
-    for(var n = 0; n < gl_VfStaveNotes[measureIndex].length; n++){
+    for(var n = 0; n < gl_VfStaveNotes[drawnMeasureIndex].length; n++){
       // adding listeners for interactivity: (from vexflow stavenote_tests.js line 463)
       // item is svg group: <g id="vf-m1n3" class="vf-stavenote">
-      var item = gl_VfStaveNotes[measureIndex][n].getElem();
+      var item = gl_VfStaveNotes[drawnMeasureIndex][n].getElem();
       attachListenersToNote(item);
-      // var noteBBox = gl_VfStaveNotes[measureIndex][n].getBoundingBox();
+      // var noteBBox = gl_VfStaveNotes[drawnMeasureIndex][n].getBoundingBox();
       // noteBBox.draw(editor.ctx);
     }
 
   },
 
   selectedMeasure: function(cursorNoteEnabled) {
-    var measureIndex = 0;
+    // var measureIndex = 0;
     // get measure index from id of selected object
-    if(editor.mode === 'note')
-      measureIndex = +editor.selected.note.id.split('n')[0].split('m')[1];
-    else if(editor.mode === 'measure')
-      measureIndex = +editor.selected.measure.id.split('m')[1];
+    // if(editor.mode === 'note')
+    //   measureIndex = +editor.selected.note.id.split('n')[0].split('m')[1];
+    // else if(editor.mode === 'measure')
+    //   measureIndex = +editor.selected.measure.id.split('m')[1];
+    var measureIndex = getSelectedMeasureIndex();
 
     console.log('redraw measure['+measureIndex+']');
 

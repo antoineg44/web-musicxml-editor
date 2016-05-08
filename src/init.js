@@ -1,12 +1,13 @@
-/**
-  * Version 0.2.0
-  * Copyright (c) 2015 Myles English
-  * http://webmonkeydd.com/vexflow-notation-editor
+/** Web Editor of MusicXML Files
+  *
+  * This project is based on Vexflow Notation Editor by Myles English, 2015
+  * https://github.com/Bijingus/vexflow-notation-editor
+  *
+  * Reimplementation made by Tomas Hudziec, 2016
+  * https://github.com/freetomik/web-musicxml-editor
  */
 
-//This online notation editor is built using the VexFlow Javascript API, Javascript, jQuery (for now anyway) and Bootstrap for Styling.
-
-var scoreJson = {
+scoreJson = {
   'score-partwise': {
     '@version': '3.0',
     'part-list': {
@@ -49,15 +50,15 @@ var scoreJson = {
   }
 };
 
-var uploadedFileName = 'score';
+uploadedFileName = 'score';
 
 // one <measure> in MusicXML -> one Vex.Flow.Stave
 // all of these three arrays below use share same index
-var gl_VfStaves = [];       // array with currently rendered vexflow measures(Vex.Flow.Stave)
-var gl_StaveAttributes = [];  // array of attributes for each measure
-var gl_VfStaveNotes = [];   // array of arrays with notes to corresponding stave in gl_VfStaves
+gl_VfStaves = [];       // array with currently rendered vexflow measures(Vex.Flow.Stave)
+gl_StaveAttributes = [];  // array of attributes for each measure
+gl_VfStaveNotes = [];   // array of arrays with notes to corresponding stave in gl_VfStaves
 
-var editor = {};
+editor = {};
 editor.svgElem = $("#svg-container")[0];
 // editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
 editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
@@ -75,25 +76,48 @@ editor.noteWidth = 40;
 
 editor.mode = "measure";    // measure or note
 
-editor.selected = {
-  cursorNoteKey: '',
-  measure: {
-    id: 'm0',
-    previousId: 'm0'
-  },
-  note: {
-    id: 'm0n0',
-    previousId: 'm0n0'
-  }
-}
 
-editor.mousePos = {
-  current: {
-    x: 0,
-    y: 0
-  },
-  previous: {
-    x: 0,
-    y: 0
+function init() {
+  editor.selected = {
+    cursorNoteKey: '',
+    measure: {
+      id: 'm0',
+      previousId: 'm0'
+    },
+    note: {
+      id: 'm0n0',
+      previousId: 'm0n0'
+    }
   }
-};
+
+  editor.mousePos = {
+    current: {
+      x: 0,
+      y: 0
+    },
+    previous: {
+      x: 0,
+      y: 0
+    }
+  }
+
+  // uncheck checked accidental radio button
+  $("input:radio[name='note-accidental']:checked").prop("checked", false);
+  // uncheck note-value radio button
+  $("input:radio[name='note-value']:checked").prop("checked", false);
+  // check whole note radio button
+  $("input:radio[name='note-value'][value='w']").prop("checked", true);
+  // examples dropdown
+  $("#examples-dropdown").val("default");
+  // uncheck doted checkbox
+  $("#dotted-checkbox").prop("checked", false);
+  // set selected clef to treble
+  $("#clef-dropdown").val("treble");
+  // set selected key signature to C
+  $("#keySig-dropdown").val("C");
+
+  editor.parse.all();
+  editor.draw.score();
+  switchToNoteMode();
+
+}

@@ -74,11 +74,17 @@ editor.add = {
 
     // put new note into scoreJson also
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].rest;
+    delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex]['@measure'];
+    
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch = {};
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
       .step = editor.selected.cursorNoteKey[0].toUpperCase();
     scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].pitch
       .octave = editor.selected.cursorNoteKey[editor.selected.cursorNoteKey.length - 1];
+
+    divisions = getCurAttrForMeasure(measureIndex, 'xmlDivisions');
+    var xmlDuration = editor.NoteTool.getDurationFromStaveNote(newNote, divisions);
+    scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].duration = xmlDuration;
 
     editor.svgElem.removeEventListener('click', editor.add.note, false); 
     editor.draw.selectedMeasure(false);
@@ -97,20 +103,80 @@ editor.add = {
 
   },
   clef: function(){
-    // var dropdownValue = editor.clefDropdown.value;
-    // editor.measures[editor.selected.measure.selection - 1].clef = dropdownValue;
+    var clefDropdown = $('#clef-dropdown').val();
+    // console.log('add clef: '+clefDropdown);
+    var measureIndex = getSelectedMeasureIndex();
+    var noteIndex = getSelectedNoteIndex();
+    var vfStave = gl_VfStaves[measureIndex];
+
+    var currentClef = getCurAttrForMeasure(measureIndex, 'vfClef');
+
+    // change clef only if new is different from current
+    if(currentClef !== clefDropdown) {
+      vfStave.setClef(clefDropdown);
+      gl_StaveAttributes[measureIndex].vfClef = clefDropdown;
+      var xmlClef = editor.table.CLEF_VEX_TYPE_DICT[clefDropdown];
+      gl_StaveAttributes[measureIndex].xmlClef = xmlClef;
+      // put clef into measure attributes in json
+      var xmlAttr = scoreJson["score-partwise"].part[0].measure[measureIndex].attributes || {};
+      xmlAttr.clef = {};
+      xmlAttr.clef.sign = xmlClef.split('/')[0];
+      xmlAttr.clef.line = xmlClef.split('/')[1];
+      scoreJson["score-partwise"].part[0].measure[measureIndex].attributes = xmlAttr;
+    }
+
+    // remove changed clef, if it is the same like previous
+    if(measureIndex > 0) {
+      var previousClef = getCurAttrForMeasure(measureIndex - 1, 'vfClef');
+      if(clefDropdown === previousClef) {
+        vfStave.removeClef();
+        delete gl_StaveAttributes[measureIndex].vfClef;
+        delete gl_StaveAttributes[measureIndex].xmlClef;
+        delete scoreJson["score-partwise"].part[0].measure[measureIndex].attributes.clef;
+      }
+    }
   },
   keySignature: function(){ 
-    // editor.measures[editor.selected.measure.selection - 1].keySig = editor.keySignature.value;
+    var keySig = $('#keySig-dropdown').val();
+
+    var measureIndex = getSelectedMeasureIndex();
+    var vfStave = gl_VfStaves[measureIndex];
+
+    vfStave.setKeySignature(keySig);
+
+    gl_StaveAttributes[measureIndex].vfKeySpec = keySig;
+    var fifths = 0;
+    fifths = editor.table.SHARP_MAJOR_KEY_SIGNATURES.indexOf(keySig) + 1;
+    if(!fifths)
+      fifths = -(editor.table.FLAT_MAJOR_KEY_SIGNATURES.indexOf(keySig) + 1);
+    gl_StaveAttributes[measureIndex].xmlFifths = fifths;
+
+    var xmlAttr = scoreJson["score-partwise"].part[0].measure[measureIndex].attributes || {};
+    xmlAttr.key = {};
+    xmlAttr.key.fifths = fifths;
+    // mode is not mandatory (e.g. major, minor, dorian...)
+
+    scoreJson["score-partwise"].part[0].measure[measureIndex].attributes = xmlAttr;
+
   },
   timeSignature: function(){
-    // var top = $('#timeSigTop').val();
-    // var bottom = $('#timeSigBottom').val();
-    // var selectedMeasure = editor.selected.measure.selection - 1;
+    var top = $('#timeSigTop').val();
+    var bottom = $('#timeSigBottom').val();
+    var timeSig = top + '/' + bottom;
 
-    // editor.measures[selectedMeasure].timeSigTop = top;
-    // editor.measures[selectedMeasure].timeSigBottom = bottom;
-    // editor.measures[selectedMeasure].showTimeSig = true;
+    var measureIndex = getSelectedMeasureIndex();
+    var vfStave = gl_VfStaves[measureIndex];
+
+    vfStave.setTimeSignature(timeSig);
+    gl_StaveAttributes[measureIndex].vfTimeSpec = timeSig;
+
+    var xmlAttr = scoreJson["score-partwise"].part[0].measure[measureIndex].attributes || {};
+    xmlAttr.time = {};
+    xmlAttr.time.beats = top;
+    xmlAttr.time['beat-type'] = bottom;
+
+    scoreJson["score-partwise"].part[0].measure[measureIndex].attributes = xmlAttr;
+
   },
   accidental: function(){
     var vexAcc = getRadioValue('note-accidental');

@@ -28,8 +28,6 @@ editor.NoteTool = {};
         var duration = Math.pow(2, offset) * divisions;
         duration = duration * 2 - duration * Math.pow(2, -numDots);
 
-        console.log(noteType+', '+divisions+'->'+duration);
-
         return duration;
     };
 

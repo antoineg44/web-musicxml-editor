@@ -165,6 +165,23 @@ function highlightSelectedNoteProperties() {
   $("#dotted-checkbox").prop("checked", vfStaveNote.isDotted());
 }
 
+// highlights properties of selected measure on control panel
+function highlightSelectedMeasureProperties() {
+  var measureIndex = getSelectedMeasureIndex();
+  var clef = gl_StaveAttributes[measureIndex].vfClef;
+  if(!clef) clef = getCurAttrForMeasure(measureIndex, 'vfClef');
+  if(clef) $("#clef-dropdown").val(clef);
+  var keySig = gl_StaveAttributes[measureIndex].vfKeySpec;
+  if(!keySig) keySig = getCurAttrForMeasure(measureIndex, 'vfKeySpec');
+  if(keySig) $("#keySig-dropdown").val(keySig);
+  var timeSig = gl_StaveAttributes[measureIndex].vfTimeSpec;
+  if(!timeSig) timeSig = getCurAttrForMeasure(measureIndex, 'vfTimeSpec');
+  if(timeSig) {
+    $("#timeSigTop").val(timeSig.split('/')[0]);
+    $("#timeSigBottom").val(timeSig.split('/')[1]);
+  }
+}
+
 function isCursorInBoundingBox(bBox, cursorPos) {
   return cursorPos.x > bBox.getX() && cursorPos.x < bBox.getX() + bBox.getW() &&
          cursorPos.y > bBox.getY() && cursorPos.y < bBox.getY() + bBox.getH();

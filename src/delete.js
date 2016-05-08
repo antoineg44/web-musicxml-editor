@@ -7,12 +7,12 @@ editor.delete = {
       return;
     }
 
-    var measureIndex = +editor.selected.measure.id.split('m')[1];
+    var measureIndex = getSelectedMeasureIndex();
     // to avoid inconsistency between measure and note id
     editor.selected.note.id = 'm' + measureIndex + 'n0';
 
     // merge attributes of measure being deleted with next measure attributes
-    if(measureIndex !== gl_VfStaves.length - 1) {
+    if(measureIndex !== gl_StaveAttributes.length - 1) {
       mergePropertiesInPlace(gl_StaveAttributes[measureIndex], gl_StaveAttributes[measureIndex + 1]);
     }
 
@@ -27,6 +27,8 @@ editor.delete = {
         gl_VfStaveNotes[m][n].setId('m' + m + 'n' + n);
       }
     }
+
+    // TODO merge attributes in json like above in gl_StaveAttributes
 
     // remove measure from scoreJson
     scoreJson["score-partwise"].part[0].measure.splice(measureIndex, 1);

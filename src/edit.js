@@ -88,9 +88,10 @@ editor.edit = {
     // get divisions
     var divisions = 0;
     // finds attributes of closest previous measure or current measure
-    for(var a = 0; a <= measureIndex; a++)
-      if(! $.isEmptyObject(gl_StaveAttributes[a]) && gl_StaveAttributes[a].xmlDivisions)
-        divisions = gl_StaveAttributes[a].xmlDivisions;
+    divisions = getCurAttrForMeasure(measureIndex, 'xmlDivisions');
+    // for(var a = 0; a <= measureIndex; a++)
+    //   if(! $.isEmptyObject(gl_StaveAttributes[a]) && gl_StaveAttributes[a].xmlDivisions)
+    //     divisions = gl_StaveAttributes[a].xmlDivisions;
 
     if(!divisions)
       console.error('divisions for measures 1 to '+(measureIndex+1)+' are not set');

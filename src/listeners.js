@@ -38,6 +38,7 @@ function attachListenersToMeasureRect(measureRectElem) {
       $('svg .measureRect#'+prevId).css({'fill': 'transparent'});
       $('svg .measureRect#'+editor.selected.measure.id)
         .css({'fill': 'blue', 'opacity': '0.4'});
+      highlightSelectedMeasureProperties();
     }
   });
   measureRectElem.on('mouseenter', function() {
@@ -102,6 +103,30 @@ jQuery.fn.colourNote = function (colour) {
   return this;
 }
 
+$("#clef-dropdown").on("change", function() {
+  editor.add.clef();
+  // editor.draw.selectedMeasure();
+  editor.draw.score();
+});
+
+$("#keySig-dropdown").on("change", function() {
+  editor.add.keySignature();
+  // editor.draw.selectedMeasure();
+  editor.draw.score();
+});
+
+$("#timeSig-button").on("click", function() {
+  editor.add.timeSignature();
+  // editor.draw.selectedMeasure();
+  editor.draw.score();
+});
+
+$("#examples-dropdown").on("change", function() {
+  var url = $("#examples-dropdown").val();
+  if(url !== 'default')
+    loadExample(url);
+});
+
 // setting/removing accidental to/from note via radio buttons
 $("input:radio[name='note-accidental']").on("click",function() {
   var radio = $(this);
@@ -120,17 +145,17 @@ $("input:radio[name='note-accidental']").on("click",function() {
 
   // radio already checked, uncheck it
   if(radio.is(".selAcc")) {
-    console.log('uncheck');
+    // console.log('uncheck');
     radio.prop("checked",false).removeClass("selAcc");
     editor.delete.accidental();
   }
   // radio unchecked, check it
   else {
-    console.log('check');
+    // console.log('check');
     $("input:radio[name='"+radio.prop("name")+"'].selAcc").removeClass("selAcc");
     radio.addClass("selAcc");
     var vexAcc = $(this).prop("value");
-    console.log($(this).prop("value"));
+    // console.log($(this).prop("value"));
     editor.edit.noteAccidental(vexAcc);
   }
   editor.draw.selectedMeasure();
@@ -149,17 +174,3 @@ $("input:radio[name='note-value']").on("change",function() {
 //   editor.edit.noteDot();
 //   editor.draw.selectedMeasure();
 // });
-
-// TODO move elsewhere
-// called at start of whole program:
-// uncheck checked accidental radio button
-$("input:radio[name='note-accidental']:checked").prop("checked", false);
-// uncheck note-value radio button
-$("input:radio[name='note-value']:checked").prop("checked", false);
-// check whole note radio button
-$("input:radio[name='note-value'][value='w']").prop("checked", true);
-// uncheck doted checkbox
-$("#dotted-checkbox").prop("checked", false);
-editor.parse.all();
-editor.draw.score();
-switchToNoteMode();

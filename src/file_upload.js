@@ -20,7 +20,7 @@ window.onload = function() {
         // after FileReader finishes reading:
         reader.onload = function(e) {
           try {
-            init();
+            initUI();
             uploadedFileName = file.name;
             loadAndDraw(reader.result);
           }
@@ -81,6 +81,11 @@ function loadAndDraw(inputFile) {
   editor.draw.score();
 }
 
+function parseAndDraw() {
+  editor.parse.all();
+  editor.draw.score();
+}
+
 function loadExample(url) {
   // body...
   console.log(url);
@@ -88,7 +93,7 @@ function loadExample(url) {
       url: url,
       data: null,
       success: function(data) {
-        init();
+        initUI();
         uploadedFileName = 'example.xml';
         loadAndDraw(data);
       },

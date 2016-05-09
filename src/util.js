@@ -51,10 +51,6 @@ function redrawMeasureWithCursorNote(event) {
       // console.log(editor.selected.cursorNoteKey);
       editor.draw.selectedMeasure(true);
 
-
-// TODO after click replace selected rest with cursor note and highlight it
-  // (implement add note for this)
-
     }
     // save previous cursor note for latter comparison
     editor.lastCursorNote = editor.selected.cursorNoteKey;

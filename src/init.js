@@ -77,7 +77,7 @@ editor.noteWidth = 40;
 editor.mode = "measure";    // measure or note
 
 
-function init() {
+function initUI() {
   editor.selected = {
     cursorNoteKey: '',
     measure: {
@@ -115,9 +115,5 @@ function init() {
   $("#clef-dropdown").val("treble");
   // set selected key signature to C
   $("#keySig-dropdown").val("C");
-
-  editor.parse.all();
-  editor.draw.score();
-  switchToNoteMode();
 
 }

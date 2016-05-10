@@ -13,7 +13,9 @@
     <div class="row">
       <div class="col-xs-12"> -->
        <nav class="navbar navbar-default navbar-fixed-top" id="fixed-header">
-
+       <!-- <nav class="navbar navbar-default navbar-static-top" id="fixed-header"> -->
+        <div class="container">
+        <!-- <div> -->
         <ul class="nav nav-tabs" id="editor-tabs">
           <li role="presentation"><a href="#file" onclick="" data-toggle="tab">File</a></li>
           <li role="presentation"><a href="#measure" onclick="switchToMeasureMode();" data-toggle="tab">Measure</a></li>
@@ -33,19 +35,23 @@
             </div>
             <div class="tool-section" style="display: inline-block;">
               <label>MusicXML import:</label>
-              <input type="file" id="fileInput">
+              <input type="file" accept=".xml" id="fileInput">
               <!-- <button onclick="editor.parse.all();">parse</button> -->
             </div>
             <div class="tool-section">
-              <a href="" id="link" onclick="setupDownloadLink(this)" download="">MusicXML export</a>
+              <a href="" id="link" onclick="setupDownloadLink(this)" download="" class="btn btn-default">MusicXML export</a>
             </div>
           </div>
 
           <div class="tab-pane fade in" id="measure">
             <div class="tool-section">
               <label>Measure:</label>
-              <button onclick="editor.add.measure();editor.draw.score();">+</button>
-              <button onclick="editor.delete.measure();editor.draw.score();">-</button>
+              <button class="btn btn-default btn-lg" onclick="editor.add.measure();editor.draw.score();">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              </button>
+              <button class="btn btn-default btn-lg" onclick="editor.delete.measure();editor.draw.score();">
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+              </button>
             </div>
             <div class="tool-section">
               <label>Clef:</label>
@@ -95,7 +101,7 @@
                 <option value="8">8</option>
                 <option value="16">16</option>
               </select>
-              <button id="timeSig-button">set</button>
+              <button class="btn btn-default btn-lg" id="timeSig-button">set</button>
               <!-- <button onclick="editor.delete.timeSignature();">-</button> -->
             </div>
           </div>
@@ -103,8 +109,12 @@
 
             <div class="tool-section">
               <label>Pitch:</label>
-              <button onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure(false);">^</button>
-              <button onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure(false);">v</button>
+              <button class="btn btn-default btn-lg" onclick="editor.edit.notePitch(1); editor.draw.selectedMeasure(false);">
+                <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+              </button>
+              <button class="btn btn-default btn-lg" onclick="editor.edit.notePitch(-1); editor.draw.selectedMeasure(false);">
+                <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+              </button>
             </div>
 
             <div class="tool-section">
@@ -162,10 +172,13 @@
 
             <div class="tool-section">
               <!-- <label>Pitch: </label> -->
-              <button onclick="editor.delete.note(); editor.draw.selectedMeasure(false);">delete</button>
+              <button class="btn btn-danger" onclick="editor.delete.note(); editor.draw.selectedMeasure(false);">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              </button>
             </div>
 
           </div>
+        </div>
         </div>
       </nav>
 <!--     </div>

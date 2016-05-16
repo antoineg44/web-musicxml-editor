@@ -1,10 +1,8 @@
 /** Web Editor of MusicXML Files
   *
-  * This project is based on Vexflow Notation Editor by Myles English, 2015
-  * https://github.com/Bijingus/vexflow-notation-editor
-  *
-  * Reimplementation made by Tomas Hudziec, 2016
+  * (c) Thomas Hudziec, 2016
   * https://github.com/freetomik/web-musicxml-editor
+  * MIT license
  */
 
 scoreJson = {

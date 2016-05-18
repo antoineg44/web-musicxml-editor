@@ -41,6 +41,7 @@ function loadAndDraw(inputFile) {
   // parse xml using jQuery into xml document object
   if(typeof inputFile === 'string')
     var xmlDoc = $.parseXML(inputFile);
+  // example file loaded via ajax is already of xml Document type
   else
     var xmlDoc = inputFile;
   if(xmlDoc.documentElement.nodeName !== "score-partwise")

@@ -97,16 +97,20 @@ jQuery.fn.colourNote = function (colour) {
 
 clefDropdown = $("#clef-dropdown").selectBoxIt().data("selectBox-selectBoxIt");  // use fancy theme for select box
 $("#clef-dropdown").on("change", function() {
-  editor.add.clef();
-  // editor.draw.selectedMeasure();
-  editor.draw.score();
+  // see comment in util.js in highlightSelectedMeasureProperties()
+  if(!gl_selectBoxChangeOnMeasureSelect) {
+    editor.add.clef();
+    editor.draw.score();
+  }
 });
 
 keySigDropdown = $("#keySig-dropdown").selectBoxIt().data("selectBox-selectBoxIt");
 $("#keySig-dropdown").on("change", function() {
-  editor.add.keySignature();
-  // editor.draw.selectedMeasure();
-  editor.draw.score();
+  // see comment in util.js in highlightSelectedMeasureProperties()
+  if(!gl_selectBoxChangeOnMeasureSelect) {
+    editor.add.keySignature();
+    editor.draw.score();
+  }
 });
 
 examplesDropdown = $("#examples-dropdown").selectBoxIt().data("selectBox-selectBoxIt");

@@ -7,8 +7,20 @@ editor.draw = {
     var canvasHeight = document.getElementById('svg-wrapper').clientHeight;
     $('#svg-container').attr('width', canvasWidth);
 
-    // TODO resize ctx here and also on lines 43 - 49
+    // to avoid NaNs in svg viewbox:
+    // https://groups.google.com/forum/?fromgroups=#!topic/vexflow/RWtqOhQoXMI
+    // editor.ctx.svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+    // editor.ctx.scale(1, 1);
+
+    // or resize ctx here and also on lines 43 - 49
     // editor.ctx.resize(canvasWidth, canvasHeight);
+
+    // or this:
+    // editor.ctx.width = editor.ctx.svg.clientWidth;
+    // editor.ctx.height = editor.ctx.svg.clientHeight;
+    // editor.ctx.width = canvasWidth;
+    // editor.ctx.height = canvasHeight;
+
     editor.ctx.clear();
     // no cursor note will be displayed
     editor.selected.cursorNoteKey = null;
@@ -50,7 +62,15 @@ editor.draw = {
       // if one measure is wider than canvas(e.g. in Chant.xml), extend canvas
       if(staveWidth > $('#svg-container').attr('width')) {
         $('#svg-container').attr('width', staveWidth);
+        // editor.ctx.width = staveWidth;
         // editor.ctx.resize(staveWidth, canvasHeight);
+      }
+
+      // set height of canvas after last rendered measure
+      if(staveIndex == gl_VfStaves.length - 1) {
+        $('#svg-container').attr('height', staveY + editor.staveHeight);
+        // editor.ctx.height = staveY + editor.staveHeight;
+        // editor.ctx.resize(canvasWidth, staveY + editor.staveHeight);
       }
 
       // set position and width of stave 
@@ -92,12 +112,6 @@ editor.draw = {
 
       // set start x position for next measure
       staveX = staveX + staveWidth;
-
-      // set height of canvas after last rendered measure
-      if(staveIndex == gl_VfStaves.length - 1) {
-        $('#svg-container').attr('height', staveY + editor.staveHeight);
-        // editor.ctx.resize(canvasWidth, staveY + editor.staveHeight);
-      }
 
     } // loop over measures
 

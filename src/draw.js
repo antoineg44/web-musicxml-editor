@@ -21,7 +21,13 @@ editor.draw = {
     // editor.ctx.width = canvasWidth;
     // editor.ctx.height = canvasHeight;
 
+    // or this:
+    // editor.ctx.svg.style.width = "100%";
+    // editor.ctx.svg.style.height = "100%";
+
     editor.ctx.clear();
+    // editor.ctx.svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+
     // no cursor note will be displayed
     editor.selected.cursorNoteKey = null;
 
@@ -281,12 +287,6 @@ editor.draw = {
   },
 
   selectedMeasure: function(cursorNoteEnabled) {
-    // var measureIndex = 0;
-    // get measure index from id of selected object
-    // if(editor.mode === 'note')
-    //   measureIndex = +editor.selected.note.id.split('n')[0].split('m')[1];
-    // else if(editor.mode === 'measure')
-    //   measureIndex = +editor.selected.measure.id.split('m')[1];
     var measureIndex = getSelectedMeasureIndex();
 
     console.log('redraw measure['+measureIndex+']');

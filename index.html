@@ -16,6 +16,12 @@
           <li role="presentation"><a href="#file" onclick="" data-toggle="tab">File</a></li>
           <li role="presentation"><a href="#measure" onclick="switchToMeasureMode();" data-toggle="tab">Measure</a></li>
           <li role="presentation" class="active"><a href="#note" onclick="switchToNoteMode();" data-toggle="tab">Note</a></li>
+          <button type="button" name="play" class="btn btn-default" onclick="editor.play();">
+            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+          </button>
+          <button type="button" name="stop" class="btn btn-default" onclick="editor.stop();">
+            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+          </button>
         </ul>
 
         <div class="tab-content" id="control-panel">
@@ -191,6 +197,7 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
       <!-- local libraries -->
       <script src="lib/vexflow-debug.js"></script>
+      <script src="lib/MIDI.min.js"></script>
       <script src="lib/bootstrap-filestyle.min.js"></script>
       <script src="lib/jquery-ui.min.js"></script>
       <script src="lib/jquery.selectBoxIt.min.js"></script>
@@ -203,6 +210,7 @@
       <script src="src/table.js"></script>
       <script src="src/note_tool.js"></script>
       <script src="src/parse.js"></script>
+      <script src="src/player.js"></script>
       <script src="src/add.js"></script>
       <script src="src/edit.js"></script>
       <script src="src/delete.js"></script>

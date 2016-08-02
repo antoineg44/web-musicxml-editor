@@ -79,3 +79,86 @@ Vex.Flow.StaveNote.prototype.removeDot = function(){
     this.modifiers.splice(this.getModifierIndex(Vex.Flow.Dot), 1);
   }
 }
+
+
+// for MIDI playback
+// TODO next step:
+// see Vex.UI.Handler.prototype.play() in Handler.js on line 329
+
+// Vex.Flow.StaveNote.prototype.getPlayEvents = function(playInfo){
+//   //Prepare the notes to be sent
+//   var notes = [];
+  
+//   for(var i = 0; i < this.keys.length; i++){
+//     notes.push(MIDI.keyToNote[this.keys[i].replace('/','')]);
+//   }
+
+//   //Set clef offset for notes
+//   for (var i = 0; i < notes.length; i++) {
+//     notes[i] += Vex.UI.ClefOffsets[playInfo.clef];
+//   };
+
+//   var keyPressTime = playInfo.defaultTime / this.duration;
+
+//   //Set the modifiers for this note (update note value)
+//   for (var i = 0; i < this.modifiers.length; i++) {
+//     var modifier = this.modifiers[i];
+//     if(modifier instanceof Vex.Flow.Accidental){
+//       var modValue;
+
+//       switch(modifier.type){
+//         case "bb":
+//         modValue = -2;
+//         break;
+//         case "b":
+//         modValue = -1;
+//         break;
+//         case "n":
+//         modValue = 0;
+//         break;
+//         case "#":
+//         modValue = 1;
+//         break;
+//         case "##":
+//         modValue = 2;
+//         break;
+//       }
+
+//       notes[modifier.index] += modValue;
+//     }else if(modifier instanceof Vex.Flow.Dot){
+//       keyPressTime *= 1.5;
+//     }
+    
+
+//   };
+
+//   //  velocity is set as 127
+  
+
+//   var events = [];
+  
+
+//   events.push({
+//     type: 'channel',
+//     channel: 0,
+//     subtype: notes.length==1?'noteOn':'chordOn',
+//     noteNumber: notes.length==1?notes[0]:notes,
+//     velocity: 127,
+//     queuedTime: playInfo.delay,
+//     note: this
+//   });
+//   events.push({
+//     type: 'channel',
+//     channel: 0,
+//     subtype: notes.length==1?'noteOff':'chordOff',
+//     noteNumber: notes.length==1?notes[0]:notes,
+//     queuedTime: playInfo.delay + keyPressTime,
+//     note: this
+//   });
+
+  
+//   //increment the delay 
+//   playInfo.delay = playInfo.delay + keyPressTime;
+  
+//   return events;
+// };

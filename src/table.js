@@ -93,3 +93,17 @@ editor.table.CLEF_VEX_TYPE_DICT = {
 editor.table.STAVE_DEFAULT_OPTIONS = {
     'space_above_staff_ln': 0
 };
+
+editor.MidiClefOffsets = {
+  "treble": 0,
+  "bass" : -21,
+  "alto": -10,
+    "tenor": -14,
+    "percussion": 0,
+    "soprano": -4,
+    "mezzo-soprano": -7,
+    "baritone-c": -17,
+    "baritone-f": -17,
+    "subbass": -24,
+    "french": 6 
+};

@@ -1,6 +1,10 @@
 body {
   padding-top: 160px;
 }
+#play-bar {
+  float: right;
+  margin-top: 5px;
+}
 #svg-wrapper {
   overflow-y:auto;
   overflow-x:auto;

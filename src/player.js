@@ -3,9 +3,9 @@
  * 
  */
 
-Vex.UI.Player = function (handler){
+Player = function(){ //(handler){
 	this.events = [];
-	this.handler = handler;
+	// this.handler = handler;
 	this.currentTime = 0;
 	this.currentEventIndex = 0;
 	this.ready = false;
@@ -13,7 +13,7 @@ Vex.UI.Player = function (handler){
 	this.playing = false;
 };
 
-Vex.UI.Player.prototype.loadInstrument = function(instrumentName, onReady){
+Player.prototype.loadInstrument = function(instrumentName){ //, onReady){
 	var player = this;
 	//Initialize the player
 	MIDI.loadPlugin({
@@ -21,13 +21,13 @@ Vex.UI.Player.prototype.loadInstrument = function(instrumentName, onReady){
 		instrument: instrumentName,
 		callback: function(){
 			player.ready = true;
-			if(onReady)
-				onReady();
+			// if(onReady)
+			// 	onReady();
 		}
 	});
 }
 
-Vex.UI.Player.prototype.onPlayFinished = function(callback){
+Player.prototype.onPlayFinished = function(callback){
 	this.callback = callback;
 }
 
@@ -40,16 +40,17 @@ Vex.UI.Player.prototype.onPlayFinished = function(callback){
  * velocity -> integer (only required when subtype == 'noteOn' | 'chordOn')
  * queuedTime -> float (when the event will be triggered)
  */
-Vex.UI.Player.prototype.addEvent = function(event){
+Player.prototype.addEvent = function(event){
 	this.events.push(event);
 };
 
 
-Vex.UI.Player.prototype.addEvents = function(eventList){
+Player.prototype.addEvents = function(eventList){
 	this.events = this.events.concat(eventList);
 };
 
-Vex.UI.Player.prototype.play = function(self){
+Player.prototype.play = function(self){
+	console.log('player play()');
 	if(self === undefined)
 		self = this;
 	self.playing = true;
@@ -80,7 +81,8 @@ Vex.UI.Player.prototype.play = function(self){
 	
 };
 
-Vex.UI.Player.prototype.stop = function(){
+Player.prototype.stop = function(){
+	console.log('player stop');
 	if(this.scheduledId){
 		clearTimeout(this.scheduledId);
 		this.clear();
@@ -94,50 +96,55 @@ Vex.UI.Player.prototype.stop = function(){
 };
 
 
-Vex.UI.Player.prototype.fireEvent = function(event){
+Player.prototype.fireEvent = function(event){
 	switch(event.subtype){
 		case 'noteOn':
 			MIDI.noteOn(event.channel, event.noteNumber, event.velocity, 0);
-			event.note.setHighlight(true);
-			self.handler.redraw();
+			// event.note.setHighlight(true);
+			// self.handler.redraw();
 			break;
 		case 'noteOff':
 			MIDI.noteOff(event.channel, event.noteNumber, 0);
-			event.note.setHighlight(false);
-			self.handler.redraw();
+			// event.note.setHighlight(false);
+			// self.handler.redraw();
 			break;
 		case 'chordOn':
 			MIDI.chordOn(event.channel, event.noteNumber, event.velocity, 0);
-			event.note.setHighlight(true);
-			self.handler.redraw();
+			// event.note.setHighlight(true);
+			// self.handler.redraw();
 			break;
 		case 'chordOff':
 			MIDI.chordOff(event.channel, event.noteNumber, 0);
-			event.note.setHighlight(false);
-			self.handler.redraw();
+			// event.note.setHighlight(false);
+			// self.handler.redraw();
 			break;
 	}
 };
 
-Vex.UI.Player.prototype.clear = function(){
+Player.prototype.clear = function(){
 	this.scheduledId = null;
 	this.currentTime = 0;
 	this.currentEventIndex = 0;
 };
 
 
-Vex.UI.Handler.play = function(){
 
+
+
+
+
+editor.player = new Player();
+
+editor.play = function(){
+	console.log('editor play()');
 	var playButton, stopButton;
 
-	if(this.toolbar){
-		playButton = this.toolbar.buttons.play;
-		stopButton = this.toolbar.buttons.stop;
+	playButton = document.getElementById("button-play");
+	stopButton = document.getElementById("button-stop");
 
-		//enable stop, disable play
-		stopButton.disabled = false;
-		playButton.disabled = true;
-	}
+	//enable stop, disable play
+	stopButton.disabled = false;
+	playButton.disabled = true;
 
 	//TODO RPM should be set outside...
 	var rpm = 120;
@@ -148,8 +155,8 @@ Vex.UI.Handler.play = function(){
 			};
 	//var script = "MIDI.setVolume(0, 127);";
 	var playEvents = [];
-	for(var i = 0; i < this.staveList.length; i++){
-		var stave = this.staveList[i];
+	for(var i = 0; i < gl_VfStaves.length; i++){
+		var stave = gl_VfStaves[i];
 		//set clef to playinfo
 		playInfo.clef = stave.clef;
 
@@ -158,9 +165,9 @@ Vex.UI.Handler.play = function(){
 		// barNote.setType(stave.modifiers[0].barline);
 		// playEvents = playEvents.concat(barNote.getPlayEvents(playInfo, playEvents));
 
-		for(var j = 0; j < stave.getTickables().length; j++){
-			var tickable = stave.getTickables()[j];
-			playEvents = playEvents.concat(tickable.getPlayEvents(playInfo, playEvents));
+		for(var j = 0; j < gl_VfStaveNotes[i].length; j++){
+			var staveNote = gl_VfStaveNotes[i][j];
+			playEvents = playEvents.concat(staveNote.getPlayEvents(playInfo));//, playEvents));
 		}		
 
 		//Call final barline play events
@@ -168,27 +175,24 @@ Vex.UI.Handler.play = function(){
 		// playEvents = playEvents.concat(barNote.getPlayEvents(playInfo, playEvents));
 	}
 	
-	Vex.UI.Player.addEvents(playEvents);
-	Vex.UI.Player.onPlayFinished(function(){
+	editor.player.addEvents(playEvents);
+	editor.player.onPlayFinished(function(){
 		//Reenable play and disable stop
-		if(playButton)
-			playButton.disabled = false;
-		if(stopButton)
-			stopButton.disabled = true;
-	});
-	Vex.UI.Player.play();
-};
-
-Vex.UI.Handler.stop = function(){
-	Vex.UI.Player.stop();
-		
-	if(this.toolbar){
-		playButton = this.toolbar.buttons.play;
-		stopButton = this.toolbar.buttons.stop;
-
-		//enable stop, disable play
 		playButton.disabled = false;
 		stopButton.disabled = true;
-	}
+	});
+	editor.player.play();
+};
+
+editor.stop = function(){
+	console.log('editor stop');
+	editor.player.stop();
+		
+	playButton = document.getElementById("button-play");
+	stopButton = document.getElementById("button-stop");
+
+	//enable stop, disable play
+	playButton.disabled = false;
+	stopButton.disabled = true;
 
 };

@@ -16,12 +16,14 @@
           <li role="presentation"><a href="#file" onclick="" data-toggle="tab">File</a></li>
           <li role="presentation"><a href="#measure" onclick="switchToMeasureMode();" data-toggle="tab">Measure</a></li>
           <li role="presentation" class="active"><a href="#note" onclick="switchToNoteMode();" data-toggle="tab">Note</a></li>
-          <button type="button" name="play" class="btn btn-default" onclick="editor.play();">
-            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-          </button>
-          <button type="button" name="stop" class="btn btn-default" onclick="editor.stop();">
-            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-          </button>
+          <div id="play-bar">
+            <button type="button" name="play" id="button-play" class="btn btn-success btn-sm play-button" onclick="editor.play();">
+              <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+            </button>
+            <button type="button" name="stop" id="button-stop" class="btn btn-danger btn-sm play-button" onclick="editor.stop();">
+              <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+            </button>
+          </div>
         </ul>
 
         <div class="tab-content" id="control-panel">
@@ -198,6 +200,7 @@
       <!-- local libraries -->
       <script src="lib/vexflow-debug.js"></script>
       <script src="lib/MIDI.min.js"></script>
+      <script src="lib/base64-binary.js"></script>
       <script src="lib/bootstrap-filestyle.min.js"></script>
       <script src="lib/jquery-ui.min.js"></script>
       <script src="lib/jquery.selectBoxIt.min.js"></script>

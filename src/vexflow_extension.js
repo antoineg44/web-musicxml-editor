@@ -98,7 +98,7 @@ Vex.Flow.StaveNote.prototype.getPlayEvents = function(playInfo){
     notes[i] += editor.MidiClefOffsets[playInfo.clef];
   };
 
-  var keyPressTime = playInfo.defaultTime / this.duration;
+  var keyPressTime = playInfo.defaultTime / editor.table.DURATION_DICT[this.duration];
 
   //Set the modifiers for this note (update note value)
   for (var i = 0; i < this.modifiers.length; i++) {
@@ -125,18 +125,20 @@ Vex.Flow.StaveNote.prototype.getPlayEvents = function(playInfo){
       }
 
       notes[modifier.index] += modValue;
-    }else if(modifier instanceof Vex.Flow.Dot){
+    }
+    else if(modifier instanceof Vex.Flow.Dot){
       keyPressTime *= 1.5;
     }
     
-
   };
 
+  // we don't play rests
+  if(this.isRest())
+    notes = [NaN];
+
   //  velocity is set as 127
-  
 
   var events = [];
-  
 
   events.push({
     type: 'channel',

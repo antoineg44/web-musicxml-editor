@@ -62,6 +62,17 @@ editor.table.NOTE_VEX_TYPE_DICT = {
 
 };
 
+editor.table.DURATION_DICT = {
+  'w' : '1',
+  'h' : '2',
+  'q' : '4',
+  '8' : '8',
+  '16' : '16',
+  '32' : '32',
+  '64' : '64',
+  '128' : '128'
+};
+
 editor.table.CLEF_TYPE_DICT = {
     'G/2': 'treble',
     'F/4': 'bass',

@@ -28,7 +28,7 @@
 
         <div class="tab-content" id="control-panel">
           <div class="tab-pane fade in" id="file">
-            <div class="tool-section">
+            <div class="tool-section" style="position: relative; top: -5px;">
               <select id="examples-dropdown">
                 <option value="default" selected>Choose example</option>
                 <option value="./examples/Chant.xml">Chant.xml</option>
@@ -36,10 +36,10 @@
                 <option value="./examples/Saltarello.xml">Saltarello.xml</option>
               </select>
             </div>
-            <div class="tool-section" style="display: inline-block;">
+            <div class="tool-section" style="position: relative;top: 13px;">
               <input type="file" accept=".xml" id="fileInput" class="filestyle" data-buttonBefore="true">
             </div>
-            <div class="tool-section" style="position: relative;top: -13px;">
+            <div class="tool-section">
               <a href="" id="link" onclick="setupDownloadLink(this)" download="" class="btn btn-default">MusicXML export</a>
             </div>
           </div>

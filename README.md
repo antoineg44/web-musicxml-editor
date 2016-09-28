@@ -15,11 +15,12 @@ Vexflow, jQuery and Bootstrap
 
 ## To Do
 <ol>
-  <li>Duration check for notes in measure</li>
-  <li>Playback</li>
-  <li>Chords support</li>
-  <li>Keyboard interactivity</li>
-  <li>Multiple score parts</li>
+  <li>Duration check for notes in measure - in progress</li>
+  <li>Playback - basics done, improvements needed</li>
+  <li>Bug fixes - in progress</li>
+  <li>Chords support - waiting</li>
+  <li>Keyboard interactivity - waiting</li>
+  <li>Multiple score parts - waiting</li>
 </ol>
 
 ## Contribution

@@ -195,6 +195,8 @@ editor.play = function(){
     //Reenable play and disable stop
     playButton.disabled = false;
     stopButton.disabled = true;
+    // highlight first played note
+    $('svg #vf-'+editor.selected.note.id).colourNote("red");
   });
   editor.player.play();
 };
@@ -210,4 +212,6 @@ editor.stop = function(){
   playButton.disabled = false;
   stopButton.disabled = true;
 
+  // highlight first played note
+  $('svg #vf-'+editor.selected.note.id).colourNote("red");
 };

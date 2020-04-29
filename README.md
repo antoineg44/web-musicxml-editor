@@ -35,4 +35,4 @@ $ python -m SimpleHTTPServer
 ```
 Open localhost:8000 in your browser.
 
-This project was initially created as a bachelor [thesis](https://research.redhat.com/theses/web-editor-of-musicxml-files).
+This project was initially created as a bachelor [thesis](https://www.fit.vut.cz/study/thesis/18587/.en).

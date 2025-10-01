@@ -5,6 +5,7 @@
   * MIT license
  */
 
+
 scoreJson = {
   'score-partwise': {
     '@version': '3.0',
@@ -57,20 +58,21 @@ gl_StaveAttributes = [];  // array of attributes for each measure
 gl_VfStaveNotes = [];   // array of arrays with notes to corresponding stave in gl_VfStaves
 
 editor = {};
-editor.svgElem = $("#svg-container")[0];
-// editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
-editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
-editor.ctx = editor.renderer.getContext();    //SVGContext
-
-// some default sizes
-editor.staveWidth = 150;
-editor.staveHeight = 140;
-editor.noteWidth = 40;
-
-editor.mode = "measure";    // measure or note
-editor.measureColor = "#428bca";
 
 function initUI() {
+  editor.svgElem = $("#svg-container")[0];
+  // editor.renderer = new Vex.Flow.Renderer('svg-container', Vex.Flow.Renderer.Backends.SVG);
+  editor.renderer = new Vex.Flow.Renderer(editor.svgElem, Vex.Flow.Renderer.Backends.SVG);
+  editor.ctx = editor.renderer.getContext();    //SVGContext
+
+  // some default sizes
+  editor.staveWidth = 150;
+  editor.staveHeight = 140;
+  editor.noteWidth = 40;
+
+  editor.mode = "measure";    // measure or note
+  editor.measureColor = "#428bca";
+
   editor.selected = {
     cursorNoteKey: 'b/4',
     measure: {

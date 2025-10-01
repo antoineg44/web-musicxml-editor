@@ -7,6 +7,38 @@
     <link rel="stylesheet" href="css/style.css"/>
     <link rel="stylesheet" href="css/jquery-ui.min.css"/>
     <link rel="stylesheet" href="css/jquery.selectBoxIt.css"/>
+    <!-- remote libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <!-- local libraries -->
+    <script src="lib/vexflow-debug.js"></script>
+    <script src="lib/base64-binary.js"></script>
+    <script src="lib/Base64.js"></script>
+
+    <script src="lib/bootstrap-filestyle.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <script src="lib/jquery.selectBoxIt.min.js"></script>
+
+    <script src="lib/xml2json.js"></script>
+    <script src="lib/json2xml.js"></script>
+    <!-- sources -->
+    <script src="src/vexflow_extension.js"></script>
+    <script src="src/init.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/table.js"></script>
+    <script src="src/note_tool.js"></script>
+    <script src="src/parse.js"></script>
+    <script src="src/add.js"></script>
+    <script src="src/edit.js"></script>
+    <script src="src/delete.js"></script>
+    <script src="src/draw.js"></script>
+    <script src="src/listeners.js"></script>
+    <script src="src/file_upload.js"></script>
+    <script src="src/file_download.js"></script>
+    <script src="soundfont/acoustic_grand_piano-ogg.js"></script>
+    <script src="lib/MIDI.min.js"></script>
+    <script src="src/player.js"></script>
+    <script src="index.js"></script>
   </head>
 
   <body>
@@ -195,43 +227,6 @@
 
     <footer>
       <a href="https://github.com/SymphoniaIO/web-musicxml-editor">github page</a>
-      <!-- remote libraries -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-      <!-- local libraries -->
-      <script src="lib/vexflow-debug.js"></script>
-
-      <script src="lib/MIDI.min.js"></script>
-      <script src="lib/base64-binary.js"></script>
-      <script src="lib/Base64.js"></script>
-
-      <script src="lib/bootstrap-filestyle.min.js"></script>
-      <script src="lib/jquery-ui.min.js"></script>
-      <script src="lib/jquery.selectBoxIt.min.js"></script>
-
-      <script src="lib/xml2json.js"></script>
-      <script src="lib/json2xml.js"></script>
-      <!-- sources -->
-      <script src="src/vexflow_extension.js"></script>
-      <script src="src/init.js"></script>
-      <script src="src/util.js"></script>
-      <script src="src/table.js"></script>
-      <script src="src/note_tool.js"></script>
-      <script src="src/parse.js"></script>
-      <script src="src/player.js"></script>
-      <script src="src/add.js"></script>
-      <script src="src/edit.js"></script>
-      <script src="src/delete.js"></script>
-      <script src="src/draw.js"></script>
-      <script src="src/listeners.js"></script>
-      <script src="src/file_upload.js"></script>
-      <script src="src/file_download.js"></script>
-      <!-- initialization -->
-      <script>
-        initUI();
-        editor.parse.all();
-        switchToNoteMode();
-      </script>
     </footer>
     
   </body>

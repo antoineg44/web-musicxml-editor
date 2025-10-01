@@ -133,9 +133,10 @@ Player.prototype.clear = function(){
 
 
 
+function initMIDI() {
+  editor.player = new Player();
+}
 
-
-editor.player = new Player();
 
 editor.play = function(){
   console.log('editor play()');

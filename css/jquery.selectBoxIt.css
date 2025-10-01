@@ -82,7 +82,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   min-width: 100%;  /* Minimum Width of the dropdown list box options */
-  *width: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -190,7 +190,7 @@
 
 .selectboxit-rendering {
   display: inline-block !important;
-  *display: inline !important;
+  display: inline !important;
   zoom: 1 !important;
   visibility: visible !important;
   position: absolute !important;

@@ -1,0 +1,21 @@
+{
+  "name": "web-musicxml-editor",
+  "version": "1.0.0",
+  "description": "Browser based music score editor with basic MusicXML import/export. Uses Vexflow for music engraving into HTML5 svg element. Provides mouse interactivity for manipulation with musical score.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "parcel index.html --port 1337"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "parcel": "^2.13.3",
+    "xmlhttprequest": "^1.8.0"
+  }
+}

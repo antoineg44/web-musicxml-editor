@@ -44,7 +44,17 @@ editor.NoteTool = {
             }
             div *= 2;
         }
-        
+    },
+    mesure_get_next_duration: function(vfStaveNotes) {
+        duration = editor.NoteTool.mesure_duration(vfStaveNotes);
+        div = 2;
+        while(duration < 1) {
+            if(duration + 1/div <= 1) {
+                duration += 1/div;
+            }
+            div *= 2;
+        }
+        return div/2;
     }
 };
 

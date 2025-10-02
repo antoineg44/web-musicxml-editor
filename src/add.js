@@ -81,7 +81,7 @@ editor.add = {
     newNote.setId('m' + measureIndex + 'n' + noteIndex+1);
     console.log(newNote);
     gl_VfStaveNotes[measureIndex].splice(noteIndex+1, 1, newNote);*/
-    editor.NoteTool.complete_mesure_silence(gl_VfStaveNotes, measureIndex, noteIndex);
+    //editor.NoteTool.complete_mesure_silence(gl_VfStaveNotes, measureIndex, noteIndex);
 
     // put new note into scoreJson also
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].rest;
@@ -113,12 +113,29 @@ editor.add = {
       editor.selected.note.id = 'm' + measureIndex + 'n0';
       editor.draw.score();
     } else {
-      /*noteIndex++;
+      // Add a new silence :
+      noteIndex++;
+      div = editor.NoteTool.mesure_get_next_duration(gl_VfStaveNotes[measureIndex]);
+      console.log(div);
+      var newNote = new Vex.Flow.StaveNote({
+        keys: [ editor.selected.cursorNoteKey ],
+        duration: editor.table.DURATION_DICT_INV[div.toString()]+'r',
+        auto_stem: true
+      });
+      newNote.setId('m' + measureIndex + 'n' + noteIndex);
       editor.selected.note.id = 'm' + measureIndex + 'n' + noteIndex;
-      var wholeRest = new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "16" });
-      wholeRest.setId('m' + measureIndex + 'n1');
-      gl_VfStaveNotes.splice(measureIndex + 1, 0, [wholeRest]);
-      editor.draw.score();*/
+      gl_VfStaveNotes[measureIndex].splice(noteIndex, 0, newNote);
+
+      // JSON file:
+      var note =
+        {
+          '@measure' : 'yes',
+          rest: null,
+          duration: div  // TODO get duration from divisions in current attributes
+        };
+      scoreJson["score-partwise"].part[0].measure[measureIndex].note.splice(noteIndex, 0, note);
+      
+      editor.draw.score();
     }
 
   },

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg viewBox="0 0 38 42" height="42" width="38"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <g fill-rule="evenodd" fill="none">
+                                            <path d="M0 0h38v42H0z"></path>
+                                            <path d="M10 24h6v6h-6z" fill="#FFEB3B"></path>
+                                            <path d="M16 24h6v6h-6z" fill="#FF9800"></path>
+                                            <path d="M22 24h6v6h-6z" fill="#FF5722"></path>
+                                            <path d="M22 18h6v6h-6z" fill="#00BCD4"></path>
+                                            <path d="M16 18h6v6h-6z" fill="#03A9F4"></path>
+                                            <path d="M10 18h6v6h-6z" fill="#2196F3"></path>
+                                            <path d="M10 12h6v6h-6z" fill="#E91E63"></path>
+                                            <path d="M16 12h6v6h-6z" fill="#9C27B0"></path>
+                                            <path d="M22 12h6v6h-6z" fill="#673AB7"></path>
+                                        </g>
+                                    </svg>

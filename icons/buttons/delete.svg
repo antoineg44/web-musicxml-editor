@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg viewBox="0 0 36 42" height="42" width="36"
+    xmlns="http://www.w3.org/2000/svg">
+    <g fill-rule="evenodd" fill="none">
+        <path d="M0 0h36v42H0z"></path>
+        <path d="M22.5 18.5l-5 5m0-5l5 5" stroke-linecap="square" stroke="#000" class="stroke">
+        </path>
+        <path
+            d="M25.5 15H14l-4 6 4 6h11.5c.275 0 .5-.299.5-.667V15.667c0-.368-.225-.667-.5-.667zM25 25.667H14.5L11.42 21l3.08-4.667H25v9.334z"
+            fill-rule="nonzero" fill="#000" class="fill"></path>
+    </g>
+</svg>

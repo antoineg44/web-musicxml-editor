@@ -73,6 +73,17 @@ editor.table.DURATION_DICT = {
   '128' : '128'
 };
 
+editor.table.DURATION_DICT_INV = {
+  '1' : 'w',
+  '2' : 'h',
+  '4' : 'q',
+  '8' : '8',
+  '16' : '16',
+  '32' : '32',
+  '64' : '64',
+  '128' : '128'
+};
+
 editor.table.CLEF_TYPE_DICT = {
     'G/2': 'treble',
     'F/4': 'bass',

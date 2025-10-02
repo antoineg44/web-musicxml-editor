@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg xmlns="http://www.w3.org/2000/svg" height="42" width="38">
+                            <g fill-rule="evenodd" fill="none">
+                                <path d="M0 0h38v42H0z"></path>
+                                <path stroke="#000" class="stroke"
+                                    d="M11 15.5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h16a.5.5 0 0 0 .5-.5V16a.5.5 0 0 0-.5-.5H11z">
+                                </path>
+                                <path class="stroke" stroke="#000"
+                                    d="M23.5 23.5h-9v1h9v-1zm-10-3h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1zm-12-3h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1zm3 0h-1v1h1v-1z">
+                                </path>
+                            </g>
+                        </svg>

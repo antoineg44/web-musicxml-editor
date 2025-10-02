@@ -47,6 +47,7 @@ editor.add = {
     }
   },
   note: function(){
+    console.log("add_note");
     // get and parse id of selected note (id='m13n10')
     var measureIndex = getSelectedMeasureIndex();
     var noteIndex = getSelectedNoteIndex();
@@ -71,6 +72,16 @@ editor.add = {
 
     // put new note in place of selected rest
     gl_VfStaveNotes[measureIndex].splice(noteIndex, 1, newNote);
+    console.log("duration : " + editor.NoteTool.mesure_duration(gl_VfStaveNotes[measureIndex]));
+    /*newNote = new Vex.Flow.StaveNote({
+      keys: [ editor.selected.cursorNoteKey ],
+      duration: (1/(1-editor.NoteTool.mesure_duration(gl_VfStaveNotes[measureIndex]))).toString(),
+      auto_stem: true
+    });
+    newNote.setId('m' + measureIndex + 'n' + noteIndex+1);
+    console.log(newNote);
+    gl_VfStaveNotes[measureIndex].splice(noteIndex+1, 1, newNote);*/
+    editor.NoteTool.complete_mesure_silence(gl_VfStaveNotes, measureIndex, noteIndex);
 
     // put new note into scoreJson also
     delete scoreJson["score-partwise"].part[0].measure[measureIndex].note[noteIndex].rest;
@@ -91,14 +102,23 @@ editor.add = {
 
     // fluent creating of score:
     // add new measure, if current one is the last one and the note is also the last one
+    console.log(gl_VfStaveNotes[measureIndex]);
+    console.log(editor.NoteTool.mesure_duration(gl_VfStaveNotes[measureIndex]));
     if(measureIndex === gl_VfStaves.length - 1 &&
-       noteIndex === gl_VfStaveNotes[measureIndex].length - 1) {
+       editor.NoteTool.mesure_complete(gl_VfStaveNotes[measureIndex])) { // si la dernière mesure est complète
       editor.add.measure();
       // select first note in added measure
       measureIndex++;
       editor.selected.measure.id = 'm' + measureIndex;
       editor.selected.note.id = 'm' + measureIndex + 'n0';
       editor.draw.score();
+    } else {
+      /*noteIndex++;
+      editor.selected.note.id = 'm' + measureIndex + 'n' + noteIndex;
+      var wholeRest = new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "16" });
+      wholeRest.setId('m' + measureIndex + 'n1');
+      gl_VfStaveNotes.splice(measureIndex + 1, 0, [wholeRest]);
+      editor.draw.score();*/
     }
 
   },

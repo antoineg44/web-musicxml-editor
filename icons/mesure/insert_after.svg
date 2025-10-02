@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg viewBox="0 0 59 42" height="42" width="59"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g fill-rule="evenodd" fill="none">
+                        <path d="M0 0h59v42H0z"></path>
+                        <path
+                            d="M43 30v-4h1v4c0 1.1-.896 2-2 2h-4v-1h4c.552 0 1-.45 1-1zM15 13c0-1.11.895-2 2-2h4v1h-4c-.552 0-1 .45-1 1v4h-1v-4zm1 17c0 .55.448 1 1 1h4v1h-4c-1.105 0-2-.9-2-2v-4h1v4zm26-19c1.104 0 2 .89 2 2v4h-1v-4c0-.55-.448-1-1-1h-4v-1h4zm-9.523 10.01c.288 0 .521.22.521.49s-.233.49-.521.49h-2.489v2.49c0 .28-.218.52-.488.52s-.488-.24-.488-.52v-2.49h-2.489c-.288 0-.521-.22-.521-.49s.233-.49.521-.49h2.489v-2.49c0-.29.218-.52.488-.52s.488.23.488.52v2.49h2.489z"
+                            fill="#373A39" class="fill"></path>
+                    </g>
+                </svg>

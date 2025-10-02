@@ -9,7 +9,44 @@ Modifications:
   function transposeNote created by Thomas Hudziec, 2016
 */
 
-editor.NoteTool = {};
+editor.NoteTool = {
+    // Calcul de la durée des notes d'une mesure
+    mesure_duration: function(vfStaveNotes) {
+        var mesure_duration = 0;
+        for (var index = 0; index < vfStaveNotes.length; index++) {
+            mesure_duration += 1/parseInt(editor.table.DURATION_DICT[vfStaveNotes[index].getDuration()]);
+        }
+        return mesure_duration;
+    },
+    // Calcul s'il reste de la place dans la mesure
+    mesure_complete: function(vfStaveNotes) {
+        return editor.NoteTool.mesure_duration(vfStaveNotes) >= 1;
+    },
+    // Calcul s'il reste de la place dans la mesure
+    mesure_add_duration: function(vfStaveNotes, new_note) {
+        return mesure_duration(vfStaveNotes) + 1/parseInt(editor.table.DURATION_DICT[new_note.getDuration()]) < 1;
+    },
+    complete_mesure_silence: function(gl_VfStaveNotes, measureIndex, noteIndex) {
+        duration = editor.NoteTool.mesure_duration(gl_VfStaveNotes[measureIndex]);
+        div = 2;
+        while(duration < 1) {
+            if(duration + 1/div <= 1) {
+                console.log(div);
+                console.log(editor.table.DURATION_DICT_INV[div.toString()]+'r');
+                var newNote = new Vex.Flow.StaveNote({
+                    keys: [ editor.selected.cursorNoteKey ],
+                    duration: editor.table.DURATION_DICT_INV[div.toString()]+'r',
+                    auto_stem: true
+                });
+                newNote.setId('m' + measureIndex + 'n' + noteIndex+1);
+                gl_VfStaveNotes[measureIndex].splice(noteIndex+1, 0, newNote);
+                duration += 1/div;
+            }
+            div *= 2;
+        }
+        
+    }
+};
 
     /**
      * @param {Object} staveNote

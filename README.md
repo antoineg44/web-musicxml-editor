@@ -1,7 +1,7 @@
 # Web Editor of MusicXML Files
 Browser based music score editor with basic MusicXML import/export. Uses Vexflow for music engraving into HTML5 svg element. Provides mouse interactivity for manipulation with musical score.
 
-You can see live demo [here](http://freetomik.github.io/).
+You can see live demo [here](https://antoineg44.github.io/web-musicxml-editor/).
 
 ## Dependencies
 Vexflow, jQuery and Bootstrap
